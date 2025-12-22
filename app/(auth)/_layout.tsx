@@ -1,5 +1,6 @@
 import { images } from "@/constants";
-import { Slot, usePathname } from "expo-router";
+import useAuthStore from "@/store/auth.store";
+import { Redirect, Slot, usePathname } from "expo-router";
 import React from "react";
 import {
   Dimensions,
@@ -10,8 +11,13 @@ import {
   View,
 } from "react-native";
 
-export default function Layout() {
+export default function AuthLayout() {
+  const { isAuthenticated } = useAuthStore();
   const pathname = usePathname();
+  if (isAuthenticated) {
+    return <Redirect href="/" />;
+  }
+
   const Logo = images.Logo;
 
   const backgroundImage = pathname.includes("sign-up")
