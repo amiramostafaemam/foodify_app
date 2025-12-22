@@ -6,6 +6,7 @@ import {
   Databases,
   ID,
   Query,
+  Storage,
 } from "react-native-appwrite";
 
 export const appwriteConfig = {
@@ -13,7 +14,13 @@ export const appwriteConfig = {
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
   platform: "com.amira.foodify",
   databaseId: "69481a45003716bfd6c4",
+  bucketId: "69497c37000a13628bac",
   userCollectionId: "user",
+  categoriesCollectionId: "categories",
+  customizationsCollectionId: "customizations",
+  menuCollectionId: "menu",
+  menuCustomizationsCollectionId: "menu_customizations",
+ 
 };
 
 export const client = new Client();
@@ -25,6 +32,8 @@ client
 
 export const account = new Account(client);
 export const databases = new Databases(client);
+
+export const storage = new Storage(client);
 
 const avatars = new Avatars(client);
 
