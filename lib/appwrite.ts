@@ -1,4 +1,4 @@
-import { CreateUserParams, SignInParams, User } from "@/type";
+// lib/appwrite.ts
 import {
   Account,
   Avatars,
@@ -8,6 +8,14 @@ import {
   Query,
   Storage,
 } from "react-native-appwrite";
+import {
+  CreateUserParams,
+  GetMenuParams,
+  MenuItem,
+  SignInParams,
+  User,
+  Category,
+} from "./../type.d";
 
 export const appwriteConfig = {
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
@@ -20,7 +28,6 @@ export const appwriteConfig = {
   customizationsCollectionId: "customizations",
   menuCollectionId: "menu",
   menuCustomizationsCollectionId: "menu_customizations",
- 
 };
 
 export const client = new Client();
@@ -96,5 +103,76 @@ export const getCuurentUser = async (): Promise<User | undefined> => {
     return currentUser.documents[0] as User;
   } catch (error) {
     throw new Error(error as string);
+  }
+};
+
+// export const getMenu = async ({ category, query }: GetMenuParams) => {
+//   try {
+//     const queries: string[] = [];
+//     if (category) {
+//       queries.push(Query.equal("categories", category));
+//     }
+//     if (query) {
+//       queries.push(Query.search("name", query));
+//     }
+
+//     const menus = await databases.listDocuments(
+//       appwriteConfig.databaseId,
+//       appwriteConfig.menuCollectionId,
+//       queries
+//     );
+//     return menus.documents;
+//   } catch (error) {
+//     throw new Error(error as string);
+//   }
+// };
+export const getMenu = async ({
+  category,
+  query,
+  limit,
+}: GetMenuParams): Promise<MenuItem[]> => {
+  try {
+    const queries: string[] = [];
+
+    // Handle category filter - category should be a category ID string (not an array)
+    // Empty strings should be treated as no filter
+    if (category && category.trim() !== "") {
+      queries.push(Query.equal("categories", category));
+    }
+
+    // Handle search query
+    if (query && query.trim() !== "") {
+      queries.push(Query.search("name", query));
+    }
+
+    // Handle limit - Query.limit() should be part of the queries array
+    if (limit && limit > 0) {
+      queries.push(Query.limit(limit));
+    }
+
+    const menus = await databases.listDocuments<MenuItem>(
+      appwriteConfig.databaseId,
+      appwriteConfig.menuCollectionId,
+      queries
+    );
+
+    return menus.documents as MenuItem[];
+  } catch (e) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    throw new Error(`Failed to fetch menu: ${errorMessage}`);
+  }
+};
+
+export const getCategories = async (params: {}): Promise<Category[]> => {
+  try {
+    const categories = await databases.listDocuments<Category>(
+      appwriteConfig.databaseId,
+      appwriteConfig.categoriesCollectionId
+    );
+
+    return categories.documents as Category[];
+  } catch (e) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    throw new Error(`Failed to fetch categories: ${errorMessage}`);
   }
 };
