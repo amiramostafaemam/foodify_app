@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
-interface UseAppwriteOptions<T, P extends Record<string, string | number>> {
+interface UseAppwriteOptions<
+  T,
+  P extends Record<string, string | number | undefined>,
+> {
   fn: (params: P) => Promise<T>;
   params?: P;
   skip?: boolean;
@@ -14,7 +17,7 @@ interface UseAppwriteReturn<T, P> {
   refetch: (newParams?: P) => Promise<void>;
 }
 
-const useAppwrite = <T, P extends Record<string, string | number>>({
+const useAppwrite = <T, P extends Record<string, string | number | undefined>>({
   fn,
   params = {} as P,
   skip = false,
@@ -25,23 +28,15 @@ const useAppwrite = <T, P extends Record<string, string | number>>({
 
   const fetchData = useCallback(
     async (fetchParams: P) => {
-      console.log("[useAppwrite] fetchData called with params:", fetchParams);
       setLoading(true);
       setError(null);
 
       try {
         const result = await fn({ ...fetchParams });
-        console.log("[useAppwrite] fetchData result:", result);
-        console.log(
-          "[useAppwrite] fetchData result length:",
-          Array.isArray(result) ? result.length : "not an array"
-        );
         setData(result);
       } catch (err: unknown) {
         const errorMessage =
           err instanceof Error ? err.message : "An unknown error occurred";
-        console.error("[useAppwrite] fetchData error:", errorMessage);
-        console.error("[useAppwrite] fetchData full error:", err);
         setError(errorMessage);
         Alert.alert("Error", errorMessage);
       } finally {
@@ -55,15 +50,15 @@ const useAppwrite = <T, P extends Record<string, string | number>>({
     if (!skip) {
       fetchData(params);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refetch = async (newParams?: P) => {
-    // Use new params if provided, otherwise use original params
-    const paramsToUse = newParams || params;
-    console.log("[useAppwrite] refetch called");
-    console.log("[useAppwrite] refetch with params:", paramsToUse);
-    console.log("[useAppwrite] refetch newParams provided:", !!newParams);
-    await fetchData(paramsToUse);
+    if (newParams) {
+      await fetchData(newParams);
+    } else {
+      await fetchData(params);
+    }
   };
 
   return { data, loading, error, refetch };

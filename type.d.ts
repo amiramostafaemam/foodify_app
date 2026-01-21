@@ -9,6 +9,7 @@ export interface MenuItem extends Models.Document {
   protein: number;
   rating: number;
   type: string;
+  categories: Category | string;
 }
 
 export interface Category extends Models.Document {
@@ -20,6 +21,10 @@ export interface User extends Models.Document {
   name: string;
   email: string;
   avatar: string;
+  accountId: string;
+  phone?: string;
+  address_home?: string;
+  address_work?: string;
 }
 
 export interface CartCustomization {
@@ -30,6 +35,7 @@ export interface CartCustomization {
 }
 
 export interface CartItemType {
+  cartItemId: string; // ⭐ Unique ID لكل cart item
   id: string; // menu item id
   name: string;
   price: number;
@@ -39,11 +45,11 @@ export interface CartItemType {
 }
 
 export interface CartStore {
-  items: CartItem[];
-  addItem: (item: Omit<CartItem, "quantity">) => void;
-  removeItem: (id: string, customizations: CartCustomization[]) => void;
-  increaseQty: (id: string, customizations: CartCustomization[]) => void;
-  decreaseQty: (id: string, customizations: CartCustomization[]) => void;
+  items: CartItemType[];
+  addItem: (item: Omit<CartItemType, "quantity">) => void;
+  removeItem: (cartItemId: string) => void;
+  increaseQty: (cartItemId: string) => void;
+  decreaseQty: (cartItemId: string) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -73,6 +79,7 @@ interface CustomButtonProps {
 
 interface CustomHeaderProps {
   title?: string;
+  style?: string;
 }
 
 interface CustomInputProps {
@@ -101,8 +108,50 @@ interface SignInParams {
   password: string;
 }
 
-interface GetMenuParams {
+export interface GetMenuParams {
   category?: string;
   query?: string;
   limit?: number;
+  [key: string]: string | number | undefined;
+}
+
+export type GetMenuParamsStrict = {
+  [K in keyof GetMenuParams]: Exclude<GetMenuParams[K], undefined>;
+};
+
+export interface UpdateUserParams {
+  userId: string;
+  name?: string;
+  phone?: string;
+  address_home?: string;
+  address_work?: string;
+  avatar?: string;
+}
+
+export interface Customization extends Models.Document {
+  name: string;
+  price: number;
+  type: "topping" | "side";
+  menu: string;
+  customization: string;
+}
+
+export interface MenuCustomization extends Models.Document {
+  menu: string;
+  customization: {
+    $id: string;
+    name: string;
+    price: number;
+    type: "topping" | "side";
+  };
+  customization_name: string;
+  customization_price: number;
+  customization_type: "topping" | "side";
+}
+
+export interface CustomizationOption {
+  id: string;
+  name: string;
+  price: number;
+  type: "topping" | "side";
 }

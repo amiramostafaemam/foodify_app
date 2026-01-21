@@ -1,5 +1,6 @@
 import { images } from "@/constants";
 import useAuthStore from "@/store/auth.store";
+import { useCartStore } from "@/store/cart.store";
 import { TabBarIconProps } from "@/type";
 import cn from "clsx";
 import { Redirect, Tabs } from "expo-router";
@@ -23,6 +24,37 @@ const TabBarIcon = ({ focused, icon, title }: TabBarIconProps) => (
     </Text>
   </View>
 );
+
+// Cart Tab Icon مع Badge
+const CartTabIcon = ({ focused }: { focused: boolean }) => {
+  const totalItems = useCartStore((state) => state.getTotalItems());
+
+  return (
+    <View className="tab-icon">
+      <View className="relative">
+        <Image
+          source={images.bag}
+          className="size-7"
+          resizeMode="contain"
+          tintColor={focused ? "#FE8C00" : "#5D5F6D"}
+        />
+        {totalItems > 0 && (
+          <View className="cart-badge -right-2 -top-2">
+            <Text className="small-bold text-white">{totalItems}</Text>
+          </View>
+        )}
+      </View>
+      <Text
+        className={cn(
+          "text-xs font-bold",
+          focused ? "text-primary" : "text-gray-200"
+        )}
+      >
+        Cart
+      </Text>
+    </View>
+  );
+};
 
 export default function TabLayout() {
   const { isAuthenticated } = useAuthStore();
@@ -77,9 +109,7 @@ export default function TabLayout() {
         name="cart"
         options={{
           title: "Cart",
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} icon={images.bag} title="Cart" />
-          ),
+          tabBarIcon: ({ focused }) => <CartTabIcon focused={focused} />,
         }}
       />
       <Tabs.Screen

@@ -1,0 +1,501 @@
+import CustomButton from "@/components/CustomButton";
+import CustomHeader from "@/components/CustomHeader";
+import Toast from "@/components/Toast";
+import { getCustomizationImage, images } from "@/constants";
+import {
+  getCategoryById,
+  getMenuCustomizations,
+  getMenuItemById,
+} from "@/lib/appwrite";
+import useAppwrite from "@/lib/useAppwrite";
+import { useCartStore } from "@/store/cart.store";
+import { CartCustomization, CustomizationOption, MenuItem } from "@/type";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const CARD_PADDING = 3;
+const CARD_GAP = 23;
+const CARDS_VISIBLE = 3.5;
+const CARD_WIDTH =
+  (SCREEN_WIDTH - CARD_PADDING - CARD_GAP * (CARDS_VISIBLE - 1)) /
+  CARDS_VISIBLE;
+
+const CustomizationCard = ({
+  item,
+  isSelected,
+  onToggle,
+}: {
+  item: CustomizationOption;
+  isSelected: boolean;
+  onToggle: () => void;
+}) => {
+  const image = getCustomizationImage(item.name);
+
+  return (
+    <TouchableOpacity
+      onPress={onToggle}
+      className={`h-[120px] items-center rounded-2xl overflow-hidden ${
+        isSelected ? "bg-primary/90" : "bg-[#3C2F2F]"
+      }`}
+      style={{
+        width: CARD_WIDTH,
+        shadowColor: "#000",
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: isSelected ? 0.25 : 0.1,
+        shadowRadius: isSelected ? 6 : 4,
+        elevation: isSelected ? 6 : 3,
+      }}
+      activeOpacity={0.7}
+    >
+      <View className="w-full h-[75px] bg-white items-center justify-center rounded-b-2xl">
+        {image && (
+          <Image
+            source={image}
+            className="w-16 h-16 scale-125"
+            resizeMode="contain"
+          />
+        )}
+      </View>
+
+      <View className="w-full px-2 py-4 flex-row items-center justify-between">
+        <Text
+          className="text-white text-[12px] font-quicksand-semibold leading-[1.3] flex-1 mr-1"
+          numberOfLines={1}
+        >
+          {item.name}
+        </Text>
+
+        <TouchableOpacity
+          onPress={onToggle}
+          className={`w-5 h-5 rounded-full items-center justify-center ${
+            isSelected ? "bg-success" : "bg-[#EF2A39]"
+          }`}
+          activeOpacity={0.8}
+        >
+          {!isSelected && (
+            <Image source={images.plus} className="w-3 h-3" tintColor="white" />
+          )}
+          {isSelected && (
+            <Image
+              source={images.check}
+              className="w-3 h-3"
+              tintColor="white"
+            />
+          )}
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+const StarRating = ({ rating }: { rating: number }) => {
+  return (
+    <View className="flex-row items-center gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <Image
+          key={star}
+          source={images.star}
+          className="w-4 h-4"
+          tintColor={star <= rating ? "bg-primary" : "#D1D5DB"}
+        />
+      ))}
+      <Text className="paragraph-semibold text-[#878787] ml-2">{rating}/5</Text>
+    </View>
+  );
+};
+
+const Details = () => {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const [quantity, setQuantity] = useState(1);
+  const [selectedCustomizations, setSelectedCustomizations] = useState<
+    CartCustomization[]
+  >([]);
+  const [categoryName, setCategoryName] = useState<string>("");
+  const [showToast, setShowToast] = useState(false);
+  const [isFirstItem, setIsFirstItem] = useState(false);
+  const insets = useSafeAreaInsets();
+
+  const { data: menuItem, loading: menuLoading } = useAppwrite<
+    MenuItem,
+    { menuId: string }
+  >({
+    fn: async ({ menuId }) => getMenuItemById(menuId),
+    params: { menuId: id! },
+  });
+
+  const { data: customizations, loading: customizationsLoading } = useAppwrite<
+    CustomizationOption[],
+    { menuId: string }
+  >({
+    fn: async ({ menuId }) => getMenuCustomizations(menuId),
+    params: { menuId: id! },
+  });
+
+  const { addItem, increaseQty } = useCartStore();
+
+  useEffect(() => {
+    const fetchCategoryName = async () => {
+      if (menuItem?.categories) {
+        try {
+          if (
+            typeof menuItem.categories === "object" &&
+            "$id" in menuItem.categories
+          ) {
+            setCategoryName(menuItem.categories.name);
+          } else if (typeof menuItem.categories === "string") {
+            const category = await getCategoryById(menuItem.categories);
+            setCategoryName(category.name);
+          }
+        } catch (error) {
+          console.error("Error fetching category:", error);
+          setCategoryName("");
+        }
+      }
+    };
+
+    fetchCategoryName();
+  }, [menuItem]);
+
+  const toppings = customizations?.filter((c) => c.type === "topping") || [];
+  const sides = customizations?.filter((c) => c.type === "side") || [];
+
+  const toggleCustomization = (customization: CustomizationOption) => {
+    const exists = selectedCustomizations.find(
+      (c) => c.id === customization.id,
+    );
+
+    if (exists) {
+      setSelectedCustomizations(
+        selectedCustomizations.filter((c) => c.id !== customization.id),
+      );
+    } else {
+      setSelectedCustomizations([
+        ...selectedCustomizations,
+        {
+          id: customization.id,
+          name: customization.name,
+          price: customization.price,
+          type: customization.type,
+        },
+      ]);
+    }
+  };
+
+  const isSelected = (customizationId: string) => {
+    return selectedCustomizations.some((c) => c.id === customizationId);
+  };
+
+  const calculateTotalPrice = () => {
+    if (!menuItem) return 0;
+    const basePrice = menuItem.price;
+    const customizationsPrice = selectedCustomizations.reduce(
+      (total, c) => total + c.price,
+      0,
+    );
+    return (basePrice + customizationsPrice) * quantity;
+  };
+
+  const handleAddToCart = () => {
+    if (!menuItem || quantity === 0) return;
+
+    const isCartEmpty = useCartStore.getState().items.length === 0;
+
+    const newItem = {
+      cartItemId: `${menuItem.$id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: menuItem.$id,
+      name: menuItem.name,
+      price: menuItem.price,
+      image_url: menuItem.image_url,
+      customizations: selectedCustomizations,
+    };
+
+    addItem(newItem);
+
+    if (quantity > 1) {
+      const cartItems = useCartStore.getState().items;
+      const addedItem = cartItems[cartItems.length - 1];
+
+      for (let i = 1; i < quantity; i++) {
+        increaseQty(addedItem.cartItemId);
+      }
+    }
+
+    setShowToast(true);
+    setIsFirstItem(isCartEmpty);
+  };
+
+  if (menuLoading || customizationsLoading || !menuItem) {
+    return (
+      <SafeAreaView className="bg-white h-full flex-center">
+        <ActivityIndicator size="large" color="#FF9C01" />
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <>
+      <SafeAreaView className="bg-white h-full" edges={["top"]}>
+        <View className="flex-1">
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 140 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <View className="flex-row px-5 py-4">
+              <View className="flex-1 pr-3 justify-start">
+                <CustomHeader style="mb-7" />
+                {/* Menu Item Name */}
+                <Text className="h1-bold text-dark-100 mb-2">
+                  {menuItem.name}
+                </Text>
+                {/* Category Name */}
+                {categoryName && (
+                  <Text className="paragraph-medium text-[#878787] mb-3">
+                    {categoryName}
+                  </Text>
+                )}
+
+                {/* Rating */}
+                <View className="mb-4">
+                  <StarRating rating={menuItem.rating} />
+                </View>
+
+                {/* Price */}
+                <Text className="font-quicksand-bold text-2xl mb-4 text-dark-100">
+                  <Text className="text-primary font-bold text-2xl">$</Text>
+                  {menuItem.price.toFixed(2)}
+                </Text>
+
+                {/* Calories & Protein */}
+                <View className="flex-row gap-2 mb-4">
+                  {/* Calories */}
+                  <View className="flex-1 py-3">
+                    <Text className="paragraph-medium text-[#878787] mb-1">
+                      Calories
+                    </Text>
+                    <Text className="font-quicksand-semibold text-lg text-dark-100">
+                      {menuItem.calories} Cal
+                    </Text>
+                  </View>
+
+                  {/* Protein */}
+                  <View className="flex-1 py-3">
+                    <Text className="paragraph-medium text-[#878787] mb-1">
+                      Protein
+                    </Text>
+                    <Text className="font-quicksand-semibold text-lg text-dark-100">
+                      {menuItem.protein}g
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Menu Item Image */}
+              <View className="flex-1 items-center justify-center">
+                <Image
+                  source={{ uri: menuItem.image_url }}
+                  className="w-full h-80 scale-125"
+                  resizeMode="contain"
+                />
+              </View>
+            </View>
+
+            {/* Stats Section */}
+            <View className="py-3 px-5 mb-5 bg-primary/5 rounded-full w-[390px] mx-auto">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-2">
+                  <Text className="text-base text-dark-100 font-quicksand-semibold">
+                    <Text className="text-primary font-extrabold">$</Text> Free
+                    Delivery
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center gap-2">
+                  <Image
+                    source={images.clock}
+                    className="w-4 h-4"
+                    tintColor="text-primary"
+                  />
+                  <Text className="text-base text-dark-100 font-quicksand-semibold">
+                    20 - 30 mins
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center gap-2">
+                  <Image
+                    source={images.star}
+                    className="w-4 h-4"
+                    tintColor="text-primary"
+                  />
+                  <Text className="text-base font-quicksand-semibold text-dark-100">
+                    {menuItem.rating}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Description */}
+            <View className="px-5 mb-5">
+              <Text className="text-base font-quicksand-medium text-[#6A6A6A] leading-[1.7]">
+                {menuItem.description ||
+                  "Delicious and freshly prepared meal with high-quality ingredients."}
+              </Text>
+            </View>
+
+            {/* Toppings */}
+            {toppings.length > 0 && (
+              <View className="mb-6">
+                <Text className="h3-bold text-dark-100 px-5 mb-4">
+                  Toppings
+                </Text>
+                <FlatList
+                  data={toppings}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{
+                    paddingHorizontal: 20,
+                  }}
+                  ItemSeparatorComponent={() => (
+                    <View style={{ width: CARD_GAP }} />
+                  )}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <CustomizationCard
+                      item={item}
+                      isSelected={isSelected(item.id)}
+                      onToggle={() => toggleCustomization(item)}
+                    />
+                  )}
+                  decelerationRate="fast"
+                  snapToInterval={CARD_WIDTH + CARD_GAP}
+                  snapToAlignment="start"
+                />
+              </View>
+            )}
+
+            {/* Side Options */}
+            {sides.length > 0 && (
+              <View className="mb-6">
+                <Text className="h3-bold text-dark-100 px-5 mb-4">
+                  Side Options
+                </Text>
+
+                <FlatList
+                  data={sides}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{
+                    paddingHorizontal: 20,
+                  }}
+                  ItemSeparatorComponent={() => (
+                    <View style={{ width: CARD_GAP }} />
+                  )}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <CustomizationCard
+                      item={item}
+                      isSelected={isSelected(item.id)}
+                      onToggle={() => toggleCustomization(item)}
+                    />
+                  )}
+                  decelerationRate="fast"
+                  snapToInterval={CARD_WIDTH + CARD_GAP}
+                  snapToAlignment="start"
+                />
+              </View>
+            )}
+          </ScrollView>
+
+          {/* Add to Cart Button - Fixed at Bottom */}
+          <View
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}
+          >
+            <View
+              className="bg-white rounded-t-3xl w-full px-4"
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: -2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 5,
+                paddingBottom: Math.max(insets.bottom, 16),
+                paddingTop: 16,
+              }}
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-5 rounded-full px-5 py-3">
+                  <TouchableOpacity
+                    onPress={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-9 h-9 rounded-[4px] bg-primary/5 items-center justify-center"
+                  >
+                    <Image
+                      source={images.minus}
+                      className="w-5 h-1"
+                      tintColor="#FF9C01"
+                    />
+                  </TouchableOpacity>
+
+                  <Text className="text-xl font-quicksand-bold text-dark-100 w-[12px] text-center">
+                    {quantity}
+                  </Text>
+
+                  <TouchableOpacity
+                    onPress={() => setQuantity(quantity + 1)}
+                    className="w-9 h-9 bg-primary/5 rounded-[4px] items-center justify-center"
+                  >
+                    <Image
+                      source={images.plus}
+                      className="w-5 h-5"
+                      tintColor="#FF9C01"
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                <View className="flex-1 py-4 font-quicksand-bold text-[14px]">
+                  <CustomButton
+                    title={`Add to cart ($${calculateTotalPrice().toFixed(2)})`}
+                    onPress={handleAddToCart}
+                    style="px-6 py-4 rounded-[100px]"
+                    leftIcon={
+                      <Image
+                        source={images.bag}
+                        className="w-5 h-5 mr-3"
+                        tintColor="white"
+                      />
+                    }
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </SafeAreaView>
+      <Toast
+        visible={showToast}
+        onClose={() => setShowToast(false)}
+        isFirstItem={isFirstItem}
+      />
+    </>
+  );
+};
+
+export default Details;

@@ -1,14 +1,38 @@
+import { images } from "@/constants";
 import { MenuItem } from "@/type";
-import { Image, Platform, Text, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-interface MenuCardProps {
-  item: MenuItem;
-}
+const MenuCard = ({ item }: { item: MenuItem }) => {
+  const { $id, image_url, name, price } = item;
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
-const MenuCard = ({ item }: MenuCardProps) => {
-  // image_url from Appwrite storage is already a complete URL
-  // No need to append project parameter as it's already in the URL
-  const imageUrl = item.image_url;
+  const imageUrl = image_url || "";
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoading(false);
+  };
+
+  const handlePress = () => {
+    router.push({
+      pathname: "/details/[id]",
+      params: { id: $id },
+    });
+  };
 
   return (
     <TouchableOpacity
@@ -18,23 +42,41 @@ const MenuCard = ({ item }: MenuCardProps) => {
           ? { elevation: 10, shadowColor: "#878787" }
           : {}
       }
+      onPress={handlePress}
     >
-      <Image
-        source={{ uri: imageUrl }}
-        className="size-32 absolute -top-10"
-        resizeMode="contain"
-      />
+      <View className="size-32 absolute -top-10 flex-center">
+        {imageLoading && !imageError && (
+          <ActivityIndicator
+            size="small"
+            color="#FF9C01"
+            className="absolute"
+          />
+        )}
+        {imageError ? (
+          <Image
+            source={images.emptyState}
+            className="size-32"
+            resizeMode="contain"
+          />
+        ) : (
+          <Image
+            source={{ uri: imageUrl }}
+            className="size-32"
+            resizeMode="contain"
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+        )}
+      </View>
       <Text
-        className="text-center base-bold mb-2 text-dark-100"
+        className="text-center base-bold text-dark-100 mb-2"
         numberOfLines={1}
       >
-        {item.name}
+        {name}
       </Text>
-      <Text className="body-regular text-gray-200 mb-4">
-        From ${item.price}
-      </Text>
-      <TouchableOpacity onPress={() => {}}>
-        <Text className="paragraph-bold text-primary">Add to cart +</Text>
+      <Text className="body-regular text-gray-200 mb-4">From ${price}</Text>
+      <TouchableOpacity onPress={handlePress}>
+        <Text className="paragraph-bold text-primary">View Details</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );

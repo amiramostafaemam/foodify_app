@@ -1,3 +1,4 @@
+// lib/data.ts
 const dummyData = {
   categories: [
     { name: "Burgers", description: "Juicy grilled burgers" },

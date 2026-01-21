@@ -2,33 +2,42 @@ import CartButton from "@/components/CartButton";
 import Filter from "@/components/Filter";
 import MenuCard from "@/components/MenuCard";
 import SearchBar from "@/components/SearchBar";
+import { images } from "@/constants";
 import { getCategories, getMenu } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
-import { MenuItem, Category } from "@/type";
+import { Category, GetMenuParams, MenuItem } from "@/type";
 import cn from "clsx";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Search = () => {
   const { category, query } = useLocalSearchParams<{
-    query: string;
-    category: string;
+    query?: string;
+    category?: string;
   }>();
 
-  const { data, refetch, loading } = useAppwrite({
+  const { data, refetch, loading } = useAppwrite<MenuItem[], GetMenuParams>({
     fn: getMenu,
-    params: { category, query, limit: 12 },
+    params: {
+      category: category || undefined,
+      query: query || undefined,
+      limit: 12,
+    },
   });
 
-  const { data: categories } = useAppwrite<Category[], {}>({
+  const { data: categories } = useAppwrite<Category[], Record<string, never>>({
     fn: getCategories,
-    params: {},
+    params: {} as Record<string, never>,
   });
 
   useEffect(() => {
-    refetch({ category, query, limit: 12 });
+    refetch({
+      category: category || undefined,
+      query: query || undefined,
+      limit: 12,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category, query]);
 
@@ -36,12 +45,9 @@ const Search = () => {
     <SafeAreaView className="bg-white h-full">
       <FlatList
         data={data || []}
-        keyExtractor={(item) => item.$id}
-        numColumns={2}
-        columnWrapperClassName="gap-7"
-        contentContainerClassName="gap-7 px-5 pb-32"
         renderItem={({ item, index }) => {
           const isFirstRightColItem = index % 2 === 0;
+
           return (
             <View
               className={cn(
@@ -53,7 +59,11 @@ const Search = () => {
             </View>
           );
         }}
-        ListHeaderComponent={
+        keyExtractor={(item) => item.$id}
+        numColumns={2}
+        columnWrapperClassName="gap-7"
+        contentContainerClassName="gap-7 px-5 pb-32"
+        ListHeaderComponent={() => (
           <View className="my-5 gap-5">
             <View className="flex-between flex-row w-full">
               <View className="flex-start">
@@ -62,17 +72,36 @@ const Search = () => {
                 </Text>
                 <View className="flex-start flex-row gap-x-1 mt-0.5">
                   <Text className="paragraph-semibold text-dark-100">
-                    Find your favorite food{" "}
+                    Find your favorite food
                   </Text>
                 </View>
               </View>
+
               <CartButton />
             </View>
+
             <SearchBar />
+
             <Filter categories={categories!} />
           </View>
+        )}
+        ListEmptyComponent={() =>
+          !loading && (
+            <View className="flex-center px-10">
+              <Image
+                source={images.emptyState}
+                className="w-[250px] h-[300px] scale-110"
+                resizeMode="contain"
+              />
+              <Text className="h3-bold text-dark-100 text-center mb-2">
+                Nothing matched your search
+              </Text>
+              <Text className="paragraph-medium text-[#878787] text-center leading-[24px]">
+                Try a different search term or check for typos.
+              </Text>
+            </View>
+          )
         }
-        ListEmptyComponent={() => !loading && <Text>No results</Text>}
       />
     </SafeAreaView>
   );
