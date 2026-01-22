@@ -1,9 +1,10 @@
+import { StripeProvider } from "@stripe/stripe-react-native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 
+import useAuthStore from "@/store/auth.store";
 import { useEffect } from "react";
 import "./global.css";
-import useAuthStore from "@/store/auth.store";
 
 export default function RootLayout() {
   const { isLoading, fetchAuthenticatedUser } = useAuthStore();
@@ -29,6 +30,16 @@ export default function RootLayout() {
   if (!fontsLoaded || isLoading) {
     return null;
   }
+  return (
+    <StripeProvider
+      publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
+      merchantIdentifier="merchant.com.amira.foodify" // iOS only
+    >
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      </Stack>
+    </StripeProvider>
+  );
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  // return <Stack screenOptions={{ headerShown: false }} />;
 }

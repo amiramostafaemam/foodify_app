@@ -75,6 +75,7 @@ interface CustomButtonProps {
   leftIcon?: React.ReactNode;
   textStyle?: string;
   isLoading?: boolean;
+  disabled?: boolean;
 }
 
 interface CustomHeaderProps {
@@ -154,4 +155,28 @@ export interface CustomizationOption {
   name: string;
   price: number;
   type: "topping" | "side";
+}
+
+export type PaymentMethod = "card" | "cash";
+
+export interface OrderData {
+  userId: string;
+  items: string; // JSON stringified cart items
+  totalAmount: number;
+  deliveryFee: number;
+  discount: number;
+  finalAmount: number;
+  paymentIntentId: string;
+  paymentStatus: "pending" | "succeeded" | "failed" | "cash_on_delivery";
+  orderStatus:
+    | "pending"
+    | "confirmed"
+    | "preparing"
+    | "on_the_way"
+    | "delivered"
+    | "cancelled";
+  deliveryAddress?: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string;
 }

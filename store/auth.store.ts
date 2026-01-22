@@ -1,3 +1,4 @@
+// store/auth.store.ts
 import {
   account,
   signIn as appwriteSignIn,
