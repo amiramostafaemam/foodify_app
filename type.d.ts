@@ -1,4 +1,199 @@
+// import { Models } from "react-native-appwrite";
+
+// export interface MenuItem extends Models.Document {
+//   name: string;
+//   price: number;
+//   image_url: string;
+//   description: string;
+//   calories: number;
+//   protein: number;
+//   rating: number;
+//   type: string;
+//   categories: Category | string;
+// }
+
+// export interface Category extends Models.Document {
+//   name: string;
+//   description: string;
+// }
+
+// export interface User extends Models.Document {
+//   name: string;
+//   email: string;
+//   avatar: string;
+//   accountId: string;
+//   phone?: string;
+//   address_home?: string;
+//   address_work?: string;
+// }
+
+// export interface CartCustomization {
+//   id: string;
+//   name: string;
+//   price: number;
+//   type: string;
+// }
+
+// export interface CartItemType {
+//   cartItemId: string;
+//   id: string; // menu item id
+//   name: string;
+//   price: number;
+//   image_url: string;
+//   quantity: number;
+//   customizations?: CartCustomization[];
+// }
+
+// export interface CartStore {
+//   items: CartItemType[];
+//   addItem: (item: Omit<CartItemType, "quantity">) => void;
+//   removeItem: (cartItemId: string) => void;
+//   increaseQty: (cartItemId: string) => void;
+//   decreaseQty: (cartItemId: string) => void;
+//   clearCart: () => void;
+//   getTotalItems: () => number;
+//   getTotalPrice: () => number;
+// }
+
+// interface TabBarIconProps {
+//   focused: boolean;
+//   icon: ImageSourcePropType;
+//   title: string;
+// }
+
+// interface PaymentInfoStripeProps {
+//   label: string;
+//   value: string;
+//   labelStyle?: string;
+//   valueStyle?: string;
+// }
+
+// interface CustomButtonProps {
+//   onPress?: () => void;
+//   title?: string;
+//   style?: string;
+//   leftIcon?: React.ReactNode;
+//   textStyle?: string;
+//   isLoading?: boolean;
+//   disabled?: boolean;
+// }
+
+// interface CustomHeaderProps {
+//   title?: string;
+//   style?: string;
+// }
+
+// export interface CustomInputProps {
+//   placeholder?: string;
+//   value: string;
+//   onChangeText: (text: string) => void;
+//   label?: string;
+//   secureTextEntry?: boolean;
+//   keyboardType?:
+//     | "default"
+//     | "email-address"
+//     | "numeric"
+//     | "phone-pad"
+//     | "number-pad"
+//     | "decimal-pad";
+//   containerStyle?: string;
+//   inputStyle?: any;
+// }
+// interface ProfileFieldProps {
+//   label: string;
+//   value: string;
+//   icon: ImageSourcePropType;
+// }
+
+// interface CreateUserParams {
+//   email: string;
+//   password: string;
+//   name: string;
+// }
+
+// interface SignInParams {
+//   email: string;
+//   password: string;
+// }
+
+// export interface GetMenuParams {
+//   category?: string;
+//   query?: string;
+//   limit?: number;
+//   [key: string]: string | number | undefined;
+// }
+
+// export type GetMenuParamsStrict = {
+//   [K in keyof GetMenuParams]: Exclude<GetMenuParams[K], undefined>;
+// };
+
+// export interface UpdateUserParams {
+//   userId: string;
+//   name?: string;
+//   phone?: string;
+//   address_home?: string;
+//   address_work?: string;
+//   avatar?: string;
+// }
+
+// export interface Customization extends Models.Document {
+//   name: string;
+//   price: number;
+//   type: "topping" | "side";
+//   menu: string;
+//   customization: string;
+// }
+
+// export interface MenuCustomization extends Models.Document {
+//   menu: string;
+//   customization: {
+//     $id: string;
+//     name: string;
+//     price: number;
+//     type: "topping" | "side";
+//   };
+//   customization_name: string;
+//   customization_price: number;
+//   customization_type: "topping" | "side";
+// }
+
+// export interface CustomizationOption {
+//   id: string;
+//   name: string;
+//   price: number;
+//   type: "topping" | "side";
+// }
+
+// export type PaymentMethod = "card" | "cash";
+
+// export interface OrderData {
+//   userId: string;
+//   items: string;
+//   totalAmount: number;
+//   deliveryFee: number;
+//   discount: number;
+//   finalAmount: number;
+//   paymentIntentId: string;
+//   paymentStatus: "pending" | "succeeded" | "failed" | "cash_on_delivery";
+//   orderStatus:
+//     | "pending"
+//     | "confirmed"
+//     | "preparing"
+//     | "on_the_way"
+//     | "delivered"
+//     | "cancelled";
+//   deliveryAddress?: string;
+//   customerName: string;
+//   customerEmail: string;
+//   customerPhone?: string;
+// }
+// type.ts - Add these interfaces to your existing type.ts file
+
 import { Models } from "react-native-appwrite";
+
+// ============================================
+// EXISTING TYPES (Keep as they are)
+// ============================================
 
 export interface MenuItem extends Models.Document {
   name: string;
@@ -83,15 +278,22 @@ interface CustomHeaderProps {
   style?: string;
 }
 
-interface CustomInputProps {
+export interface CustomInputProps {
   placeholder?: string;
-  value?: string;
-  onChangeText?: (text: string) => void;
-  label: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  label?: string;
   secureTextEntry?: boolean;
-  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  keyboardType?:
+    | "default"
+    | "email-address"
+    | "numeric"
+    | "phone-pad"
+    | "number-pad"
+    | "decimal-pad";
+  containerStyle?: string;
+  inputStyle?: any;
 }
-
 interface ProfileFieldProps {
   label: string;
   value: string;
@@ -179,4 +381,30 @@ export interface OrderData {
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
+}
+
+// ============================================
+// NEW TYPES FOR OFFERS 🎉
+// ============================================
+
+export interface OfferItem {
+  name: string;
+  quantity: number;
+  icon?: string; // Optional emoji or icon
+}
+
+export interface Offer {
+  id: string;
+  title: string;
+  description: string;
+  image: any; // Local image for cards
+  videoUrl: string; // Video URL for details page
+  color: string;
+  originalPrice: number;
+  discountedPrice: number;
+  discount: number; // Percentage
+  items: OfferItem[];
+  rating: number;
+  deliveryTime: string;
+  validUntil: string;
 }

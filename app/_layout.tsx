@@ -1,13 +1,24 @@
-import { StripeProvider } from "@stripe/stripe-react-native";
+// app/_layout.tsx
+import { hasSeenOnboarding } from "@/lib/onboarding";
+import useAuthStore from "@/store/auth.store";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-
-import useAuthStore from "@/store/auth.store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./global.css";
 
+let StripeProvider: any = ({ children }: any) => children;
+
+try {
+  const stripe = require("@stripe/stripe-react-native");
+  StripeProvider = stripe.StripeProvider;
+} catch (e) {
+  console.warn("Stripe not available - running in Expo Go mode");
+}
+
 export default function RootLayout() {
-  const { isLoading, fetchAuthenticatedUser } = useAuthStore();
+  const { isLoading, fetchAuthenticatedUser, user } = useAuthStore();
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
 
   const [fontsLoaded, error] = useFonts({
     "QuickSand-Bold": require("../assets/fonts/Quicksand-Bold.ttf"),
@@ -19,7 +30,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (error) throw error;
-    //it means since fonts are loaded and error is null hide the splash screen
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error]);
 
@@ -27,19 +37,31 @@ export default function RootLayout() {
     fetchAuthenticatedUser();
   }, []);
 
-  if (!fontsLoaded || isLoading) {
+  useEffect(() => {
+    checkOnboarding();
+  }, []);
+
+  const checkOnboarding = async () => {
+    const seen = await hasSeenOnboarding();
+    setHasCompletedOnboarding(seen);
+    setOnboardingChecked(true);
+  };
+
+  if (!fontsLoaded || isLoading || !onboardingChecked) {
     return null;
   }
+
   return (
     <StripeProvider
-      publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY!}
-      merchantIdentifier="merchant.com.amira.foodify" // iOS only
+      publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}
+      merchantIdentifier="merchant.com.amira.foodify"
     >
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(onboarding)/index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
     </StripeProvider>
   );
-
-  // return <Stack screenOptions={{ headerShown: false }} />;
 }

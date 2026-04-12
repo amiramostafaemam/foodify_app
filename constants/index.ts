@@ -34,6 +34,7 @@ import coke from "@/assets/images/coke.png";
 import coleslaw from "@/assets/images/coleslaw.png";
 import corn from "@/assets/images/corn.png";
 import emptyState from "@/assets/images/empty-state.png";
+import emptycart from "@/assets/images/emptycart.png";
 import fries from "@/assets/images/fries.png";
 import grilledOnion from "@/assets/images/grilledonions.png";
 import jalapeno from "@/assets/images/jalapeno.png";
@@ -52,8 +53,11 @@ import rice from "@/assets/images/rice.png";
 import salad from "@/assets/images/salad.png";
 import signupGraphic from "@/assets/images/signup-graphic.png";
 import success from "@/assets/images/success.png";
+import successs from "@/assets/images/successs.png";
 import tea from "@/assets/images/tea.png";
 import tomatoes from "@/assets/images/tomatoes.png";
+import notfound from "@/assets/images/not-found.png";
+import canceled from "@/assets/images/canceled.png";
 
 export const CATEGORIES = [
   {
@@ -127,6 +131,8 @@ export const images = {
   pizzaOne,
   salad,
   success,
+  successs,
+  canceled,
   tomatoes,
   arrowBack,
   arrowDown,
@@ -161,6 +167,8 @@ export const images = {
   beans,
   pepperoni,
   grilledOnion,
+  emptycart,
+  notfound,
 };
 
 export const getCustomizationImage = (name: string) => {
@@ -197,3 +205,5 @@ export const getCustomizationImage = (name: string) => {
 
   return imageMap[normalizedName] || null;
 };
+
+// export * from "./offers.constants";

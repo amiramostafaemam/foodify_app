@@ -31,7 +31,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
           ) : (
             <Image
               source={{ uri: imageUrl }}
-              className="size-4/5 rounded-lg"
+              className="size-4/5 rounded-lg scale-125"
               resizeMode="cover"
               onError={handleImageError}
             />
@@ -43,7 +43,6 @@ const CartItem = ({ item }: { item: CartItemType }) => {
             {item.name}
           </Text>
 
-          {/* عرض الـ customizations لو موجودة */}
           {item.customizations && item.customizations.length > 0 && (
             <Text className="text-xs text-gray-400 mt-1" numberOfLines={2}>
               {item.customizations.map((c) => c.name).join(", ")}
