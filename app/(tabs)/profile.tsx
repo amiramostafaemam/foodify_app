@@ -1,3 +1,4 @@
+import AppModal from "@/components/AppModal";
 import Avatar from "@/components/Avatar";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
@@ -24,86 +25,15 @@ import {
   Phone,
   User,
 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
-  Animated,
-  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
-  useAnimatedValue,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const LogoutModal = ({
-  visible,
-  onConfirm,
-  onCancel,
-}: {
-  visible: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-}) => {
-  const scaleAnim = useAnimatedValue(0);
-
-  useEffect(() => {
-    if (visible) {
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 60,
-        friction: 8,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      scaleAnim.setValue(0);
-    }
-  }, [visible, scaleAnim]);
-
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onCancel}
-    >
-      <View className="flex-1 items-center justify-center bg-black/50 px-5">
-        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-          <View className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl">
-            <View className="mb-5 h-16 w-16 items-center justify-center rounded-full bg-error/10">
-              <LogOut size={26} color="#F14141" />
-            </View>
-
-            <Text className="mb-2 text-center font-quicksand-bold text-xl text-dark-100">
-              Log out?
-            </Text>
-            <Text className="mb-6 text-center font-quicksand text-base text-gray-100">
-              You&apos;ll need to sign in again to place orders.
-            </Text>
-
-            <View className="w-full gap-3">
-              <TouchableOpacity
-                onPress={onConfirm}
-                className="items-center rounded-xl bg-error py-4"
-                activeOpacity={0.85}
-              >
-                <Text className="base-bold text-white">Log out</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={onCancel}
-                className="items-center rounded-xl bg-gray-100/10 py-4"
-                activeOpacity={0.85}
-              >
-                <Text className="base-bold text-dark-100">Stay signed in</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Animated.View>
-      </View>
-    </Modal>
-  );
-};
 
 const NavRow = ({
   icon: Icon,
@@ -273,10 +203,18 @@ const Profile = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      <LogoutModal
+      <AppModal
         visible={showLogoutModal}
-        onConfirm={handleConfirmLogout}
-        onCancel={() => setShowLogoutModal(false)}
+        onClose={() => setShowLogoutModal(false)}
+        tone="error"
+        icon={LogOut}
+        title="Log out?"
+        message="You'll need to sign in again to place orders."
+        primary={{ label: "Log out", onPress: handleConfirmLogout }}
+        secondary={{
+          label: "Stay signed in",
+          onPress: () => setShowLogoutModal(false),
+        }}
       />
     </SafeAreaView>
   );

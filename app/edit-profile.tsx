@@ -1,83 +1,15 @@
+import AppModal from "@/components/AppModal";
 import Avatar from "@/components/Avatar";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import CustomInput from "@/components/CustomInput";
-import { images } from "@/constants";
 import useAuthStore from "@/store/auth.store";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import {
-  Alert,
-  Animated,
-  Image,
-  Modal,
-  Text,
-  TouchableOpacity,
-  useAnimatedValue,
-  View,
-} from "react-native";
+import { CircleCheck } from "lucide-react-native";
+import { useState } from "react";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// Success Modal Component
-const SuccessModal = ({
-  visible,
-  onClose,
-}: {
-  visible: boolean;
-  onClose: () => void;
-}) => {
-  const scaleAnim = useAnimatedValue(0);
-
-  useEffect(() => {
-    if (visible) {
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 50,
-        friction: 7,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      scaleAnim.setValue(0);
-    }
-  }, [visible, scaleAnim]);
-
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View className="flex-1 items-center justify-center bg-black/50 px-5">
-        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-          <View className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl">
-            <Image
-              source={images.successs}
-              className="mb-2 h-60 w-60"
-              resizeMode="contain"
-            />
-
-            <Text className="mb-3 text-center font-quicksand-bold text-2xl text-primary">
-              Profile Updated!
-            </Text>
-            <Text className="mb-6 text-center font-quicksand text-base text-gray-100">
-              Your profile information has been updated successfully.
-            </Text>
-
-            <TouchableOpacity
-              onPress={onClose}
-              className="w-full items-center rounded-xl bg-primary py-4"
-              activeOpacity={0.8}
-            >
-              <Text className="base-bold text-white">Back to Profile</Text>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-      </View>
-    </Modal>
-  );
-};
 
 const EditProfile = () => {
   const { user, updateUserProfile } = useAuthStore();
@@ -211,9 +143,17 @@ const EditProfile = () => {
         </View>
       </KeyboardAwareScrollView>
 
-      <SuccessModal
+      <AppModal
         visible={showSuccessModal}
         onClose={handleCloseSuccessModal}
+        tone="success"
+        icon={CircleCheck}
+        title="Profile updated"
+        message="Your changes have been saved."
+        primary={{
+          label: "Back to Profile",
+          onPress: handleCloseSuccessModal,
+        }}
       />
     </SafeAreaView>
   );

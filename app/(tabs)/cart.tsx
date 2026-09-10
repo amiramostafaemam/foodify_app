@@ -1,3 +1,4 @@
+import AppModal from "@/components/AppModal";
 import CartItem from "@/components/CartItem";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
@@ -12,19 +13,16 @@ import { useNotificationsStore } from "@/store/notifications.store";
 import { PaymentInfoStripeProps, PaymentMethod } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
-import { ChevronLeft, MapPin } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { ChevronLeft, CircleAlert, CircleCheck, MapPin } from "lucide-react-native";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Animated,
   FlatList,
   Image,
-  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
-  useAnimatedValue,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -48,96 +46,6 @@ const SummaryRow = ({
     </Text>
   </View>
 );
-
-const ResultModal = ({
-  visible,
-  onClose,
-  image,
-  title,
-  message,
-  primaryLabel,
-  secondaryLabel,
-  onSecondary,
-  tone = "primary",
-}: {
-  visible: boolean;
-  onClose: () => void;
-  image: number;
-  title: string;
-  message: string;
-  primaryLabel: string;
-  secondaryLabel?: string;
-  onSecondary?: () => void;
-  tone?: "primary" | "error";
-}) => {
-  const scaleAnim = useAnimatedValue(0);
-
-  useEffect(() => {
-    if (visible) {
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        tension: 60,
-        friction: 8,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      scaleAnim.setValue(0);
-    }
-  }, [visible, scaleAnim]);
-
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View className="flex-1 items-center justify-center bg-black/50 px-5">
-        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-          <View className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl">
-            <Image
-              source={image}
-              className="mb-2 h-56 w-56"
-              resizeMode="contain"
-            />
-            <Text
-              className={cn(
-                "mb-3 text-center font-quicksand-bold text-2xl",
-                tone === "error" ? "text-error" : "text-primary",
-              )}
-            >
-              {title}
-            </Text>
-            <Text className="mb-6 text-center font-quicksand text-base text-gray-100">
-              {message}
-            </Text>
-
-            <View className="w-full gap-3">
-              <TouchableOpacity
-                onPress={onClose}
-                className="items-center rounded-xl bg-primary py-4"
-                activeOpacity={0.85}
-              >
-                <Text className="base-bold text-white">{primaryLabel}</Text>
-              </TouchableOpacity>
-              {secondaryLabel && (
-                <TouchableOpacity
-                  onPress={onSecondary}
-                  className="items-center rounded-xl bg-gray-100/10 py-4"
-                  activeOpacity={0.85}
-                >
-                  <Text className="base-bold text-dark-100">
-                    {secondaryLabel}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        </Animated.View>
-      </View>
-    </Modal>
-  );
-};
 
 const PaymentOption = ({
   selected,
@@ -301,27 +209,33 @@ const Cart = () => {
 
   const resultModals = (
     <>
-      <ResultModal
+      <AppModal
         visible={showSuccess}
         onClose={closeSuccess}
-        image={images.successs}
-        title="Order Confirmed!"
+        tone="success"
+        icon={CircleCheck}
+        title="Order confirmed!"
         message="Your food is being prepared and will be delivered shortly."
-        primaryLabel="Back to Home"
+        primary={{ label: "Back to Home", onPress: closeSuccess }}
       />
-      <ResultModal
+      <AppModal
         visible={showCancel}
         onClose={() => setShowCancel(false)}
-        image={images.canceled}
-        title="Payment Cancelled"
-        message="Your payment was cancelled. Your cart items are still saved."
-        primaryLabel="Try Again"
-        secondaryLabel="Back to Home"
-        onSecondary={() => {
-          setShowCancel(false);
-          router.replace("/");
-        }}
         tone="error"
+        icon={CircleAlert}
+        title="Payment cancelled"
+        message="Your payment was cancelled. Your cart items are still saved."
+        primary={{
+          label: "Try Again",
+          onPress: () => setShowCancel(false),
+        }}
+        secondary={{
+          label: "Back to Home",
+          onPress: () => {
+            setShowCancel(false);
+            router.replace("/");
+          },
+        }}
       />
     </>
   );

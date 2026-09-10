@@ -1,48 +1,41 @@
-import { images } from "@/constants";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-import { Image, TextInput, TouchableOpacity, View } from "react-native";
+import { Search, X } from "lucide-react-native";
+import { useEffect, useState } from "react";
+import { TextInput, TouchableOpacity, View } from "react-native";
 
 const SearchBar = () => {
   const params = useLocalSearchParams<{ query?: string }>();
-  const [query, setQuery] = useState(params.query || "");
+  const [value, setValue] = useState(params.query ?? "");
 
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    if (!text) {
-      router.setParams({ query: undefined });
-    }
-  };
-
-  const handleSubmit = () => {
-    if (query.trim()) {
-      router.setParams({ query });
-    }
-  };
+  // Debounced live search — the results list refetches whenever the query param
+  // changes, so results appear as you type.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      router.setParams({ query: value.trim() || undefined });
+    }, 300);
+    return () => clearTimeout(id);
+  }, [value]);
 
   return (
-    <View className="searchbar">
+    <View className="h-14 flex-row items-center gap-3 rounded-2xl bg-gray-50 px-4">
+      <Search size={20} color="#878787" />
       <TextInput
-        className="flex-1 p-5"
-        placeholder="Search for pizzas , burgers ..."
-        value={query}
-        onChangeText={handleSearch}
-        onSubmitEditing={handleSubmit}
+        className="flex-1 font-quicksand-medium text-base text-dark-100"
+        placeholder="Search for pizzas, burgers…"
+        value={value}
+        onChangeText={setValue}
         returnKeyType="search"
+        autoCorrect={false}
+        autoCapitalize="none"
         placeholderTextColor="#A0A0A0"
       />
-      <TouchableOpacity
-        className="pr-5"
-        onPress={() => router.setParams({ query })}
-      >
-        <Image
-          source={images.search}
-          className="size-6"
-          resizeMode="contain"
-          tintColor="#5D5F6D"
-        />
-        {/* You can add a search icon here */}
-      </TouchableOpacity>
+      {value.length > 0 ? (
+        <TouchableOpacity onPress={() => setValue("")} hitSlop={8}>
+          <View className="h-6 w-6 items-center justify-center rounded-full bg-gray-300">
+            <X size={13} color="#fff" strokeWidth={3} />
+          </View>
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 };

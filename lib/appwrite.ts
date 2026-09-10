@@ -10,6 +10,7 @@ import {
   UpdateUserParams,
   User,
 } from "@/type";
+import { Platform } from "react-native";
 import {
   Account,
   Avatars,
@@ -137,48 +138,61 @@ export type UploadFile = {
  * Keep files under 5 MB (Appwrite's single-request limit) — the picker already
  * compresses avatars well below that.
  *
- * We attach a public-read permission to every file so the returned URL renders
- * in `<Image>` without a session. That only takes effect when the bucket has
- * "File Security" enabled; otherwise the bucket itself must grant Read to "Any".
+ * Why XHR and not `storage.createFile`: Expo SDK 54+ replaces the global
+ * `fetch` with a winter-runtime version that can't serialise React Native's
+ * `{ uri }` FormData file parts ("Unsupported FormDataPart implementation"),
+ * which is exactly how the Appwrite SDK sends files. XMLHttpRequest uses the
+ * native networking stack, which handles `{ uri }` parts and automatically
+ * carries the Appwrite session cookie set at login.
+ *
+ * The `permissions[]` grants public read so `<Image>` can load the URL without
+ * a session — this needs "File Security" ON for the bucket (otherwise the
+ * bucket itself must grant Read to "Any").
  */
 export const uploadImage = async (file: UploadFile): Promise<string> => {
-  let uploadedId: string;
-  try {
-    const uploaded = await storage.createFile(
-      appwriteConfig.bucketId,
-      ID.unique(),
-      file,
-      [Permission.read(Role.any())],
-    );
-    uploadedId = uploaded.$id;
-  } catch (e: any) {
-    throw new Error(
-      e?.message
-        ? `Appwrite rejected the upload: ${e.message}`
-        : "Could not upload the image. Check your connection and try again.",
-    );
-  }
+  const form = new FormData();
+  form.append("fileId", ID.unique());
+  form.append("file", {
+    uri: file.uri,
+    name: file.name,
+    type: file.type,
+  } as unknown as Blob);
+  form.append("permissions[]", Permission.read(Role.any()));
 
-  const url = storage
-    .getFileView(appwriteConfig.bucketId, uploadedId)
+  const url = `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.bucketId}/files`;
+
+  const responseText = await new Promise<string>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader("X-Appwrite-Project", appwriteConfig.projectId);
+    xhr.setRequestHeader("X-Appwrite-Response-Format", "1.8.0");
+    xhr.setRequestHeader(
+      "Origin",
+      `appwrite-${Platform.OS}://${appwriteConfig.platform}`,
+    );
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(xhr.responseText);
+        return;
+      }
+      let message = `HTTP ${xhr.status}`;
+      try {
+        message = JSON.parse(xhr.responseText).message || message;
+      } catch {
+        // response wasn't JSON — keep the status code
+      }
+      reject(new Error(`Appwrite rejected the upload: ${message}`));
+    };
+    xhr.onerror = () =>
+      reject(new Error("Network error while uploading the image."));
+    xhr.send(form);
+  });
+
+  const uploaded = JSON.parse(responseText) as { $id: string };
+  return storage
+    .getFileView(appwriteConfig.bucketId, uploaded.$id)
     .toString();
-
-  // The file is stored, but if the bucket doesn't grant public read the image
-  // will silently fail to load. Turn that into a clear, fixable error.
-  try {
-    const res = await fetch(url, { method: "GET" });
-    if (!res.ok) {
-      throw new Error(
-        `Uploaded, but the image isn't publicly readable (HTTP ${res.status}). ` +
-          `In the Appwrite console open Storage → your bucket → Settings and add a Read permission for "Any".`,
-      );
-    }
-  } catch (e: any) {
-    if (e instanceof Error && e.message.startsWith("Uploaded, but")) throw e;
-    // A transient network error here shouldn't block an otherwise-good upload.
-  }
-
-  return url;
 };
 
 export const getCurrentUser = async (): Promise<User | undefined> => {

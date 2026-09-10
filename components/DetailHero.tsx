@@ -4,7 +4,6 @@ import type { FavoriteItem } from "@/store/favorites.store";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { ReactNode } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -23,8 +22,6 @@ interface DetailHeroProps {
   badge?: string;
   height?: number;
   favorite?: FavoriteItem;
-  /** pinned to the bottom-left of a photo hero (e.g. a validity pill) */
-  overlay?: ReactNode;
 }
 
 const DetailHero = ({
@@ -33,7 +30,6 @@ const DetailHero = ({
   badge,
   height = 320,
   favorite,
-  overlay,
 }: DetailHeroProps) => {
   const insets = useSafeAreaInsets();
 
@@ -83,12 +79,6 @@ const DetailHero = ({
           <Text className="font-quicksand-bold text-xs text-white">
             {badge}
           </Text>
-        </View>
-      ) : null}
-
-      {mode === "photo" && overlay ? (
-        <View className="absolute left-4 right-4" style={{ bottom: 16 }}>
-          {overlay}
         </View>
       ) : null}
     </View>

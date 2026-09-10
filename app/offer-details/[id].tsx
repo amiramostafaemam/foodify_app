@@ -74,15 +74,6 @@ const OfferDetails = () => {
               image: offer.image,
               price: offer.discountedPrice,
             }}
-            overlay={
-              <View className="flex-row items-center gap-2 self-start rounded-full bg-black/55 px-3 py-1.5">
-                <Clock size={13} color="#fff" />
-                <Text className="font-quicksand-bold text-xs text-white">
-                  Ends in {validity.daysLeft}{" "}
-                  {validity.daysLeft === 1 ? "day" : "days"} · {validity.date}
-                </Text>
-              </View>
-            }
           />
 
           <View
@@ -113,6 +104,22 @@ const OfferDetails = () => {
               <View className="rounded-full bg-primary/10 px-2.5 py-1">
                 <Text className="small-bold text-primary">
                   Save {offer.discount}%
+                </Text>
+              </View>
+            </View>
+
+            {/* Validity */}
+            <View className="mt-4 flex-row items-center gap-3 rounded-2xl bg-primary/5 p-3.5">
+              <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                <Clock size={18} color="#FE8C00" />
+              </View>
+              <View className="flex-1">
+                <Text className="paragraph-bold text-dark-100">
+                  Ends in {validity.daysLeft}{" "}
+                  {validity.daysLeft === 1 ? "day" : "days"}
+                </Text>
+                <Text className="body-regular text-gray-100">
+                  Valid until {validity.date}
                 </Text>
               </View>
             </View>

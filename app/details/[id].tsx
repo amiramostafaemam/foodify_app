@@ -37,11 +37,11 @@ import {
 const { width } = Dimensions.get("window");
 
 // The dish "floats" over the seam between the warm hero panel and the white
-// sheet. These are tuned so ~2/3 of it sits on the panel and the rest dips in.
-const PANEL_H = 220;
-const DISH = Math.round(width * 0.56);
-const SHEET_PULL = 26;
-const OVERHANG = 96;
+// sheet. The dish sits in the centre column, clear of the edge buttons.
+const PANEL_H = 235;
+const DISH = Math.round(width * 0.66);
+const SHEET_PULL = 28;
+const OVERHANG = 118; // how far the dish dips past the seam into the sheet
 const DISH_TOP = PANEL_H - SHEET_PULL + OVERHANG - DISH;
 const CONTENT_PT = OVERHANG + 16;
 

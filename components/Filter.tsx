@@ -2,7 +2,7 @@ import { Category } from "@/type";
 import cn from "clsx";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { FlatList, Platform, Text, TouchableOpacity } from "react-native";
+import { FlatList, Text, TouchableOpacity } from "react-native";
 
 const Filter = ({ categories }: { categories: Category[] }) => {
   const searchParams = useLocalSearchParams();
@@ -30,20 +30,15 @@ const Filter = ({ categories }: { categories: Category[] }) => {
         <TouchableOpacity
           key={item.$id}
           className={cn(
-            "filter",
-            active === item.$id ? "bg-amber-500" : "bg-white",
+            "mr-2 rounded-full px-5 py-2.5",
+            active === item.$id ? "bg-primary" : "bg-gray-50",
           )}
-          style={
-            Platform.OS === "android"
-              ? { elevation: 5, shadowColor: "#878787" }
-              : {}
-          }
           onPress={() => handlePress(item.$id)}
         >
           <Text
             className={cn(
-              "body-medium",
-              active === item.$id ? "text-white" : "text-gray-200",
+              "font-quicksand-semibold text-sm",
+              active === item.$id ? "text-white" : "text-gray-100",
             )}
           >
             {item.name}
