@@ -21,8 +21,7 @@ type AuthState = {
   user: User | null;
   isLoading: boolean;
 
-  login: (email: string, password: string) => Promise<User>;
-  completeLogin: (user: User) => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   fetchAuthenticatedUser: () => Promise<void>;
   updateUserProfile: (data: UpdateProfileData) => Promise<User>;
@@ -33,19 +32,15 @@ const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isLoading: true,
 
-  // Signs in and returns the user without flipping auth state yet, so the
-  // caller can show a success screen before navigating into the app.
+  // Signs in and flips auth state in one step — the router reacts and lands
+  // the user on the tabs.
   login: async (email, password) => {
     const session = await appwriteSignIn({ email, password });
     if (!session) throw new Error("Failed to create session");
 
     const user = await getCurrentUser();
-    if (!user) throw new Error("Failed to get user data");
+    if (!user) throw new Error("Failed to load your profile");
 
-    return user;
-  },
-
-  completeLogin: (user) => {
     set({ isAuthenticated: true, user, isLoading: false });
   },
 

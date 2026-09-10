@@ -8,7 +8,7 @@ export default function TabLayout() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-cream">
+      <View className="flex-1 items-center justify-center bg-white">
         <ActivityIndicator size="large" color="#FE8C00" />
       </View>
     );
@@ -23,7 +23,7 @@ export default function TabLayout() {
       tabBar={(props) => <FloatingTabBar {...props} />}
       screenOptions={{
         headerShown: false,
-        sceneStyle: { backgroundColor: "#FBF6EF" },
+        sceneStyle: { backgroundColor: "#FFFFFF" },
       }}
     >
       <Tabs.Screen name="index" options={{ title: "Home" }} />

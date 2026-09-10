@@ -57,7 +57,7 @@ export default function Home() {
   const popular = (menu ?? []).slice(0, 8);
 
   return (
-    <SafeAreaView className="flex-1 bg-cream" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 130 }}

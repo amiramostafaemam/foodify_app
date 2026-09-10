@@ -162,7 +162,7 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
           alignItems: "center",
           justifyContent: "center",
           borderWidth: 3.5,
-          borderColor: "#FBF6EF",
+          borderColor: "#FFFFFF",
           transform: [{ translateX }],
           shadowColor: PRIMARY,
           shadowOffset: { width: 0, height: 5 },
