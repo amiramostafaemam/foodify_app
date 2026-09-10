@@ -1,11 +1,12 @@
 // constants/offers.constants.ts
+import { images } from "@/constants";
 
 export interface Offer {
   id: string;
   title: string;
   description: string;
-  image: string; // hero photo (remote)
-  color: string; // fallback / accent tint
+  image: number; // local transparent PNG (require)
+  color: string; // promo-card background / accent
   originalPrice: number;
   discountedPrice: number;
   discount: number; // Percentage
@@ -51,17 +52,16 @@ export const OFFERS_DATA: Offer[] = [
     id: "summer-combo",
     title: "Summer Combo",
     description:
-      "Beat the heat with our refreshing Summer Combo! Enjoy a juicy beef burger, crispy fries, and an ice-cold Pepsi - the perfect meal for sunny days.",
-    image:
-      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=900&q=70&auto=format&fit=crop",
-    color: "#D33B0D",
+      "Beat the heat with our refreshing Summer Combo! Enjoy a juicy beef burger, crispy fries, and an ice-cold drink — the perfect meal for sunny days.",
+    image: images.burgerOne,
+    color: "#E4572E",
     originalPrice: 15.99,
     discountedPrice: 9.99,
     discount: 38,
     items: [
       { name: "Beef Burger", quantity: 2 },
       { name: "Large Fries", quantity: 2 },
-      { name: "Pepsi (500ml)", quantity: 2 },
+      { name: "Soft Drink (500ml)", quantity: 2 },
     ],
     rating: 4.7,
     deliveryTime: "20-30 mins",
@@ -71,9 +71,8 @@ export const OFFERS_DATA: Offer[] = [
     title: "Burger Bash",
     description:
       "Double the burger, double the fun! Get two premium juicy burgers loaded with cheese, bacon, and fresh veggies. Perfect for sharing or for the burger lover in you!",
-    image:
-      "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=900&q=70&auto=format&fit=crop",
-    color: "#DF5A0C",
+    image: images.burgerTwo,
+    color: "#C7451B",
     originalPrice: 22.99,
     discountedPrice: 14.99,
     discount: 35,
@@ -91,14 +90,13 @@ export const OFFERS_DATA: Offer[] = [
     title: "Pizza Party",
     description:
       "Party time starts here! A large pizza loaded with your favorite toppings, served with garlic bread and a refreshing drink. Perfect for family nights or hanging out with friends!",
-    image:
-      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=70&auto=format&fit=crop",
-    color: "#084137",
+    image: images.pizzaOne,
+    color: "#1D6152",
     originalPrice: 24.99,
     discountedPrice: 16.99,
     discount: 32,
     items: [
-      { name: "Large Pizza (12)", quantity: 2 },
+      { name: 'Large Pizza (12")', quantity: 2 },
       { name: "Garlic Bread", quantity: 4 },
       { name: "Mozzarella Sticks", quantity: 6 },
       { name: "Soft Drink (1L)", quantity: 2 },
@@ -111,9 +109,8 @@ export const OFFERS_DATA: Offer[] = [
     title: "Burrito Delight",
     description:
       "Spice up your day with our authentic Mexican burrito! Packed with seasoned beef, rice, beans, cheese, and fresh salsa. Comes with crispy tortilla chips and guacamole!",
-    image:
-      "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=900&q=70&auto=format&fit=crop",
-    color: "#EB920C",
+    image: images.buritto,
+    color: "#B26A00",
     originalPrice: 18.99,
     discountedPrice: 12.99,
     discount: 32,
@@ -129,12 +126,8 @@ export const OFFERS_DATA: Offer[] = [
   },
 ];
 
-// Helper function to get offer by ID
-export const getOfferById = (id: string): Offer | undefined => {
-  return OFFERS_DATA.find((offer) => offer.id === id);
-};
+export const getOfferById = (id: string): Offer | undefined =>
+  OFFERS_DATA.find((offer) => offer.id === id);
 
-// Helper function to calculate savings
-export const calculateSavings = (offer: Offer): number => {
-  return offer.originalPrice - offer.discountedPrice;
-};
+export const calculateSavings = (offer: Offer): number =>
+  offer.originalPrice - offer.discountedPrice;

@@ -40,7 +40,7 @@ export interface CartItemType {
   id: string; // menu item id
   name: string;
   price: number;
-  image_url: string;
+  image_url: string | number; // remote URL (menu) or bundled require() (offer)
   quantity: number;
   customizations?: CartCustomization[];
 }

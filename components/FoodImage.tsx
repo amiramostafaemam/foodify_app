@@ -4,15 +4,15 @@ import type { ImageContentFit } from "expo-image";
 import { useState } from "react";
 
 interface FoodImageProps {
-  uri?: string | null;
+  /** remote URL string, a local require() number, or nullish for the fallback */
+  uri?: string | number | null;
   className?: string;
   contentFit?: ImageContentFit;
 }
 
 /**
- * Remote food image with memory + disk caching, a soft fade-in, and a graceful
- * fallback. expo-image keeps decoded frames warm, so lists stop flashing while
- * scrolling.
+ * Food image with memory + disk caching, a soft fade-in, and a graceful
+ * fallback. Accepts a remote URL or a bundled image.
  */
 const FoodImage = ({
   uri,
@@ -21,7 +21,7 @@ const FoodImage = ({
 }: FoodImageProps) => {
   const [failed, setFailed] = useState(false);
 
-  if (!uri || failed) {
+  if (uri == null || failed) {
     return (
       <Image
         source={images.emptyState}
@@ -33,7 +33,7 @@ const FoodImage = ({
 
   return (
     <Image
-      source={{ uri }}
+      source={typeof uri === "number" ? uri : { uri }}
       className={className}
       contentFit={contentFit}
       transition={200}

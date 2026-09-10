@@ -8,7 +8,7 @@ export interface FavoriteItem {
   id: string;
   kind: FavoriteKind;
   name: string;
-  image: string;
+  image: string | number; // remote URL (menu) or bundled require() (offer)
   price: number;
 }
 

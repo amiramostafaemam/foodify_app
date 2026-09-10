@@ -1,17 +1,9 @@
 import { Image } from "@/components/CachedImage";
 import { OFFERS_DATA } from "@/constants/offers.constants";
-import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
 import { useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, FlatList, Text, TouchableOpacity, View } from "react-native";
 
 // Gutter === gap so each card is centred with white on both sides and the next
 // card lands exactly off-screen (matches PopularMealsCarousel).
@@ -41,33 +33,19 @@ const PromoCarousel = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             activeOpacity={0.92}
-            style={{ width: CARD_W }}
+            style={{ width: CARD_W, backgroundColor: item.color }}
             onPress={() =>
               router.push({
                 pathname: "/offer-details/[id]",
                 params: { id: item.id },
               })
             }
-            className="h-48 overflow-hidden rounded-[28px]"
+            className="h-44 flex-row overflow-hidden rounded-[28px]"
           >
-            <Image
-              source={{ uri: item.image }}
-              style={StyleSheet.absoluteFill}
-              contentFit="cover"
-              transition={250}
-              cachePolicy="memory-disk"
-            />
-            <LinearGradient
-              colors={["rgba(0,0,0,0.85)", "rgba(0,0,0,0.15)"]}
-              start={{ x: 0, y: 1 }}
-              end={{ x: 1, y: 0 }}
-              style={StyleSheet.absoluteFill}
-            />
-
-            <View className="flex-1 justify-center px-5">
-              <View className="mb-2 self-start rounded-full bg-accent px-2.5 py-1">
-                <Text className="font-quicksand-bold text-[10px] text-content">
-                  LIMITED TIME
+            <View className="flex-1 justify-center py-4 pl-5">
+              <View className="mb-1.5 self-start rounded-full bg-white/20 px-2.5 py-1">
+                <Text className="font-quicksand-bold text-[10px] text-white">
+                  SAVE {item.discount}%
                 </Text>
               </View>
               <Text
@@ -76,18 +54,34 @@ const PromoCarousel = () => {
               >
                 {item.title}
               </Text>
-              <Text className="body-medium mt-1 text-white/85">
-                Save {item.discount}% · from ${item.discountedPrice.toFixed(2)}
+              <Text className="body-medium mt-0.5 text-white/85">
+                from ${item.discountedPrice.toFixed(2)}
               </Text>
 
-              <View className="mt-3.5 flex-row items-center gap-2 self-start rounded-full bg-primary py-2 pl-4 pr-2">
-                <Text className="font-quicksand-bold text-sm text-white">
+              <View className="mt-3 flex-row items-center gap-1.5 self-start rounded-full bg-white py-1.5 pl-3.5 pr-1.5">
+                <Text
+                  className="font-quicksand-bold text-xs"
+                  style={{ color: item.color }}
+                >
                   Order Now
                 </Text>
-                <View className="h-6 w-6 items-center justify-center rounded-full bg-white">
-                  <ArrowRight size={14} color="#FE8C00" />
+                <View
+                  className="h-5 w-5 items-center justify-center rounded-full"
+                  style={{ backgroundColor: item.color }}
+                >
+                  <ArrowRight size={12} color="#fff" />
                 </View>
               </View>
+            </View>
+
+            <View className="w-[42%] items-center justify-center">
+              <Image
+                source={item.image}
+                style={{ width: 150, height: 150 }}
+                contentFit="contain"
+                transition={200}
+                cachePolicy="memory-disk"
+              />
             </View>
           </TouchableOpacity>
         )}

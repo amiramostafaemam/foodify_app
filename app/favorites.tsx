@@ -1,5 +1,6 @@
 import FoodImage from "@/components/FoodImage";
 import { images } from "@/constants";
+import { getOfferById } from "@/constants/offers.constants";
 import { useColors } from "@/hooks/useColors";
 import {
   FavoriteItem,
@@ -18,16 +19,21 @@ const FavRow = ({
   item: FavoriteItem;
   onOpen: () => void;
   onRemove: () => void;
-}) => (
+}) => {
+  const src =
+    item.kind === "offer"
+      ? (getOfferById(item.id)?.image ?? item.image)
+      : item.image;
+  return (
   <TouchableOpacity
     activeOpacity={0.8}
     onPress={onOpen}
     className="flex-row items-center gap-3 rounded-2xl bg-surface p-3"
   >
     <FoodImage
-      uri={item.image}
-      contentFit="cover"
-      className="h-16 w-16 rounded-xl bg-surface"
+      uri={src}
+      contentFit={item.kind === "offer" ? "contain" : "cover"}
+      className="h-16 w-16 rounded-xl bg-card"
     />
     <View className="flex-1">
       <Text className="paragraph-bold text-content" numberOfLines={1}>
@@ -48,7 +54,8 @@ const FavRow = ({
       <Heart size={16} color="#F14141" fill="#F14141" />
     </TouchableOpacity>
   </TouchableOpacity>
-);
+  );
+};
 
 const Favorites = () => {
   const items = useFavoritesStore((s) => s.items);

@@ -42,19 +42,17 @@ const ExclusiveOfferBanner = () => {
 
       <View className="relative h-28 w-28">
         <Image
-          source={{ uri: best.image }}
-          className="h-28 w-28 rounded-2xl"
-          contentFit="cover"
+          source={best.image}
+          className="h-28 w-28"
+          contentFit="contain"
           transition={250}
           cachePolicy="memory-disk"
         />
-        <View className="absolute -left-3 top-1/2 h-14 w-14 -translate-y-7 items-center justify-center rounded-full border-4 border-warm bg-white">
-          <Text className="font-quicksand-bold text-sm leading-4 text-primary">
+        <View className="absolute -left-3 top-1/2 h-14 w-14 -translate-y-7 items-center justify-center rounded-full border-4 border-warm bg-primary">
+          <Text className="font-quicksand-bold text-sm leading-4 text-white">
             {best.discount}%
           </Text>
-          <Text className="font-quicksand-bold text-[9px] text-primary">
-            OFF
-          </Text>
+          <Text className="font-quicksand-bold text-[9px] text-white">OFF</Text>
         </View>
       </View>
     </TouchableOpacity>

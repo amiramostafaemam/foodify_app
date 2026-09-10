@@ -1,4 +1,9 @@
 import DetailHero from "@/components/DetailHero";
+import FloatingDish, {
+  CONTENT_PT,
+  PANEL_H,
+  SHEET_PULL,
+} from "@/components/FloatingDish";
 import Toast from "@/components/Toast";
 import { images } from "@/constants";
 import { getOfferById, getOfferValidity } from "@/constants/offers.constants";
@@ -11,6 +16,15 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+
+const StatTile = ({ value, label }: { value: string; label: string }) => (
+  <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
+    <Text className="font-quicksand-bold text-sm text-content">{value}</Text>
+    <Text className="font-quicksand-medium text-[11px] text-muted">
+      {label}
+    </Text>
+  </View>
+);
 
 const OfferDetails = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -64,9 +78,8 @@ const OfferDetails = () => {
           showsVerticalScrollIndicator={false}
         >
           <DetailHero
-            uri={offer.image}
-            mode="photo"
-            height={280}
+            mode="product"
+            height={PANEL_H}
             favorite={{
               id: offer.id,
               kind: "offer",
@@ -77,8 +90,8 @@ const OfferDetails = () => {
           />
 
           <View
-            className="rounded-t-[28px] bg-card px-5 pt-5"
-            style={{ marginTop: -24 }}
+            className="rounded-t-[30px] bg-card px-5"
+            style={{ marginTop: -SHEET_PULL, paddingTop: CONTENT_PT }}
           >
             <View className="flex-row items-start justify-between">
               <Text className="h1-bold flex-1 pr-3 text-content">
@@ -125,30 +138,12 @@ const OfferDetails = () => {
             </View>
 
             <View className="mt-4 flex-row gap-2.5">
-              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
-                <Text className="font-quicksand-bold text-sm text-content">
-                  Free
-                </Text>
-                <Text className="font-quicksand-medium text-[11px] text-muted">
-                  Delivery
-                </Text>
-              </View>
-              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
-                <Text className="font-quicksand-bold text-sm text-content">
-                  {offer.deliveryTime.split(" ")[0]}
-                </Text>
-                <Text className="font-quicksand-medium text-[11px] text-muted">
-                  Minutes
-                </Text>
-              </View>
-              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
-                <Text className="font-quicksand-bold text-sm text-content">
-                  {totalItems}
-                </Text>
-                <Text className="font-quicksand-medium text-[11px] text-muted">
-                  Items
-                </Text>
-              </View>
+              <StatTile value="Free" label="Delivery" />
+              <StatTile
+                value={offer.deliveryTime.split(" ")[0]}
+                label="Minutes"
+              />
+              <StatTile value={`${totalItems}`} label="Items" />
             </View>
 
             <Text className="h3-bold mt-7 text-content">About this deal</Text>
@@ -177,6 +172,8 @@ const OfferDetails = () => {
               ))}
             </View>
           </View>
+
+          <FloatingDish uri={offer.image} />
         </ScrollView>
 
         <View

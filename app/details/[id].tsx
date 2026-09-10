@@ -1,5 +1,10 @@
 import { Image as CachedImage } from "@/components/CachedImage";
 import DetailHero from "@/components/DetailHero";
+import FloatingDish, {
+  CONTENT_PT,
+  PANEL_H,
+  SHEET_PULL,
+} from "@/components/FloatingDish";
 import Toast from "@/components/Toast";
 import { getCustomizationImage } from "@/constants";
 import { getMenuCustomizations, getMenuItemById } from "@/lib/appwrite";
@@ -22,7 +27,6 @@ import {
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
   ScrollView,
   Text,
@@ -33,17 +37,6 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-
-const { width } = Dimensions.get("window");
-
-// The dish "floats" over the seam between the warm hero panel and the white
-// sheet. The dish sits in the centre column, clear of the edge buttons.
-const PANEL_H = 235;
-const DISH = Math.round(width * 0.66);
-const SHEET_PULL = 28;
-const OVERHANG = 118; // how far the dish dips past the seam into the sheet
-const DISH_TOP = PANEL_H - SHEET_PULL + OVERHANG - DISH;
-const CONTENT_PT = OVERHANG + 16;
 
 const fetchMenuItem = ({ menuId }: { menuId: string }) =>
   getMenuItemById(menuId);
@@ -294,31 +287,7 @@ const Details = () => {
             )}
           </View>
 
-          {/* Floating dish — last child so it paints above the panel/sheet seam
-              and still scrolls away with the hero. */}
-          <View
-            pointerEvents="none"
-            className="absolute left-0 right-0 items-center"
-            style={{ top: DISH_TOP }}
-          >
-            <View
-              style={{
-                shadowColor: "#8A5A00",
-                shadowOpacity: 0.18,
-                shadowRadius: 24,
-                shadowOffset: { width: 0, height: 16 },
-                elevation: 12,
-              }}
-            >
-              <CachedImage
-                source={item.image_url ? { uri: item.image_url } : undefined}
-                style={{ width: DISH, height: DISH }}
-                contentFit="contain"
-                transition={250}
-                cachePolicy="memory-disk"
-              />
-            </View>
-          </View>
+          <FloatingDish uri={item.image_url} />
         </ScrollView>
 
         {/* Sticky bottom bar */}
