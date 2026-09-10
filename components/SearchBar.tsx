@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 
 const SearchBar = () => {
-  const params = useLocalSearchParams<{ query?: string }>();
+  const params = useLocalSearchParams<{ query?: string; focus?: string }>();
   const [value, setValue] = useState(params.query ?? "");
 
   // Debounced live search — the results list refetches whenever the query param
@@ -18,7 +18,7 @@ const SearchBar = () => {
 
   return (
     <View className="h-14 flex-row items-center gap-3 rounded-2xl bg-surface px-4">
-      <Search size={20} color="#878787" />
+      <Search size={20} color="#9AA0A6" />
       <TextInput
         className="flex-1 font-quicksand-medium text-base text-content"
         placeholder="Search for pizzas, burgers…"
@@ -27,7 +27,8 @@ const SearchBar = () => {
         returnKeyType="search"
         autoCorrect={false}
         autoCapitalize="none"
-        placeholderTextColor="#A0A0A0"
+        autoFocus={params.focus === "1"}
+        placeholderTextColor="#9AA0A6"
       />
       {value.length > 0 ? (
         <TouchableOpacity onPress={() => setValue("")} hitSlop={8}>

@@ -1,3 +1,4 @@
+import AddressPicker from "@/components/AddressPicker";
 import AppModal from "@/components/AppModal";
 import CartItem from "@/components/CartItem";
 import CustomButton from "@/components/CustomButton";
@@ -14,7 +15,13 @@ import { useNotificationsStore } from "@/store/notifications.store";
 import { PaymentInfoStripeProps, PaymentMethod } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
-import { ChevronLeft, CircleAlert, CircleCheck, MapPin } from "lucide-react-native";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CircleAlert,
+  CircleCheck,
+  MapPin,
+} from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -31,6 +38,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const DELIVERY_FEE = 2.99;
 const FREE_DELIVERY_OVER = 30;
 const APP_DISCOUNT = 1.0;
+
+const FOOTER_SHADOW = {
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: -3 },
+  shadowOpacity: 0.06,
+  shadowRadius: 10,
+  elevation: 12,
+} as const;
 
 const SummaryRow = ({
   label,
@@ -99,6 +114,8 @@ const Cart = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
+  const [showAddressPicker, setShowAddressPicker] = useState(false);
+  const [address, setAddress] = useState(user?.address_home || "");
 
   const totalItems = getTotalItems();
   const subtotal = getTotalPrice();
@@ -121,7 +138,7 @@ const Cart = () => {
       paymentIntentId,
       paymentStatus,
       orderStatus: "pending",
-      deliveryAddress: user.address_home || "",
+      deliveryAddress: address || user.address_home || "",
       customerName: user.name,
       customerEmail: user.email,
       customerPhone: user.phone || "",
@@ -278,6 +295,7 @@ const Cart = () => {
           data={items}
           renderItem={({ item }) => <CartItem item={item} />}
           keyExtractor={(item) => item.cartItemId}
+          ItemSeparatorComponent={() => <View className="h-2.5" />}
           contentContainerStyle={{
             paddingHorizontal: 20,
             paddingTop: 20,
@@ -285,7 +303,9 @@ const Cart = () => {
           }}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            <CustomHeader title={`Your Cart (${totalItems})`} />
+            <View className="mb-1">
+              <CustomHeader title={`Your Cart (${totalItems})`} />
+            </View>
           }
           ListFooterComponent={
             <View className="mt-6 rounded-2xl bg-surface p-5">
@@ -319,8 +339,8 @@ const Cart = () => {
         />
 
         <View
-          className="border-t border-line/10 bg-elevated px-5 pt-4"
-          style={{ paddingBottom: TAB_BAR_SPACE }}
+          className="bg-elevated px-5 pt-4"
+          style={{ paddingBottom: TAB_BAR_SPACE, ...FOOTER_SHADOW }}
         >
           <CustomButton
             title={`Proceed to Checkout · $${finalAmount.toFixed(2)}`}
@@ -355,7 +375,7 @@ const Cart = () => {
         {/* Deliver to */}
         <Text className="paragraph-bold mb-2 text-content">Deliver to</Text>
         <TouchableOpacity
-          onPress={() => router.push("/edit-profile")}
+          onPress={() => setShowAddressPicker(true)}
           activeOpacity={0.8}
           className="mb-6 flex-row items-center gap-3 rounded-2xl bg-surface p-4"
         >
@@ -364,13 +384,19 @@ const Cart = () => {
           </View>
           <View className="flex-1">
             <Text className="paragraph-semibold text-content">
-              {user?.address_home ? "Home" : "No address yet"}
+              {address === user?.address_home
+                ? "Home"
+                : address === user?.address_work
+                  ? "Work"
+                  : address
+                    ? "Delivery address"
+                    : "No address yet"}
             </Text>
             <Text className="body-regular text-muted" numberOfLines={1}>
-              {user?.address_home || "Tap to add a delivery address"}
+              {address || "Tap to choose a delivery address"}
             </Text>
           </View>
-          <Text className="body-medium text-primary">Change</Text>
+          <ChevronRight size={18} color={c.muted} />
         </TouchableOpacity>
 
         {/* Payment method */}
@@ -421,8 +447,8 @@ const Cart = () => {
       </ScrollView>
 
       <View
-        className="border-t border-line/10 bg-elevated px-5 pt-4"
-        style={{ paddingBottom: TAB_BAR_SPACE }}
+        className="bg-elevated px-5 pt-4"
+        style={{ paddingBottom: TAB_BAR_SPACE, ...FOOTER_SHADOW }}
       >
         <CustomButton
           title={
@@ -441,6 +467,15 @@ const Cart = () => {
       </View>
 
       {resultModals}
+
+      <AddressPicker
+        visible={showAddressPicker}
+        onClose={() => setShowAddressPicker(false)}
+        homeAddress={user?.address_home}
+        workAddress={user?.address_work}
+        selected={address}
+        onSelect={setAddress}
+      />
     </SafeAreaView>
   );
 };
