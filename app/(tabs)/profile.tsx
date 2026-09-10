@@ -3,6 +3,7 @@ import Avatar from "@/components/Avatar";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import ProfileField from "@/components/ProfileField";
+import { useColors } from "@/hooks/useColors";
 import { uploadImage } from "@/lib/appwrite";
 import { pickSquareImage } from "@/lib/media";
 import useAuthStore from "@/store/auth.store";
@@ -23,6 +24,7 @@ import {
   Mail,
   MapPin,
   Phone,
+  Settings,
   User,
 } from "lucide-react-native";
 import { useState } from "react";
@@ -62,7 +64,7 @@ const NavRow = ({
         </Text>
       </View>
     ) : null}
-    <ChevronRight size={18} color="#878787" />
+    <ChevronRight size={18} color="#9AA0A6" />
   </TouchableOpacity>
 );
 
@@ -72,6 +74,7 @@ const Profile = () => {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const favCount = useFavoritesStore(selectFavoriteCount);
   const unreadCount = useNotificationsStore(selectUnreadCount);
+  const c = useColors();
 
   const handleChangeAvatar = async () => {
     try {
@@ -126,7 +129,18 @@ const Profile = () => {
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 130 }}
         showsVerticalScrollIndicator={false}
       >
-        <CustomHeader title="Profile" />
+        <CustomHeader
+          title="Profile"
+          right={
+            <TouchableOpacity
+              onPress={() => router.push("/settings")}
+              hitSlop={10}
+              className="h-10 w-10 items-center justify-center rounded-full bg-surface"
+            >
+              <Settings size={20} color={c.content} />
+            </TouchableOpacity>
+          }
+        />
 
         {/* Identity */}
         <View className="mb-8 items-center">

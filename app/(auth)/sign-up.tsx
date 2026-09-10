@@ -4,6 +4,7 @@ import ErrorModal from "@/components/ErrorModal";
 import { createUser } from "@/lib/appwrite";
 import useAuthStore from "@/store/auth.store";
 import { Link, Redirect } from "expo-router";
+import { Lock, Mail, User, UtensilsCrossed } from "lucide-react-native";
 import { useState } from "react";
 import { Keyboard, Text, View } from "react-native";
 
@@ -68,7 +69,6 @@ const SignUp = () => {
     setIsSubmitting(true);
     try {
       await createUser({ name, email, password });
-      // createUser also opens an Appwrite session — hydrate the store from it.
       await fetchAuthenticatedUser();
       setDone(true);
     } catch (error) {
@@ -83,24 +83,39 @@ const SignUp = () => {
   }
 
   return (
-    <View className="flex-1">
-      <View className="mt-5 gap-8 rounded-lg bg-card p-5">
+    <View className="flex-1 justify-center">
+      <View className="mb-8 items-center">
+        <View className="h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30">
+          <UtensilsCrossed size={30} color="#fff" />
+        </View>
+        <Text className="mt-5 font-quicksand-bold text-3xl text-content">
+          Create account
+        </Text>
+        <Text className="mt-1.5 text-center font-quicksand-medium text-base text-muted">
+          Join Foodify — your first delivery is on us
+        </Text>
+      </View>
+
+      <View className="gap-4">
         <CustomInput
-          label="Full Name"
-          placeholder="Enter Your Full Name"
+          label="Full name"
+          icon={User}
+          placeholder="Amira Mostafa"
           value={form.name}
           onChangeText={(name) => setForm((prev) => ({ ...prev, name }))}
         />
         <CustomInput
           label="Email"
-          placeholder="Enter Your Email"
+          icon={Mail}
+          placeholder="you@example.com"
           value={form.email}
           onChangeText={(email) => setForm((prev) => ({ ...prev, email }))}
           keyboardType="email-address"
         />
         <CustomInput
           label="Password"
-          placeholder="Enter Your Password"
+          icon={Lock}
+          placeholder="At least 8 characters"
           value={form.password}
           onChangeText={(password) =>
             setForm((prev) => ({ ...prev, password }))
@@ -112,16 +127,17 @@ const SignUp = () => {
           title="Sign Up"
           isLoading={isSubmitting}
           onPress={submit}
+          style="mt-2"
         />
+      </View>
 
-        <View className="mt-3 flex-row justify-center gap-2">
-          <Text className="base-regular text-muted">
-            Already have an account?
-          </Text>
-          <Link href="/sign-in" className="base-bold text-primary">
-            Sign In
-          </Link>
-        </View>
+      <View className="mt-6 flex-row justify-center gap-1.5">
+        <Text className="font-quicksand-medium text-muted">
+          Already have an account?
+        </Text>
+        <Link href="/sign-in" className="font-quicksand-bold text-primary">
+          Sign In
+        </Link>
       </View>
 
       <ErrorModal

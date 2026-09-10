@@ -8,9 +8,8 @@ import {
   selectUnreadCount,
   useNotificationsStore,
 } from "@/store/notifications.store";
-import { selectScheme, useThemeStore } from "@/store/theme.store";
 import { router } from "expo-router";
-import { Bell, Heart, Moon, ShoppingBag, Sun } from "lucide-react-native";
+import { Bell, Heart, ShoppingBag } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const greeting = () => {
@@ -33,8 +32,6 @@ const HomeHeader = ({ name }: { name?: string }) => {
   const cartCount = useCartStore((s) => s.getTotalItems());
   const unreadCount = useNotificationsStore(selectUnreadCount);
   const favCount = useFavoritesStore(selectFavoriteCount);
-  const scheme = useThemeStore(selectScheme);
-  const toggleTheme = useThemeStore((s) => s.toggle);
   const c = useColors();
   const first = name?.trim().split(" ")[0];
 
@@ -48,18 +45,6 @@ const HomeHeader = ({ name }: { name?: string }) => {
       </View>
 
       <View className="flex-row gap-1.5">
-        <TouchableOpacity
-          className="icon-btn"
-          activeOpacity={0.8}
-          onPress={toggleTheme}
-          accessibilityLabel="Toggle dark mode"
-        >
-          {scheme === "dark" ? (
-            <Sun size={19} color={c.content} />
-          ) : (
-            <Moon size={19} color={c.content} />
-          )}
-        </TouchableOpacity>
         <TouchableOpacity
           className="icon-btn"
           activeOpacity={0.8}

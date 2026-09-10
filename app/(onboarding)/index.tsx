@@ -2,6 +2,7 @@
 import { onboardingSlides } from "@/constants/onboarding";
 import { setOnboardingSeen } from "@/lib/onboarding";
 import { router } from "expo-router";
+import { ArrowRight } from "lucide-react-native";
 import { useRef, useState } from "react";
 import {
   Dimensions,
@@ -11,97 +12,95 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
 export default function Onboarding() {
-  const flatListRef = useRef<FlatList>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isNavigating, setIsNavigating] = useState(false);
+  const listRef = useRef<FlatList>(null);
+  const [index, setIndex] = useState(0);
+  const [busy, setBusy] = useState(false);
 
-  const isLastSlide = currentIndex === onboardingSlides.length - 1;
+  const isLast = index === onboardingSlides.length - 1;
 
-  const finishOnboarding = async () => {
-    if (isNavigating) return;
-    setIsNavigating(true);
-
+  const finish = async () => {
+    if (busy) return;
+    setBusy(true);
     await setOnboardingSeen();
     router.replace("/(auth)/sign-in");
   };
 
-  const handleNext = () => {
-    if (isLastSlide) {
-      finishOnboarding();
-    } else {
-      flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
-        animated: true,
-      });
-    }
+  const next = () => {
+    if (isLast) finish();
+    else listRef.current?.scrollToIndex({ index: index + 1, animated: true });
   };
 
   return (
-    <View className="flex-1 bg-canvas">
-      {!isLastSlide && (
-        <TouchableOpacity
-          onPress={finishOnboarding}
-          className="absolute right-6 top-14 z-10"
-          activeOpacity={0.7}
-        >
-          <Text className="font-quicksand-semibold text-muted">Skip</Text>
-        </TouchableOpacity>
-      )}
+    <SafeAreaView className="flex-1 bg-canvas" edges={["top", "bottom"]}>
+      <View className="h-12 flex-row items-center justify-end px-6">
+        {!isLast && (
+          <TouchableOpacity onPress={finish} hitSlop={8} activeOpacity={0.7}>
+            <Text className="font-quicksand-semibold text-muted">Skip</Text>
+          </TouchableOpacity>
+        )}
+      </View>
 
       <FlatList
-        ref={flatListRef}
+        ref={listRef}
         data={onboardingSlides}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
-        scrollEnabled={!isNavigating}
-        onMomentumScrollEnd={(e) => {
-          const index = Math.round(e.nativeEvent.contentOffset.x / width);
-          setCurrentIndex(index);
-        }}
+        scrollEnabled={!busy}
+        onMomentumScrollEnd={(e) =>
+          setIndex(Math.round(e.nativeEvent.contentOffset.x / width))
+        }
         renderItem={({ item }) => (
-          <View style={{ width }} className="items-center justify-center px-6">
-            <Image
-              source={item.image}
-              className="h-72 w-72"
-              resizeMode="contain"
-            />
-            <Text className="mt-8 text-center font-quicksand-bold text-2xl text-content">
+          <View style={{ width }} className="flex-1 items-center px-8 pt-4">
+            <View className="aspect-square w-full max-w-[320px] items-center justify-center rounded-[40px] bg-primary/5">
+              <Image
+                source={item.image}
+                className="h-3/4 w-3/4"
+                resizeMode="contain"
+              />
+            </View>
+            <Text className="mt-12 text-center font-quicksand-bold text-[26px] text-content">
               {item.title}
             </Text>
-            <Text className="mt-3 text-center font-quicksand text-muted">
+            <Text className="mt-3 text-center font-quicksand-medium text-base leading-[1.6] text-muted">
               {item.description}
             </Text>
           </View>
         )}
       />
 
-      <View className="mb-6 flex-row justify-center">
-        {onboardingSlides.map((_, index) => (
-          <View
-            key={index}
-            className={`mx-1 h-2 rounded-full ${
-              currentIndex === index ? "w-6 bg-primary" : "w-2 bg-line/20"
-            }`}
-          />
-        ))}
-      </View>
+      <View className="px-8 pb-4">
+        <View className="mb-8 flex-row justify-center gap-2">
+          {onboardingSlides.map((s, i) => (
+            <View
+              key={s.id}
+              className={
+                i === index
+                  ? "h-2 w-7 rounded-full bg-primary"
+                  : "h-2 w-2 rounded-full bg-line/15"
+              }
+            />
+          ))}
+        </View>
 
-      <TouchableOpacity
-        onPress={handleNext}
-        className="mx-6 mb-10 rounded-full bg-primary py-4"
-        activeOpacity={0.7}
-        disabled={isNavigating}
-      >
-        <Text className="text-center text-lg font-bold text-white">
-          {isLastSlide ? "Get Started" : "Next"}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+          onPress={next}
+          disabled={busy}
+          activeOpacity={0.85}
+          className="flex-row items-center justify-center gap-2 rounded-full bg-primary py-4"
+        >
+          <Text className="font-quicksand-bold text-lg text-white">
+            {isLast ? "Get Started" : "Next"}
+          </Text>
+          <ArrowRight size={18} color="#fff" />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }

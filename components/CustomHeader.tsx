@@ -3,9 +3,14 @@ import { useColors } from "@/hooks/useColors";
 import { CustomHeaderProps } from "@/type";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
+import { ReactNode } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const CustomHeader = ({ title, style }: CustomHeaderProps) => {
+const CustomHeader = ({
+  title,
+  style,
+  right,
+}: CustomHeaderProps & { right?: ReactNode }) => {
   const router = useRouter();
   const c = useColors();
 
@@ -21,7 +26,7 @@ const CustomHeader = ({ title, style }: CustomHeaderProps) => {
 
       {title && <Text className="h3-bold mb-0 text-content">{title}</Text>}
 
-      <View className="h-10 w-10" />
+      <View className="h-10 w-10 items-center justify-center">{right}</View>
     </View>
   );
 };
