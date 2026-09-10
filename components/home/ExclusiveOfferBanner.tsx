@@ -1,7 +1,8 @@
+import { Image } from "@/components/CachedImage";
 import { OFFERS_DATA } from "@/constants/offers.constants";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 const ExclusiveOfferBanner = () => {
   const best = [...OFFERS_DATA].sort((a, b) => b.discount - a.discount)[0];
@@ -9,16 +10,16 @@ const ExclusiveOfferBanner = () => {
 
   return (
     <TouchableOpacity
-      activeOpacity={0.9}
+      activeOpacity={0.92}
       onPress={() =>
         router.push({
           pathname: "/offer-details/[id]",
           params: { id: best.id },
         })
       }
-      className="flex-row items-center overflow-hidden rounded-3xl bg-cream-200 p-5"
+      className="flex-row items-center gap-3 overflow-hidden rounded-3xl bg-cream-200 p-4"
     >
-      <View className="flex-1 pr-2">
+      <View className="flex-1">
         <Text className="font-quicksand-bold text-[11px] uppercase tracking-wide text-primary">
           Exclusive Offer
         </Text>
@@ -39,17 +40,22 @@ const ExclusiveOfferBanner = () => {
         </View>
       </View>
 
-      <View className="items-center">
-        <Image source={best.image} resizeMode="contain" className="h-24 w-24" />
-      </View>
-
-      <View className="ml-2 h-16 w-16 items-center justify-center rounded-full bg-white">
-        <Text className="font-quicksand-bold text-base leading-4 text-primary">
-          {best.discount}%
-        </Text>
-        <Text className="font-quicksand-bold text-[10px] text-primary">
-          OFF
-        </Text>
+      <View className="relative h-28 w-28">
+        <Image
+          source={{ uri: best.image }}
+          className="h-28 w-28 rounded-2xl"
+          contentFit="cover"
+          transition={250}
+          cachePolicy="memory-disk"
+        />
+        <View className="absolute -left-3 top-1/2 h-14 w-14 -translate-y-7 items-center justify-center rounded-full border-4 border-cream-200 bg-white">
+          <Text className="font-quicksand-bold text-sm leading-4 text-primary">
+            {best.discount}%
+          </Text>
+          <Text className="font-quicksand-bold text-[9px] text-primary">
+            OFF
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );

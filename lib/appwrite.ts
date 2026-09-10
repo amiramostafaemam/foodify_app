@@ -156,6 +156,21 @@ export const getCurrentUser = async (): Promise<User | undefined> => {
   return res.documents[0];
 };
 
+/**
+ * The seed data points at Vecteezy "large_2x" previews (~3 MB each). Their
+ * "small" thumbnails are the same image at ~40 KB — swap the path so lists load
+ * fast without re-seeding.
+ */
+const optimizeImageUrl = (url: string): string =>
+  url
+    .replace("/system/resources/previews/", "/system/resources/thumbnails/")
+    .replace(/\/large(_2x)?\//, "/small/");
+
+const withOptimizedImage = (item: MenuItem): MenuItem => ({
+  ...item,
+  image_url: item.image_url ? optimizeImageUrl(item.image_url) : item.image_url,
+});
+
 export const getMenu = async ({
   category,
   query,
@@ -171,7 +186,7 @@ export const getMenu = async ({
     queries,
   );
 
-  return res.documents;
+  return res.documents.map(withOptimizedImage);
 };
 
 export const getCategories = async (): Promise<Category[]> => {
@@ -286,11 +301,12 @@ export const removeCustomizationFromMenu = async (
 };
 
 export const getMenuItemById = async (menuId: string): Promise<MenuItem> => {
-  return await databases.getDocument<MenuItem>(
+  const item = await databases.getDocument<MenuItem>(
     appwriteConfig.databaseId,
     appwriteConfig.menuCollectionId,
     menuId,
   );
+  return withOptimizedImage(item);
 };
 
 export const getCategoryById = async (

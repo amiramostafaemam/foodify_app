@@ -1,13 +1,12 @@
 // constants/offers.constants.ts
-import { images } from "./index";
 
 export interface Offer {
   id: string;
   title: string;
   description: string;
-  image: number; // Local image (require) for cards
+  image: string; // hero photo (remote)
   videoUrl: string; // Video URL for details page
-  color: string;
+  color: string; // fallback / accent tint
   originalPrice: number;
   discountedPrice: number;
   discount: number; // Percentage
@@ -54,7 +53,8 @@ export const OFFERS_DATA: Offer[] = [
     title: "Summer Combo",
     description:
       "Beat the heat with our refreshing Summer Combo! Enjoy a juicy beef burger, crispy fries, and an ice-cold Pepsi - the perfect meal for sunny days.",
-    image: images.burgerOne,
+    image:
+      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=900&q=70&auto=format&fit=crop",
     // High-quality food video from Pexels (burger & drink combo)
     videoUrl: require("@/assets/videos/burger1.mp4"),
     color: "#D33B0D",
@@ -74,7 +74,8 @@ export const OFFERS_DATA: Offer[] = [
     title: "Burger Bash",
     description:
       "Double the burger, double the fun! Get two premium juicy burgers loaded with cheese, bacon, and fresh veggies. Perfect for sharing or for the burger lover in you!",
-    image: images.burgerTwo,
+    image:
+      "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=900&q=70&auto=format&fit=crop",
     // Delicious burger making video from Pexels
     videoUrl: require("@/assets/videos/burger.mp4"),
     color: "#DF5A0C",
@@ -95,7 +96,8 @@ export const OFFERS_DATA: Offer[] = [
     title: "Pizza Party",
     description:
       "Party time starts here! A large pizza loaded with your favorite toppings, served with garlic bread and a refreshing drink. Perfect for family nights or hanging out with friends!",
-    image: images.pizzaOne,
+    image:
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=70&auto=format&fit=crop",
     // Pizza making video from Pexels
     videoUrl: require("@/assets/videos/pizza.mp4"),
     color: "#084137",
@@ -116,7 +118,8 @@ export const OFFERS_DATA: Offer[] = [
     title: "Burrito Delight",
     description:
       "Spice up your day with our authentic Mexican burrito! Packed with seasoned beef, rice, beans, cheese, and fresh salsa. Comes with crispy tortilla chips and guacamole!",
-    image: images.buritto,
+    image:
+      "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=900&q=70&auto=format&fit=crop",
     // Mexican food / burrito video from Pexels
     videoUrl: require("@/assets/videos/burrito.mp4"),
     color: "#EB920C",

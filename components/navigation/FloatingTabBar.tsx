@@ -27,14 +27,14 @@ const TABS: Record<string, { label: string; Icon: LucideIcon }> = {
   profile: { label: "Profile", Icon: User },
 };
 
-const MARGIN = 18;
+const MARGIN = 22;
 const BAR_W = Dimensions.get("window").width - MARGIN * 2;
-const BAR_H = 64;
-const BUBBLE = 52;
-const BUBBLE_RISE = 22; // how far the bubble pokes above the bar
+const BAR_H = 56;
+const BUBBLE = 44;
+const BUBBLE_RISE = 16; // how far the bubble pokes above the bar
 
 /** Bottom padding a tab screen should reserve so content clears the bar. */
-export const TAB_BAR_SPACE = BAR_H + BUBBLE_RISE + 28;
+export const TAB_BAR_SPACE = BAR_H + BUBBLE_RISE + 24;
 
 type TabBarProps = {
   state: { index: number; routes: { key: string; name: string }[] };
@@ -129,16 +129,16 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
               onPress={onPress}
               className="flex-1 items-center justify-center"
             >
-              <View className="h-6 items-center justify-center">
+              <View className="h-5 items-center justify-center">
                 {!focused && (
                   <View className="relative">
-                    <Icon size={22} color={INACTIVE} strokeWidth={2} />
+                    <Icon size={19} color={INACTIVE} strokeWidth={2} />
                     {route.name === "cart" && <CartBadge color={PRIMARY} />}
                   </View>
                 )}
               </View>
               <Text
-                className="mt-1 font-quicksand-semibold text-[11px]"
+                className="mt-0.5 font-quicksand-semibold text-[10px]"
                 style={{ color: focused ? PRIMARY : INACTIVE }}
               >
                 {label}
@@ -161,17 +161,17 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
           backgroundColor: PRIMARY,
           alignItems: "center",
           justifyContent: "center",
-          borderWidth: 4,
+          borderWidth: 3.5,
           borderColor: "#FBF6EF",
           transform: [{ translateX }],
           shadowColor: PRIMARY,
-          shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 0.35,
-          shadowRadius: 10,
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.33,
+          shadowRadius: 9,
           elevation: 20,
         }}
       >
-        <ActiveIcon size={22} color="#fff" strokeWidth={2.4} />
+        <ActiveIcon size={19} color="#fff" strokeWidth={2.4} />
       </Animated.View>
     </View>
   );

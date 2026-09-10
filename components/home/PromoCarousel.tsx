@@ -1,12 +1,12 @@
+import { Image } from "@/components/CachedImage";
 import { OFFERS_DATA } from "@/constants/offers.constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   Dimensions,
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,12 +17,10 @@ const CARD_WIDTH = Dimensions.get("window").width - 40;
 
 const PromoCarousel = () => {
   const [index, setIndex] = useState(0);
-  const listRef = useRef<FlatList>(null);
 
   return (
     <View>
       <FlatList
-        ref={listRef}
         data={OFFERS_DATA}
         keyExtractor={(o) => o.id}
         horizontal
@@ -35,7 +33,7 @@ const PromoCarousel = () => {
         }
         renderItem={({ item }) => (
           <TouchableOpacity
-            activeOpacity={0.9}
+            activeOpacity={0.92}
             style={{ width: CARD_WIDTH }}
             onPress={() =>
               router.push({
@@ -45,23 +43,22 @@ const PromoCarousel = () => {
             }
             className="h-52 overflow-hidden rounded-3xl"
           >
-            <View
-              className="flex-1 justify-center px-5"
-              style={{ backgroundColor: item.color }}
-            >
-              <LinearGradient
-                colors={["rgba(0,0,0,0.6)", "rgba(0,0,0,0.05)"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={StyleSheet.absoluteFill}
-              />
-              <Image
-                source={item.image}
-                resizeMode="contain"
-                className="absolute -right-4 h-52 w-44"
-              />
+            <Image
+              source={{ uri: item.image }}
+              style={StyleSheet.absoluteFill}
+              contentFit="cover"
+              transition={250}
+              cachePolicy="memory-disk"
+            />
+            <LinearGradient
+              colors={["rgba(0,0,0,0.78)", "rgba(0,0,0,0.15)"]}
+              start={{ x: 0, y: 1 }}
+              end={{ x: 1, y: 0 }}
+              style={StyleSheet.absoluteFill}
+            />
 
-              <View className="w-3/5">
+            <View className="flex-1 justify-center px-5">
+              <View className="w-3/4">
                 <View className="mb-2 self-start rounded-full bg-accent px-2.5 py-1">
                   <Text className="font-quicksand-bold text-[10px] text-dark-100">
                     LIMITED TIME

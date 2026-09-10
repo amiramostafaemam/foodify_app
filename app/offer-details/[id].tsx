@@ -89,7 +89,7 @@ const OfferDetails = () => {
         id: offer.id,
         name: offer.title,
         price: offer.discountedPrice,
-        image_url: Image.resolveAssetSource(offer.image).uri,
+        image_url: offer.image,
       },
       quantity,
     );
