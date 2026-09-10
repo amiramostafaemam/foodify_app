@@ -11,6 +11,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "./global.css";
 
+// Surface render errors on-screen instead of a blank exit while debugging.
+export { ErrorBoundary } from "expo-router";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -42,10 +45,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View
-        style={[
-          { flex: 1 },
-          scheme === "dark" ? darkVars : lightVars,
-        ]}
+        style={scheme === "dark" ? darkVars : lightVars}
         className="flex-1 bg-canvas"
       >
         <StatusBar style={scheme === "dark" ? "light" : "dark"} />

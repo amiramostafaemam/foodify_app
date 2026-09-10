@@ -6,4 +6,7 @@ import { selectScheme, useThemeStore } from "@/store/theme.store";
  * `LinearGradient` stops, `placeholderTextColor`, etc. Anything that can use a
  * class should use the semantic tokens (`text-content`, `bg-card`, …) instead.
  */
-export const useColors = () => palette[useThemeStore(selectScheme)];
+export const useColors = () => {
+  const scheme = useThemeStore(selectScheme);
+  return palette[scheme] ?? palette.light;
+};

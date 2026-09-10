@@ -10,7 +10,7 @@ const systemScheme = (): ResolvedScheme =>
   Appearance.getColorScheme() === "dark" ? "dark" : "light";
 
 const resolve = (mode: ThemeMode): ResolvedScheme =>
-  mode === "system" ? systemScheme() : mode;
+  mode === "dark" ? "dark" : mode === "light" ? "light" : systemScheme();
 
 type ThemeState = {
   mode: ThemeMode;
