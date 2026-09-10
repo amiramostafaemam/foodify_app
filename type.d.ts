@@ -189,24 +189,5 @@ export interface OrderData {
   customerPhone?: string;
 }
 
-export interface OfferItem {
-  name: string;
-  quantity: number;
-  icon?: string;
-}
-
-export interface Offer {
-  id: string;
-  title: string;
-  description: string;
-  image: number;
-  videoUrl: string;
-  color: string;
-  originalPrice: number;
-  discountedPrice: number;
-  discount: number;
-  items: OfferItem[];
-  rating: number;
-  deliveryTime: string;
-  validUntil: string;
-}
+// Offer / OfferItem types live in constants/offers.constants.ts (co-located
+// with the demo data).

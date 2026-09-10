@@ -1,5 +1,6 @@
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
+import FoodImage from "@/components/FoodImage";
 import Toast from "@/components/Toast";
 import { getCustomizationImage, images } from "@/constants";
 import {
@@ -302,10 +303,9 @@ const Details = () => {
 
               {/* Menu Item Image */}
               <View className="flex-1 items-center justify-center">
-                <Image
-                  source={{ uri: menuItem.image_url }}
+                <FoodImage
+                  uri={menuItem.image_url}
                   className="h-80 w-full scale-125"
-                  resizeMode="contain"
                 />
               </View>
             </View>

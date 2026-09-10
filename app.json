@@ -39,7 +39,13 @@
         }
       ],
       "expo-video",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Foodify uses your photos so you can set a profile picture."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

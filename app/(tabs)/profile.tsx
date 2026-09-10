@@ -1,13 +1,16 @@
+import Avatar from "@/components/Avatar";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import ProfileField from "@/components/ProfileField";
+import { uploadImage } from "@/lib/appwrite";
+import { pickSquareImage } from "@/lib/media";
 import useAuthStore from "@/store/auth.store";
 import { router } from "expo-router";
-import { Mail, MapPin, Phone, User } from "lucide-react-native";
+import { LogOut, Mail, MapPin, Phone, User } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   Animated,
-  Image,
   Modal,
   ScrollView,
   Text,
@@ -17,7 +20,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Logout Confirmation Modal Component
 const LogoutModal = ({
   visible,
   onConfirm,
@@ -28,40 +30,19 @@ const LogoutModal = ({
   onCancel: () => void;
 }) => {
   const scaleAnim = useAnimatedValue(0);
-  const shakeAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {
-      Animated.sequence([
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.timing(shakeAnim, {
-            toValue: 10,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(shakeAnim, {
-            toValue: -10,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(shakeAnim, {
-            toValue: 0,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start();
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        tension: 60,
+        friction: 8,
+        useNativeDriver: true,
+      }).start();
     } else {
       scaleAnim.setValue(0);
-      shakeAnim.setValue(0);
     }
-  }, [visible, scaleAnim, shakeAnim]);
+  }, [visible, scaleAnim]);
 
   return (
     <Modal
@@ -71,42 +52,33 @@ const LogoutModal = ({
       onRequestClose={onCancel}
     >
       <View className="flex-1 items-center justify-center bg-black/50 px-5">
-        <Animated.View
-          style={{
-            transform: [{ scale: scaleAnim }, { translateX: shakeAnim }],
-          }}
-        >
+        <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
           <View className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl">
-            <View className="mb-6 h-24 w-24 items-center justify-center rounded-full bg-red-100">
-              <Image
-                source={require("@/assets/icons/logout.png")}
-                className="h-12 w-12"
-                tintColor="#EF4444"
-              />
+            <View className="mb-5 h-16 w-16 items-center justify-center rounded-full bg-error/10">
+              <LogOut size={26} color="#F14141" />
             </View>
 
-            <Text className="mb-3 text-center font-quicksand-bold text-2xl text-dark-100">
-              Logout
+            <Text className="mb-2 text-center font-quicksand-bold text-xl text-dark-100">
+              Log out?
             </Text>
             <Text className="mb-6 text-center font-quicksand text-base text-gray-100">
-              Are you sure you want to logout?
+              You&apos;ll need to sign in again to place orders.
             </Text>
 
             <View className="w-full gap-3">
               <TouchableOpacity
                 onPress={onConfirm}
                 className="items-center rounded-xl bg-error py-4"
-                activeOpacity={0.8}
+                activeOpacity={0.85}
               >
-                <Text className="base-bold text-white">Logout</Text>
+                <Text className="base-bold text-white">Log out</Text>
               </TouchableOpacity>
-
               <TouchableOpacity
                 onPress={onCancel}
-                className="items-center rounded-xl bg-gray-100/20 py-4"
-                activeOpacity={0.8}
+                className="items-center rounded-xl bg-gray-100/10 py-4"
+                activeOpacity={0.85}
               >
-                <Text className="base-bold text-dark-100">Cancel</Text>
+                <Text className="base-bold text-dark-100">Stay signed in</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -117,15 +89,26 @@ const LogoutModal = ({
 };
 
 const Profile = () => {
-  const { user, logout, isLoading } = useAuthStore();
+  const { user, logout, isLoading, updateUserProfile } = useAuthStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
-  const handleEdit = () => {
-    router.push("/edit-profile");
-  };
+  const handleChangeAvatar = async () => {
+    try {
+      const file = await pickSquareImage();
+      if (!file) return;
 
-  const handleLogoutPress = () => {
-    setShowLogoutModal(true);
+      setUploadingAvatar(true);
+      const avatar = await uploadImage(file);
+      await updateUserProfile({ avatar });
+    } catch (error) {
+      Alert.alert(
+        "Upload failed",
+        error instanceof Error ? error.message : "Could not update your photo.",
+      );
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   const handleConfirmLogout = async () => {
@@ -138,14 +121,10 @@ const Profile = () => {
     }
   };
 
-  const handleCancelLogout = () => {
-    setShowLogoutModal(false);
-  };
-
   if (isLoading) {
     return (
       <SafeAreaView className="flex-center h-full bg-white">
-        <Text className="paragraph-regular text-gray-200">Loading...</Text>
+        <Text className="paragraph-regular text-gray-200">Loading…</Text>
       </SafeAreaView>
     );
   }
@@ -160,44 +139,36 @@ const Profile = () => {
     );
   }
 
-  // Generate Avatar with first letter
-  const avatarLetter = user.name?.charAt(0).toUpperCase() || "?";
-
   return (
     <SafeAreaView className="h-full bg-white">
       <ScrollView
-        contentContainerClassName="px-5 pb-32"
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 130 }}
         showsVerticalScrollIndicator={false}
       >
         <CustomHeader title="Profile" />
 
-        {/* Avatar Section with Letter */}
-        <View className="flex-center mb-8">
-          <View className="h-32 w-32 items-center justify-center rounded-full bg-primary shadow-xl shadow-primary/30">
-            <Text className="font-quicksand-bold text-6xl text-white">
-              {avatarLetter}
-            </Text>
-          </View>
+        {/* Identity */}
+        <View className="mb-8 items-center">
+          <Avatar
+            name={user.name}
+            uri={user.avatar}
+            editable
+            uploading={uploadingAvatar}
+            onEditPress={handleChangeAvatar}
+          />
+          <Text className="mt-4 font-quicksand-bold text-2xl text-dark-100">
+            {user.name}
+          </Text>
+          <Text className="body-regular text-gray-100">{user.email}</Text>
         </View>
 
-        {/* User Info Card */}
-        <View className="shadow-gray/20 mb-6 rounded-2xl bg-gray-50 p-5 shadow-sm">
-          <Text className="h3-bold mb-4 text-primary">
-            Personal Information
+        {/* Personal information */}
+        <View className="mb-4 rounded-2xl border border-gray-200/70 bg-white p-5">
+          <Text className="paragraph-bold mb-4 text-dark-100">
+            Personal information
           </Text>
-
-          <ProfileField
-            label="Full Name"
-            value={user.name || "Not provided"}
-            icon={User}
-          />
-
-          <ProfileField
-            label="Email"
-            value={user.email || "Not provided"}
-            icon={Mail}
-          />
-
+          <ProfileField label="Full Name" value={user.name} icon={User} />
+          <ProfileField label="Email" value={user.email} icon={Mail} />
           <ProfileField
             label="Phone Number"
             value={user.phone || "Not provided"}
@@ -205,16 +176,14 @@ const Profile = () => {
           />
         </View>
 
-        {/* Addresses Card */}
-        <View className="shadow-gray/20 mb-6 rounded-2xl bg-gray-50 p-5 shadow-sm">
-          <Text className="h3-bold mb-4 text-primary">Addresses</Text>
-
+        {/* Addresses */}
+        <View className="mb-6 rounded-2xl border border-gray-200/70 bg-white p-5">
+          <Text className="paragraph-bold mb-4 text-dark-100">Addresses</Text>
           <ProfileField
             label="Home Address"
             value={user.address_home || "Not provided"}
             icon={MapPin}
           />
-
           <ProfileField
             label="Work Address"
             value={user.address_work || "Not provided"}
@@ -222,34 +191,25 @@ const Profile = () => {
           />
         </View>
 
-        {/* Action Buttons */}
-        <View className="mt-2 gap-4">
-          <CustomButton
-            title="Edit Profile"
-            onPress={handleEdit}
-            style="custom-btn"
-            textStyle="paragraph-bold text-white"
-          />
+        <CustomButton
+          title="Edit Profile"
+          onPress={() => router.push("/edit-profile")}
+        />
 
-          <TouchableOpacity
-            onPress={handleLogoutPress}
-            className="flex-center w-full flex-row rounded-xl border-2 border-red-500 p-4"
-          >
-            <Image
-              source={require("@/assets/icons/logout.png")}
-              className="mr-2 h-6 w-6"
-              tintColor="#EF4444"
-            />
-            <Text className="paragraph-bold text-red-500">Logout</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() => setShowLogoutModal(true)}
+          className="mt-3 flex-row items-center justify-center gap-2 py-4"
+          activeOpacity={0.7}
+        >
+          <LogOut size={18} color="#F14141" />
+          <Text className="paragraph-bold text-error">Log out</Text>
+        </TouchableOpacity>
       </ScrollView>
 
-      {/* Logout Confirmation Modal */}
       <LogoutModal
         visible={showLogoutModal}
         onConfirm={handleConfirmLogout}
-        onCancel={handleCancelLogout}
+        onCancel={() => setShowLogoutModal(false)}
       />
     </SafeAreaView>
   );

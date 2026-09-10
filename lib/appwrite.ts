@@ -123,6 +123,27 @@ export const signOut = async () => {
   await account.deleteSession("current");
 };
 
+export type UploadFile = {
+  uri: string;
+  name: string;
+  type: string;
+  size: number;
+};
+
+/**
+ * Uploads an image to the storage bucket and returns a public view URL.
+ * Keep files under 5 MB (Appwrite's single-request limit) — the picker already
+ * compresses avatars well below that.
+ */
+export const uploadImage = async (file: UploadFile): Promise<string> => {
+  const uploaded = await storage.createFile(
+    appwriteConfig.bucketId,
+    ID.unique(),
+    file,
+  );
+  return storage.getFileView(appwriteConfig.bucketId, uploaded.$id).toString();
+};
+
 export const getCurrentUser = async (): Promise<User | undefined> => {
   const acc = await account.get();
 

@@ -5,7 +5,7 @@ export interface Offer {
   id: string;
   title: string;
   description: string;
-  image: any; // Local image for cards
+  image: number; // Local image (require) for cards
   videoUrl: string; // Video URL for details page
   color: string;
   originalPrice: number;
@@ -14,14 +14,39 @@ export interface Offer {
   items: OfferItem[];
   rating: number;
   deliveryTime: string;
-  validUntil: string;
 }
 
 export interface OfferItem {
   name: string;
   quantity: number;
-  // Optional emoji or icon
 }
+
+/**
+ * Demo offers run on a rolling window so they never look expired. Anchored once
+ * per app launch, valid for the next two weeks.
+ */
+const VALID_DAYS = 14;
+const VALID_UNTIL = (() => {
+  const d = new Date();
+  d.setHours(23, 59, 59, 0);
+  d.setDate(d.getDate() + VALID_DAYS);
+  return d;
+})();
+
+export const getOfferValidity = () => {
+  const daysLeft = Math.max(
+    1,
+    Math.ceil((VALID_UNTIL.getTime() - Date.now()) / 86_400_000),
+  );
+  return {
+    daysLeft,
+    date: VALID_UNTIL.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }),
+  };
+};
 
 export const OFFERS_DATA: Offer[] = [
   {
@@ -43,7 +68,6 @@ export const OFFERS_DATA: Offer[] = [
     ],
     rating: 4.7,
     deliveryTime: "20-30 mins",
-    validUntil: "Mar 28, 2026",
   },
   {
     id: "burger-bash",
@@ -65,7 +89,6 @@ export const OFFERS_DATA: Offer[] = [
     ],
     rating: 4.8,
     deliveryTime: "25-35 mins",
-    validUntil: "Mar 28, 2026",
   },
   {
     id: "pizza-party",
@@ -87,7 +110,6 @@ export const OFFERS_DATA: Offer[] = [
     ],
     rating: 4.9,
     deliveryTime: "30-40 mins",
-    validUntil: "Mar 28, 2026",
   },
   {
     id: "burrito-delight",
@@ -110,7 +132,6 @@ export const OFFERS_DATA: Offer[] = [
     ],
     rating: 4.6,
     deliveryTime: "25-35 mins",
-    validUntil: "Mar 28, 2026",
   },
 ];
 

@@ -1,3 +1,4 @@
+import Avatar from "@/components/Avatar";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import CustomInput from "@/components/CustomInput";
@@ -150,14 +151,10 @@ const EditProfile = () => {
         <CustomHeader title="Edit Profile" />
 
         {/* Profile Avatar Preview */}
-        <View className="flex-center my-8">
-          <View className="h-32 w-32 items-center justify-center rounded-full bg-primary shadow-lg">
-            <Text className="font-quicksand-bold text-6xl text-white">
-              {form.name ? form.name.charAt(0).toUpperCase() : "?"}
-            </Text>
-          </View>
-          <Text className="paragraph-regular mt-3 text-gray-400">
-            Profile preview
+        <View className="my-8 items-center">
+          <Avatar name={form.name} uri={user.avatar} />
+          <Text className="body-regular mt-3 text-gray-100">
+            Change your photo from the Profile screen
           </Text>
         </View>
 

@@ -1,18 +1,11 @@
+import FoodImage from "@/components/FoodImage";
 import { images } from "@/constants";
 import { useCartStore } from "@/store/cart.store";
 import { CartItemType } from "@/type";
-import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 const CartItem = ({ item }: { item: CartItemType }) => {
   const { increaseQty, decreaseQty, removeItem } = useCartStore();
-  const [imageError, setImageError] = useState(false);
-
-  const imageUrl = item.image_url || "";
-
-  const handleImageError = () => {
-    setImageError(true);
-  };
 
   const itemTotalPrice =
     item.price +
@@ -22,20 +15,11 @@ const CartItem = ({ item }: { item: CartItemType }) => {
     <View className="cart-item mb-4">
       <View className="flex flex-row items-center gap-x-3">
         <View className="cart-item__image">
-          {imageError ? (
-            <Image
-              source={images.emptyState}
-              className="size-4/5 rounded-lg"
-              resizeMode="cover"
-            />
-          ) : (
-            <Image
-              source={{ uri: imageUrl }}
-              className="size-4/5 scale-125 rounded-lg"
-              resizeMode="cover"
-              onError={handleImageError}
-            />
-          )}
+          <FoodImage
+            uri={item.image_url}
+            className="size-4/5 rounded-lg"
+            contentFit="contain"
+          />
         </View>
 
         <View className="flex-1">

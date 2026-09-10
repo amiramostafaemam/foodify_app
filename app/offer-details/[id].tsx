@@ -3,10 +3,15 @@ import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import Toast from "@/components/Toast";
 import { images } from "@/constants";
-import { getOfferById, Offer } from "@/constants/offers.constants";
+import {
+  getOfferById,
+  getOfferValidity,
+  Offer,
+} from "@/constants/offers.constants";
 import { useCartStore } from "@/store/cart.store";
 import { useLocalSearchParams } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
+import { Clock, Volume2, VolumeX } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -39,6 +44,7 @@ const OfferDetails = () => {
   const insets = useSafeAreaInsets();
 
   const { addItem } = useCartStore();
+  const validity = getOfferValidity();
 
   // Get offer data
   const offer: Offer | undefined = getOfferById(id!);
@@ -125,10 +131,15 @@ const OfferDetails = () => {
               {/* Mute toggle */}
               <TouchableOpacity
                 onPress={() => setIsMuted((prev) => !prev)}
-                className="absolute bottom-4 right-4 z-20 h-10 w-10 items-center justify-center rounded-full bg-black/60"
+                className="absolute bottom-4 right-4 z-20 h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/45"
                 activeOpacity={0.8}
+                accessibilityLabel={isMuted ? "Unmute video" : "Mute video"}
               >
-                <Text className="text-lg">{isMuted ? "🔇" : "🔊"}</Text>
+                {isMuted ? (
+                  <VolumeX size={20} color="#fff" />
+                ) : (
+                  <Volume2 size={20} color="#fff" />
+                )}
               </TouchableOpacity>
             </View>
 
@@ -224,17 +235,16 @@ const OfferDetails = () => {
                 </View>
               </View>
 
-              {/* Valid Until */}
-              <View className="mb-4 w-[250px]  rounded-full bg-primary/5 p-4">
-                <View className="flex-center flex-row  gap-2">
-                  <Image
-                    source={images.clock}
-                    className="h-5 w-5"
-                    tintColor="#FE8C00"
-                  />
-                  <Text className="paragraph-medium text-dark-100">
-                    <Text className="paragraph-bold">Ended on : </Text>{" "}
-                    {offer.validUntil}
+              {/* Offer validity */}
+              <View className="mb-4 flex-row items-center gap-3 self-start rounded-2xl border border-primary/15 bg-primary/5 px-4 py-3">
+                <Clock size={18} color="#FE8C00" />
+                <View>
+                  <Text className="paragraph-bold text-dark-100">
+                    Ends in {validity.daysLeft}{" "}
+                    {validity.daysLeft === 1 ? "day" : "days"}
+                  </Text>
+                  <Text className="body-regular text-gray-100">
+                    Valid until {validity.date}
                   </Text>
                 </View>
               </View>
