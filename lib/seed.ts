@@ -36,13 +36,17 @@ const data = dummyData as DummyData;
 async function clearAll(collectionId: string): Promise<void> {
   const list = await databases.listDocuments(
     appwriteConfig.databaseId,
-    collectionId
+    collectionId,
   );
 
   await Promise.all(
     list.documents.map((doc) =>
-      databases.deleteDocument(appwriteConfig.databaseId, collectionId, doc.$id)
-    )
+      databases.deleteDocument(
+        appwriteConfig.databaseId,
+        collectionId,
+        doc.$id,
+      ),
+    ),
   );
 }
 
@@ -60,7 +64,7 @@ async function seed(): Promise<void> {
       appwriteConfig.databaseId,
       appwriteConfig.categoriesCollectionId,
       ID.unique(),
-      cat
+      cat,
     );
     categoryMap[cat.name] = doc.$id;
   }
@@ -77,7 +81,7 @@ async function seed(): Promise<void> {
         name: cus.name,
         price: cus.price,
         type: cus.type,
-      }
+      },
     );
     customizationMap[cus.name] = doc.$id;
   }
@@ -99,7 +103,7 @@ async function seed(): Promise<void> {
         calories: item.calories,
         protein: item.protein,
         categories: [categoryMap[item.category_name]],
-      }
+      },
     );
 
     menuMap[item.name] = doc.$id;
@@ -113,7 +117,7 @@ async function seed(): Promise<void> {
         {
           menu: doc.$id,
           customization: customizationMap[cusName],
-        }
+        },
       );
     }
   }

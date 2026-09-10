@@ -44,11 +44,11 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
       }
       onPress={handlePress}
     >
-      <View className="size-32 absolute -top-10 flex-center">
+      <View className="flex-center absolute -top-10 size-32">
         {imageLoading && !imageError && (
           <ActivityIndicator
             size="small"
-            color="#FF9C01"
+            color="#FE8C00"
             className="absolute"
           />
         )}
@@ -69,12 +69,12 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
         )}
       </View>
       <Text
-        className="text-center base-bold text-dark-100 mb-2"
+        className="base-bold mb-2 text-center text-dark-100"
         numberOfLines={1}
       >
         {name}
       </Text>
-      <Text className="body-regular text-gray-200 mb-4">From ${price}</Text>
+      <Text className="body-regular mb-4 text-gray-200">From ${price}</Text>
       <TouchableOpacity onPress={handlePress}>
         <Text className="paragraph-bold text-primary">View Details</Text>
       </TouchableOpacity>

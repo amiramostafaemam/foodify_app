@@ -31,7 +31,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
           ) : (
             <Image
               source={{ uri: imageUrl }}
-              className="size-4/5 rounded-lg scale-125"
+              className="size-4/5 scale-125 rounded-lg"
               resizeMode="cover"
               onError={handleImageError}
             />
@@ -44,16 +44,16 @@ const CartItem = ({ item }: { item: CartItemType }) => {
           </Text>
 
           {item.customizations && item.customizations.length > 0 && (
-            <Text className="text-xs text-gray-400 mt-1" numberOfLines={2}>
+            <Text className="mt-1 text-xs text-gray-400" numberOfLines={2}>
               {item.customizations.map((c) => c.name).join(", ")}
             </Text>
           )}
 
-          <Text className="paragraph-bold text-primary mt-1">
+          <Text className="paragraph-bold mt-1 text-primary">
             ${itemTotalPrice.toFixed(2)}
           </Text>
 
-          <View className="flex flex-row items-center gap-x-4 mt-2">
+          <View className="mt-2 flex flex-row items-center gap-x-4">
             <TouchableOpacity
               onPress={() => decreaseQty(item.cartItemId)}
               className="cart-item__actions"
@@ -62,7 +62,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
                 source={images.minus}
                 className="size-1/2"
                 resizeMode="contain"
-                tintColor={"#FF9C01"}
+                tintColor={"#FE8C00"}
               />
             </TouchableOpacity>
 
@@ -76,7 +76,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
                 source={images.plus}
                 className="size-1/2"
                 resizeMode="contain"
-                tintColor={"#FF9C01"}
+                tintColor={"#FE8C00"}
               />
             </TouchableOpacity>
           </View>

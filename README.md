@@ -1,50 +1,156 @@
-# Welcome to your Expo app 👋
+# 🍔 Foodify
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A cross‑platform food‑ordering app built with **Expo (React Native)**, **Expo Router**, **NativeWind**, **Zustand**, **Appwrite**, and **Stripe**.
 
-## Get started
+Browse a menu, customise items with toppings and sides, manage a cart, and check out with a real Stripe payment sheet or cash on delivery.
 
-1. Install dependencies
+> ⚠️ This is a portfolio project. It talks to a self‑hosted / Appwrite Cloud backend that you provision yourself (see **Backend setup** below).
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## ✨ Features
 
-   ```bash
-   npx expo start
-   ```
+| Area              | What it does                                                                                      |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| **Onboarding**    | 3‑slide intro, shown once (persisted in `AsyncStorage`)                                           |
+| **Auth**          | Email/password sign‑up & sign‑in via Appwrite, animated success / error states                    |
+| **Menu & Search** | Server‑side search + category filter, two‑column grid                                             |
+| **Item details**  | Calories/protein, rating, selectable toppings & sides with live price                             |
+| **Offers**        | Promo bundles with autoplaying muted video, discount breakdown                                    |
+| **Cart**          | Add / remove / change quantity, persisted across app restarts                                     |
+| **Checkout**      | Stripe Payment Sheet (via a serverless function) **or** cash on delivery; order saved to Appwrite |
+| **Profile**       | View & edit name, phone, home/work address; logout confirmation                                   |
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🧱 Tech stack
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Expo SDK 54**, React Native 0.81, new architecture + React Compiler
+- **Expo Router v6** — file‑based routing, typed routes
+- **NativeWind v4** (Tailwind for RN) for styling
+- **Zustand** for auth & cart state (cart uses the `persist` middleware)
+- **Appwrite** (`react-native-appwrite`) — auth, database, storage, functions
+- **Stripe** (`@stripe/stripe-react-native`) — Payment Sheet
+- **TypeScript** (strict), ESLint (`eslint-config-expo`), Prettier
 
-## Get a fresh project
+---
 
-When you're ready, run:
+## 📂 Project structure
 
-```bash
-npm run reset-project
+```
+app/                    # Expo Router routes
+  (onboarding)/         # first‑run intro
+  (auth)/               # sign‑in / sign‑up (+ shared layout)
+  (tabs)/               # Home, Search, Cart, Profile
+  details/[id].tsx      # menu item details
+  offer-details/[id].tsx
+  edit-profile.tsx
+components/              # reusable UI (Button, Input, Cards, Modals…)
+constants/              # image map, offers data, onboarding slides
+lib/                    # appwrite client, data hooks, payment service, seed
+store/                  # zustand stores (auth, cart)
+type.d.ts               # shared types
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 🚀 Getting started
 
-To learn more about developing your project with Expo, look at the following resources:
+### 1. Prerequisites
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- Node 18+
+- An [Appwrite](https://appwrite.io) project (Cloud or self‑hosted)
+- A [Stripe](https://stripe.com) account (test mode is fine)
+- For payments you need a **development build** (Stripe’s native module does not
+  run in Expo Go). The rest of the app works in Expo Go.
 
-## Join the community
+### 2. Install
 
-Join our community of developers creating universal apps.
+```bash
+npm install
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 3. Environment variables
+
+```bash
+cp .env.example .env
+```
+
+Then fill in `.env`. Every value and where to find it is documented inside
+`.env.example`. Nothing secret goes in this file — the Stripe **secret** key
+lives only in the Appwrite function (step 5).
+
+### 4. Backend setup (Appwrite)
+
+Create one **Database** and the following **collections** (IDs must match
+`lib/appwrite.ts`). Give `users` document‑level permissions; the rest can be
+read by any authenticated user.
+
+| Collection ID         | Attributes                                                                                                                                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `user`                | `name`, `email`, `avatar`, `accountId`, `phone?`, `address_home?`, `address_work?`                                                                                                                                  |
+| `categories`          | `name`, `description`                                                                                                                                                                                               |
+| `menu`                | `name`, `description`, `image_url`, `price` (float), `rating` (float), `calories` (int), `protein` (int), `categories` (relation → `categories`)                                                                    |
+| `customizations`      | `name`, `price` (float), `type` (enum: `topping`, `side`)                                                                                                                                                           |
+| `menu_customizations` | `menu` (relation → `menu`), `customization` (relation → `customizations`), `customization_name`, `customization_price` (float), `customization_type`                                                                |
+| `orders`              | `userId`, `items` (string, JSON), `totalAmount`, `deliveryFee`, `discount`, `finalAmount`, `paymentIntentId`, `paymentStatus`, `orderStatus`, `deliveryAddress?`, `customerName`, `customerEmail`, `customerPhone?` |
+
+Also create a **Storage bucket** and register an **Android/iOS platform** whose
+bundle id matches `app.json` (`com.foodify.app`).
+
+**Seed sample data:** temporarily call the seeder once — in `app/_layout.tsx`
+add `import seed from "@/lib/seed";` and run `seed()` inside a `useEffect`, open
+the app once, then remove it. Menu data lives in `lib/data.ts`.
+
+### 5. Stripe payment function (Appwrite Functions)
+
+Payments never expose the Stripe secret to the client. Create an Appwrite
+Function (Node) that:
+
+1. reads `{ amount, currency, customerEmail, customerName }` from the request body,
+2. creates a Stripe `PaymentIntent` with your **secret** key (set as a function
+   env var, e.g. `STRIPE_SECRET_KEY`),
+3. returns `{ success: true, clientSecret, paymentIntentId }`.
+
+Put its Function ID in `EXPO_PUBLIC_APPWRITE_FUNCTION_PAYMENT_ID`.
+
+### 6. Run
+
+```bash
+npm run start:go          # Expo Go — everything works except real card payments
+```
+
+Card payments (`@stripe/stripe-react-native`) need a **development build**, since
+Stripe's native module is not in Expo Go:
+
+```bash
+# set EXPO_PUBLIC_ENABLE_STRIPE=true in .env, re-add the
+# "@stripe/stripe-react-native" config plugin to app.json, then:
+npx expo run:android      # or: eas build --profile development
+```
+
+With `EXPO_PUBLIC_ENABLE_STRIPE` unset/false, Metro swaps Stripe for a stub
+(`lib/stripe-stub.tsx`) and checkout falls back to cash on delivery.
+
+---
+
+## 📜 Scripts
+
+| Script                    | Purpose                              |
+| ------------------------- | ------------------------------------ |
+| `npm run start:go`        | Expo dev server, forced Expo Go mode |
+| `npm start`               | Expo dev server (dev-client mode)    |
+| `npm run android` / `ios` | build & run a native dev client      |
+| `npm run lint`            | ESLint                               |
+| `npm run typecheck`       | `tsc --noEmit`                       |
+| `npm run format`          | Prettier write                       |
+
+---
+
+## 🗺️ Roadmap
+
+- [ ] Order history screen (backend + `getUserOrders` already exist)
+- [ ] Pull‑to‑refresh & skeleton loaders
+- [ ] Unit tests for the cart store, component tests with RNTL
+- [ ] Dark mode (tokens are half‑wired already)
+- [ ] Accessibility pass (labels / roles)

@@ -4,6 +4,7 @@ import CustomHeader from "@/components/CustomHeader";
 import { images } from "@/constants";
 import { createOrder } from "@/lib/appwrite";
 import { createPaymentIntent } from "@/lib/payment.service";
+import { useStripe } from "@/lib/stripe";
 import useAuthStore from "@/store/auth.store";
 import { useCartStore } from "@/store/cart.store";
 import { PaymentInfoStripeProps, PaymentMethod } from "@/type";
@@ -23,30 +24,13 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Conditional Stripe import
-let useStripe: any = () => ({
-  initPaymentSheet: async () => ({
-    error: { message: "Stripe not available in Expo Go" },
-  }),
-  presentPaymentSheet: async () => ({
-    error: { message: "Stripe not available in Expo Go" },
-  }),
-});
-
-try {
-  const stripe = require("@stripe/stripe-react-native");
-  useStripe = stripe.useStripe;
-} catch (e) {
-  console.warn("Stripe hook not available");
-}
-
 const PaymentInfoStripe = ({
   label,
   value,
   labelStyle,
   valueStyle,
 }: PaymentInfoStripeProps) => (
-  <View className="flex-between flex-row my-1">
+  <View className="flex-between my-1 flex-row">
     <Text className={cn("paragraph-medium text-gray-200", labelStyle)}>
       {label}
     </Text>
@@ -86,7 +70,7 @@ const SuccessModal = ({
       scaleAnim.setValue(0);
       checkAnim.setValue(0);
     }
-  }, [visible]);
+  }, [visible, scaleAnim, checkAnim]);
 
   return (
     <Modal
@@ -95,22 +79,22 @@ const SuccessModal = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View className="flex-1 bg-black/50 items-center justify-center px-5">
+      <View className="flex-1 items-center justify-center bg-black/50 px-5">
         <Animated.View
           style={{ transform: [{ scale: scaleAnim }] }}
-          className="bg-white rounded-3xl p-8 items-center w-full max-w-sm shadow-2xl"
+          className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl"
         >
           <Image
             source={images.successs}
-            className="w-60 h-60  items-center justify-center mb-2"
+            className="mb-2 h-60  w-60 items-center justify-center"
             resizeMode="contain"
           />
 
           {/* Success Text */}
-          <Text className="font-quicksand-bold text-2xl text-primary mb-3 text-center">
+          <Text className="mb-3 text-center font-quicksand-bold text-2xl text-primary">
             Order Confirmed !
           </Text>
-          <Text className="font-quicksand-regular text-base text-gray-400 mb-6 text-center">
+          <Text className="font-quicksand-regular mb-6 text-center text-base text-gray-400">
             Your food is being prepared and will be delivered shortly.
           </Text>
 
@@ -118,7 +102,7 @@ const SuccessModal = ({
           <View className="w-full gap-3">
             <TouchableOpacity
               onPress={onClose}
-              className="bg-primary py-4 rounded-xl items-center"
+              className="items-center rounded-xl bg-primary py-4"
               activeOpacity={0.8}
             >
               <Text className="base-bold text-white">Back to Home</Text>
@@ -177,7 +161,7 @@ const CancelModal = ({
       scaleAnim.setValue(0);
       shakeAnim.setValue(0);
     }
-  }, [visible]);
+  }, [visible, scaleAnim, shakeAnim]);
 
   return (
     <Modal
@@ -186,25 +170,25 @@ const CancelModal = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View className="flex-1 bg-black/50 items-center justify-center px-5">
+      <View className="flex-1 items-center justify-center bg-black/50 px-5">
         <Animated.View
           style={{
             transform: [{ scale: scaleAnim }, { translateX: shakeAnim }],
           }}
-          className="bg-white rounded-3xl p-8 items-center w-full max-w-sm shadow-2xl"
+          className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl"
         >
           {/* Cancel Image */}
           <Image
             source={images.canceled}
-            className="w-60 h-60 items-center justify-center mb-2"
+            className="mb-2 h-60 w-60 items-center justify-center"
             resizeMode="contain"
           />
 
           {/* Cancel Text */}
-          <Text className="font-quicksand-bold text-2xl text-red-500 mb-3 text-center">
+          <Text className="mb-3 text-center font-quicksand-bold text-2xl text-red-500">
             Payment Cancelled !
           </Text>
-          <Text className="font-quicksand-regular text-base text-gray-400 mb-6 text-center">
+          <Text className="font-quicksand-regular mb-6 text-center text-base text-gray-400">
             Your payment was cancelled. Your cart items are still saved.
           </Text>
 
@@ -212,7 +196,7 @@ const CancelModal = ({
           <View className="w-full gap-3">
             <TouchableOpacity
               onPress={onClose}
-              className="bg-primary py-4 rounded-xl items-center"
+              className="items-center rounded-xl bg-primary py-4"
               activeOpacity={0.8}
             >
               <Text className="base-bold text-white">Try Again</Text>
@@ -223,7 +207,7 @@ const CancelModal = ({
                 onClose();
                 router.push("/");
               }}
-              className="bg-[#F3F4F6] py-4 rounded-xl items-center"
+              className="items-center rounded-xl bg-[#F3F4F6] py-4"
               activeOpacity={0.8}
             >
               <Text className="base-bold text-[#1F2937]">Back to Home</Text>
@@ -317,11 +301,7 @@ const Cart = () => {
             colors: {
               background: "#F59E0B",
               text: "#FFFFFF",
-
-              // Disabled
-              disabledBackground: "#FDE68A",
-              disabledText: "#FFFFFF",
-              disabledBorder: "#FDE68A",
+              border: "#F59E0B",
             },
             shapes: {
               borderRadius: 14,
@@ -433,7 +413,7 @@ const Cart = () => {
   };
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="h-full bg-white">
       <FlatList
         data={items}
         renderItem={({ item }) => <CartItem item={item} />}
@@ -441,14 +421,14 @@ const Cart = () => {
         contentContainerClassName="pb-28 px-5 pt-5"
         ListHeaderComponent={() => <CustomHeader title="Your Cart" />}
         ListEmptyComponent={() => (
-          <View className="flex-1 items-center justify-center mt-20">
+          <View className="mt-20 flex-1 items-center justify-center">
             <Image
               source={images.emptycart}
-              className="w-80 h-80 mb-6"
+              className="mb-6 h-80 w-80"
               resizeMode="contain"
             />
             <Text className="h3-bold text-[#878787]">Your cart is empty</Text>
-            <Text className="paragraph-regular text-[#878787] mt-2">
+            <Text className="paragraph-regular mt-2 text-[#878787]">
               Add some delicious items to get started!
             </Text>
           </View>
@@ -457,8 +437,8 @@ const Cart = () => {
           totalItems > 0 && (
             <View className="gap-5">
               {/* Payment Summary */}
-              <View className="mt-6 shadow-lg shadow-gray/50 p-5 rounded-2xl bg-white ">
-                <Text className="h3-bold text-primary mb-5">
+              <View className="shadow-gray/50 mt-6 rounded-2xl bg-white p-5 shadow-lg ">
+                <Text className="h3-bold mb-5 text-primary">
                   Payment Summary
                 </Text>
 
@@ -475,7 +455,7 @@ const Cart = () => {
                   value={`- $${discount.toFixed(2)}`}
                   valueStyle="!text-success"
                 />
-                <View className="border-t border-gray-300 my-2" />
+                <View className="my-2 border-t border-gray-300" />
                 <PaymentInfoStripe
                   label={`Total`}
                   value={`$${finalAmount.toFixed(2)}`}
@@ -485,8 +465,8 @@ const Cart = () => {
               </View>
 
               {/* Payment Method Selection */}
-              <View className="shadow-lg shadow-gray/50 p-5 rounded-2xl bg-white">
-                <Text className="h3-bold text-primary mb-4">
+              <View className="shadow-gray/50 rounded-2xl bg-white p-5 shadow-lg">
+                <Text className="h3-bold mb-4 text-primary">
                   Payment Method
                 </Text>
 
@@ -494,7 +474,7 @@ const Cart = () => {
                 <TouchableOpacity
                   onPress={() => setSelectedPaymentMethod("card")}
                   className={cn(
-                    "flex-row items-center p-4 rounded-xl mb-3",
+                    "mb-3 flex-row items-center rounded-xl p-4",
                     selectedPaymentMethod === "card"
                       ? "border-[#F59E0B] bg-[#FEF3E2]/50"
                       : "border-gray-200 bg-white",
@@ -510,14 +490,14 @@ const Cart = () => {
                   </View>
                   <View
                     className={cn(
-                      "w-6 h-6 rounded-full border-2 items-center justify-center",
+                      "h-6 w-6 items-center justify-center rounded-full border-2",
                       selectedPaymentMethod === "card"
                         ? "border-[#F59E0B] bg-[#F59E0B]"
                         : "border-gray-300",
                     )}
                   >
                     {selectedPaymentMethod === "card" && (
-                      <View className="w-3 h-3 rounded-full bg-white" />
+                      <View className="h-3 w-3 rounded-full bg-white" />
                     )}
                   </View>
                 </TouchableOpacity>
@@ -526,7 +506,7 @@ const Cart = () => {
                 <TouchableOpacity
                   onPress={() => setSelectedPaymentMethod("cash")}
                   className={cn(
-                    "flex-row items-center p-4 rounded-xl",
+                    "flex-row items-center rounded-xl p-4",
                     selectedPaymentMethod === "cash"
                       ? "border-[#F59E0B] bg-[#FEF3E2]/50"
                       : "border-gray-200 bg-white",
@@ -542,14 +522,14 @@ const Cart = () => {
                   </View>
                   <View
                     className={cn(
-                      "w-6 h-6 rounded-full border-2 items-center justify-center",
+                      "h-6 w-6 items-center justify-center rounded-full border-2",
                       selectedPaymentMethod === "cash"
                         ? "border-[#F59E0B] bg-[#F59E0B]"
                         : "border-gray-300",
                     )}
                   >
                     {selectedPaymentMethod === "cash" && (
-                      <View className="w-3 h-3 rounded-full bg-white" />
+                      <View className="h-3 w-3 rounded-full bg-white" />
                     )}
                   </View>
                 </TouchableOpacity>

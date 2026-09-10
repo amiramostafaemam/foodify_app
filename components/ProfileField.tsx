@@ -11,7 +11,7 @@ const ProfileField = ({ label, value, icon: Icon }: ProfileFieldProps) => {
   return (
     <View className="profile-field">
       <View className="profile-field__icon">
-        <Icon size={20} color="#FF9C01" />
+        <Icon size={20} color="#FE8C00" />
       </View>
       <View className="flex-1">
         <Text className="body-regular text-gray-500">{label}</Text>

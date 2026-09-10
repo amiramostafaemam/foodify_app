@@ -19,12 +19,12 @@ export default function Index() {
         ListHeaderComponent={() => (
           <View>
             {/* Header */}
-            <View className="flex-between flex-row w-full my-5">
+            <View className="flex-between my-5 w-full flex-row">
               <View className="flex-start">
-                <Text className="small-bold text-primary uppercase">
+                <Text className="small-bold uppercase text-primary">
                   Deliver to
                 </Text>
-                <TouchableOpacity className="flex-center flex-row gap-x-1 mt-0.5">
+                <TouchableOpacity className="flex-center mt-0.5 flex-row gap-x-1">
                   <Text className="paragraph-bold text-dark-100">Cairo</Text>
                   <Image
                     source={images.arrowDown}

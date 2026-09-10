@@ -1,60 +1,74 @@
-// store/cart.store.ts
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CartCustomization, CartStore } from "@/type";
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
-export const useCartStore = create<CartStore>((set, get) => ({
-  items: [],
+export const useCartStore = create<CartStore>()(
+  persist(
+    (set, get) => ({
+      items: [],
 
-  addItem: (item) => {
-    set({
-      items: [
-        ...get().items,
-        {
-          ...item,
-          quantity: 1,
-          customizations: item.customizations ?? [],
-        },
-      ],
-    });
-  },
+      addItem: (item) => {
+        set({
+          items: [
+            ...get().items,
+            {
+              ...item,
+              quantity: 1,
+              customizations: item.customizations ?? [],
+            },
+          ],
+        });
+      },
 
-  removeItem: (cartItemId) => {
-    set({
-      items: get().items.filter((i) => i.cartItemId !== cartItemId),
-    });
-  },
+      removeItem: (cartItemId) => {
+        set({
+          items: get().items.filter((i) => i.cartItemId !== cartItemId),
+        });
+      },
 
-  increaseQty: (cartItemId) => {
-    set({
-      items: get().items.map((i) =>
-        i.cartItemId === cartItemId ? { ...i, quantity: i.quantity + 1 } : i
-      ),
-    });
-  },
+      increaseQty: (cartItemId) => {
+        set({
+          items: get().items.map((i) =>
+            i.cartItemId === cartItemId
+              ? { ...i, quantity: i.quantity + 1 }
+              : i,
+          ),
+        });
+      },
 
-  decreaseQty: (cartItemId) => {
-    set({
-      items: get()
-        .items.map((i) =>
-          i.cartItemId === cartItemId ? { ...i, quantity: i.quantity - 1 } : i
-        )
-        .filter((i) => i.quantity > 0),
-    });
-  },
+      decreaseQty: (cartItemId) => {
+        set({
+          items: get()
+            .items.map((i) =>
+              i.cartItemId === cartItemId
+                ? { ...i, quantity: i.quantity - 1 }
+                : i,
+            )
+            .filter((i) => i.quantity > 0),
+        });
+      },
 
-  clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [] }),
 
-  getTotalItems: () =>
-    get().items.reduce((total, item) => total + item.quantity, 0),
+      getTotalItems: () =>
+        get().items.reduce((total, item) => total + item.quantity, 0),
 
-  getTotalPrice: () =>
-    get().items.reduce((total, item) => {
-      const base = item.price;
-      const customPrice =
-        item.customizations?.reduce(
-          (s: number, c: CartCustomization) => s + c.price,
-          0
-        ) ?? 0;
-      return total + item.quantity * (base + customPrice);
-    }, 0),
-}));
+      getTotalPrice: () =>
+        get().items.reduce((total, item) => {
+          const base = item.price;
+          const customPrice =
+            item.customizations?.reduce(
+              (s: number, c: CartCustomization) => s + c.price,
+              0,
+            ) ?? 0;
+          return total + item.quantity * (base + customPrice);
+        }, 0),
+    }),
+    {
+      name: "foodify-cart",
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ items: state.items }),
+    },
+  ),
+);

@@ -1,67 +1,51 @@
-// app/_layout.tsx
-import { hasSeenOnboarding } from "@/lib/onboarding";
+import { StripeProvider } from "@/lib/stripe";
 import useAuthStore from "@/store/auth.store";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "./global.css";
 
-let StripeProvider: any = ({ children }: any) => children;
-
-try {
-  const stripe = require("@stripe/stripe-react-native");
-  StripeProvider = stripe.StripeProvider;
-} catch (e) {
-  console.warn("Stripe not available - running in Expo Go mode");
-}
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { isLoading, fetchAuthenticatedUser, user } = useAuthStore();
-  const [onboardingChecked, setOnboardingChecked] = useState(false);
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const { isLoading, fetchAuthenticatedUser } = useAuthStore();
 
-  const [fontsLoaded, error] = useFonts({
-    "QuickSand-Bold": require("../assets/fonts/Quicksand-Bold.ttf"),
-    "QuickSand-Light": require("../assets/fonts/Quicksand-Light.ttf"),
-    "QuickSand-Medium": require("../assets/fonts/Quicksand-Medium.ttf"),
-    "QuickSand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
-    "QuickSand-SemiBold": require("../assets/fonts/Quicksand-SemiBold.ttf"),
+  const [fontsLoaded, fontError] = useFonts({
+    "Quicksand-Bold": require("../assets/fonts/Quicksand-Bold.ttf"),
+    "Quicksand-Light": require("../assets/fonts/Quicksand-Light.ttf"),
+    "Quicksand-Medium": require("../assets/fonts/Quicksand-Medium.ttf"),
+    "Quicksand-Regular": require("../assets/fonts/Quicksand-Regular.ttf"),
+    "Quicksand-SemiBold": require("../assets/fonts/Quicksand-SemiBold.ttf"),
   });
 
   useEffect(() => {
-    if (error) throw error;
-    if (fontsLoaded) SplashScreen.hideAsync();
-  }, [fontsLoaded, error]);
-
-  useEffect(() => {
     fetchAuthenticatedUser();
-  }, []);
+  }, [fetchAuthenticatedUser]);
 
   useEffect(() => {
-    checkOnboarding();
-  }, []);
+    if (fontsLoaded || fontError) SplashScreen.hideAsync();
+  }, [fontsLoaded, fontError]);
 
-  const checkOnboarding = async () => {
-    const seen = await hasSeenOnboarding();
-    setHasCompletedOnboarding(seen);
-    setOnboardingChecked(true);
-  };
+  if (fontError) throw fontError;
 
-  if (!fontsLoaded || isLoading || !onboardingChecked) {
+  if (!fontsLoaded || isLoading) {
     return null;
   }
 
   return (
-    <StripeProvider
-      publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}
-      merchantIdentifier="merchant.com.amira.foodify"
-    >
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(onboarding)/index" />
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(tabs)" />
-      </Stack>
-    </StripeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <StripeProvider
+        publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ""}
+        merchantIdentifier="merchant.com.foodify.app"
+      >
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(onboarding)/index" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+      </StripeProvider>
+    </GestureHandlerRootView>
   );
 }

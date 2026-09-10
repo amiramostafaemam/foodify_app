@@ -1,4 +1,3 @@
-// lib/payment.service.ts
 import { functions } from "./appwrite";
 
 export interface CreatePaymentIntentParams {
@@ -15,53 +14,51 @@ export interface PaymentIntentResponse {
   error?: string;
 }
 
+const PAYMENT_FUNCTION_ID =
+  process.env.EXPO_PUBLIC_APPWRITE_FUNCTION_PAYMENT_ID;
+
+/**
+ * Calls the Appwrite Function that talks to Stripe with the secret key and
+ * returns a PaymentIntent client secret. The secret key never touches the app.
+ */
 export const createPaymentIntent = async ({
   amount,
   currency = "usd",
   customerEmail,
   customerName,
 }: CreatePaymentIntentParams): Promise<PaymentIntentResponse> => {
-  try {
-    // Execute the function
-    const execution = await functions.createExecution(
-      process.env.EXPO_PUBLIC_APPWRITE_FUNCTION_PAYMENT_ID!,
-      JSON.stringify({
-        amount,
-        currency,
-        customerEmail,
-        customerName,
-      }),
-      false, // async execution = false (wait for response)
-    );
-
-    console.log("Execution Status:", execution.status);
-    console.log("Response Body:", execution.responseBody);
-
-    // Check execution status
-    if (execution.status === "completed") {
-      // Check if responseBody exists and is not empty
-      if (!execution.responseBody) {
-        throw new Error("Empty response from payment function");
-      }
-
-      try {
-        const response = JSON.parse(execution.responseBody);
-        return response;
-      } catch (parseError) {
-        console.error("JSON Parse Error:", parseError);
-        console.error("Raw Response:", execution.responseBody);
-        throw new Error(`Invalid response format: ${execution.responseBody}`);
-      }
-    } else if (execution.status === "failed") {
-      throw new Error(execution.errors || "Payment intent creation failed");
-    } else {
-      throw new Error("Unexpected execution status: " + execution.status);
-    }
-  } catch (error: any) {
-    console.error("Create Payment Intent Error:", error);
+  if (!PAYMENT_FUNCTION_ID) {
     return {
       success: false,
-      error: error.message || "Failed to create payment intent",
+      error: "Payment function is not configured (missing env var).",
+    };
+  }
+
+  try {
+    const execution = await functions.createExecution(
+      PAYMENT_FUNCTION_ID,
+      JSON.stringify({ amount, currency, customerEmail, customerName }),
+      false,
+    );
+
+    if (execution.status !== "completed") {
+      throw new Error(
+        execution.errors || `Payment function ${execution.status}`,
+      );
+    }
+
+    if (!execution.responseBody) {
+      throw new Error("Empty response from payment function");
+    }
+
+    return JSON.parse(execution.responseBody) as PaymentIntentResponse;
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create payment intent",
     };
   }
 };

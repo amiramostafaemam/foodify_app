@@ -1,6 +1,6 @@
 import { images } from "@/constants";
 import { router } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   Animated,
   Image,
@@ -17,7 +17,7 @@ interface ToastProps {
 }
 
 const Toast = ({ visible, onClose, isFirstItem = false }: ToastProps) => {
-  const fadeAnim = new Animated.Value(0);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
@@ -35,7 +35,7 @@ const Toast = ({ visible, onClose, isFirstItem = false }: ToastProps) => {
         useNativeDriver: true,
       }).start();
     }
-  }, [visible]);
+  }, [visible, fadeAnim]);
 
   if (!visible) return null;
 
@@ -126,7 +126,7 @@ const Toast = ({ visible, onClose, isFirstItem = false }: ToastProps) => {
                 router.push("/cart");
               }}
               style={{
-                backgroundColor: "#FF9C01",
+                backgroundColor: "#FE8C00",
                 paddingVertical: 14,
                 paddingHorizontal: 24,
                 borderRadius: 100,
@@ -174,7 +174,7 @@ const Toast = ({ visible, onClose, isFirstItem = false }: ToastProps) => {
                 style={{
                   color: "#1F2937",
                   fontSize: 16,
-                  fontFamily: "Quicksand-Semibold",
+                  fontFamily: "Quicksand-SemiBold",
                 }}
               >
                 Order More

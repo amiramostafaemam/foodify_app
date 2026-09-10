@@ -18,7 +18,7 @@ const CustomHeader = ({ title, style }: CustomHeaderProps) => {
         />
       </TouchableOpacity>
 
-      {title && <Text className="h3-bold text-dark-100 mb-0">{title}</Text>}
+      {title && <Text className="h3-bold mb-0 text-dark-100">{title}</Text>}
 
       <View className="size-5" />
     </View>

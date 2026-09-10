@@ -7,7 +7,7 @@ import { getOfferById, Offer } from "@/constants/offers.constants";
 import { useCartStore } from "@/store/cart.store";
 import { useLocalSearchParams } from "expo-router";
 import { useVideoPlayer, VideoView } from "expo-video";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
   SafeAreaView,
@@ -21,11 +21,11 @@ const StarRating = ({ rating }: { rating: number }) => {
         <Image
           key={star}
           source={images.star}
-          className="w-5 h-5"
-          tintColor={star <= Math.floor(rating) ? "#FF9C01" : "#D1D5DB"}
+          className="h-5 w-5"
+          tintColor={star <= Math.floor(rating) ? "#FE8C00" : "#D1D5DB"}
         />
       ))}
-      <Text className="paragraph-semibold text-[#878787] ml-2">{rating}/5</Text>
+      <Text className="paragraph-semibold ml-2 text-[#878787]">{rating}/5</Text>
     </View>
   );
 };
@@ -50,13 +50,17 @@ const OfferDetails = () => {
     player.muted = isMuted;
   });
 
+  useEffect(() => {
+    player.muted = isMuted;
+  }, [player, isMuted]);
+
   if (!offer) {
     return (
-      <SafeAreaView className="bg-white h-full flex-center ">
+      <SafeAreaView className="flex-center h-full bg-white ">
         <CustomHeader style="absolute top-10 left-5" />
         <Image
           source={images.notfound}
-          className="w-full h-80 scale-150 "
+          className="h-80 w-full scale-150 "
           resizeMode="contain"
         />
       </SafeAreaView>
@@ -99,7 +103,7 @@ const OfferDetails = () => {
 
   return (
     <>
-      <SafeAreaView className="bg-white h-full" edges={["top"]}>
+      <SafeAreaView className="h-full bg-white" edges={["top"]}>
         <View className="flex-1">
           <ScrollView
             contentContainerStyle={{ paddingBottom: 140 }}
@@ -111,8 +115,8 @@ const OfferDetails = () => {
             </View>
 
             {/* Video Section */}
-            <View className="w-full h-[300px] bg-black relative">
-              <View className="absolute inset-0 flex-center bg-black/10 z-10"></View>
+            <View className="relative h-[300px] w-full bg-black">
+              <View className="flex-center absolute inset-0 z-10 bg-black/10"></View>
               <VideoView
                 player={player}
                 style={{ width: "100%", height: "100%" }}
@@ -121,31 +125,40 @@ const OfferDetails = () => {
               />
 
               {/* Discount Badge */}
-              <View className="absolute top-4 left-4 bg-primary rounded-full px-4 py-2">
+              <View className="absolute left-4 top-4 rounded-full bg-primary px-4 py-2">
                 <Text className="body-bold text-white">
                   Save {offer.discount}%
                 </Text>
               </View>
+
+              {/* Mute toggle */}
+              <TouchableOpacity
+                onPress={() => setIsMuted((prev) => !prev)}
+                className="absolute bottom-4 right-4 z-20 h-10 w-10 items-center justify-center rounded-full bg-black/60"
+                activeOpacity={0.8}
+              >
+                <Text className="text-lg">{isMuted ? "🔇" : "🔊"}</Text>
+              </TouchableOpacity>
             </View>
 
             {/* Offer Info Section */}
             <View className="px-5 py-6">
               {/* Title & Rating */}
-              <Text className="h1-bold text-dark-100 mb-3">{offer.title}</Text>
+              <Text className="h1-bold mb-3 text-dark-100">{offer.title}</Text>
 
               <View className="mb-4">
                 <StarRating rating={offer.rating} />
               </View>
 
               {/* Price Section */}
-              <View className="flex-row items-center gap-3 mb-4">
+              <View className="mb-4 flex-row items-center gap-3">
                 <Text className="h3-bold text-gray-200 line-through">
                   ${offer.originalPrice.toFixed(2)}
                 </Text>
                 <Text className="h1-bold text-primary">
                   ${offer.discountedPrice.toFixed(2)}
                 </Text>
-                <View className="bg-success/10 rounded-full px-3 py-1">
+                <View className="rounded-full bg-success/10 px-3 py-1">
                   <Text className="small-bold text-success">
                     You save $
                     {(offer.originalPrice - offer.discountedPrice).toFixed(2)}
@@ -154,7 +167,7 @@ const OfferDetails = () => {
               </View>
 
               {/* Stats Section */}
-              <View className="py-4 px-5 mb-5 bg-primary/5 rounded-full">
+              <View className="mb-5 rounded-full bg-primary/5 px-5 py-4">
                 <View className="flex-row items-center justify-between">
                   <View className="flex-row items-center gap-2">
                     <Text className="text-2xl text-primary ">$</Text>
@@ -166,8 +179,8 @@ const OfferDetails = () => {
                   <View className="flex-row items-center gap-2">
                     <Image
                       source={images.clock}
-                      className="w-5 h-5"
-                      tintColor="#FF9C01"
+                      className="h-5 w-5"
+                      tintColor="#FE8C00"
                     />
                     <Text className="paragraph-semibold text-dark-100">
                       {offer.deliveryTime}
@@ -177,8 +190,8 @@ const OfferDetails = () => {
                   <View className="flex-row items-center gap-2">
                     <Image
                       source={images.star}
-                      className="w-5 h-5"
-                      tintColor="#FF9C01"
+                      className="h-5 w-5"
+                      tintColor="#FE8C00"
                     />
                     <Text className="paragraph-semibold text-dark-100">
                       {offer.rating}
@@ -189,28 +202,28 @@ const OfferDetails = () => {
 
               {/* Description */}
               <View className="mb-6">
-                <Text className="paragraph-medium text-[#6A6A6A] leading-[1.7]">
+                <Text className="paragraph-medium leading-[1.7] text-[#6A6A6A]">
                   {offer.description}
                 </Text>
               </View>
 
               {/* What's Included Section */}
               <View className="mb-6">
-                <Text className="h3-bold text-primary mb-4">
+                <Text className="h3-bold mb-4 text-primary">
                   What&#39;s Included?
                 </Text>
-                <View className="bg-white rounded-2xl shadow-md shadow-grey-300/50">
+                <View className="shadow-grey-300/50 rounded-2xl bg-white shadow-md">
                   {offer.items.map((item, index) => (
                     <View
                       key={index}
                       className="flex-row items-center justify-between p-4"
                     >
-                      <View className="flex-row items-center gap-3 flex-1">
-                        <Text className="paragraph-semibold text-dark-100 flex-1">
+                      <View className="flex-1 flex-row items-center gap-3">
+                        <Text className="paragraph-semibold flex-1 text-dark-100">
                           {item.name}
                         </Text>
                       </View>
-                      <View className="bg-primary/10 rounded-full px-3 py-1">
+                      <View className="rounded-full bg-primary/10 px-3 py-1">
                         <Text className="small-bold text-primary">
                           x{item.quantity}
                         </Text>
@@ -221,12 +234,12 @@ const OfferDetails = () => {
               </View>
 
               {/* Valid Until */}
-              <View className="bg-primary/5 rounded-full  p-4 mb-4 w-[250px]">
-                <View className="flex-row flex-center  gap-2">
+              <View className="mb-4 w-[250px]  rounded-full bg-primary/5 p-4">
+                <View className="flex-center flex-row  gap-2">
                   <Image
                     source={images.clock}
-                    className="w-5 h-5"
-                    tintColor="#FF9C01"
+                    className="h-5 w-5"
+                    tintColor="#FE8C00"
                   />
                   <Text className="paragraph-medium text-dark-100">
                     <Text className="paragraph-bold">Ended on : </Text>{" "}
@@ -247,7 +260,7 @@ const OfferDetails = () => {
             }}
           >
             <View
-              className="bg-white rounded-t-3xl w-full px-4"
+              className="w-full rounded-t-3xl bg-white px-4"
               style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: -2 },
@@ -263,27 +276,27 @@ const OfferDetails = () => {
                 <View className="flex-row items-center gap-5 rounded-full px-5 py-3">
                   <TouchableOpacity
                     onPress={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-9 h-9 rounded-[4px] bg-primary/5 items-center justify-center"
+                    className="h-9 w-9 items-center justify-center rounded-[4px] bg-primary/5"
                   >
                     <Image
                       source={images.minus}
-                      className="w-5 h-1"
-                      tintColor="#FF9C01"
+                      className="h-1 w-5"
+                      tintColor="#FE8C00"
                     />
                   </TouchableOpacity>
 
-                  <Text className="text-xl font-quicksand-bold text-dark-100 w-[12px] text-center">
+                  <Text className="w-[12px] text-center font-quicksand-bold text-xl text-dark-100">
                     {quantity}
                   </Text>
 
                   <TouchableOpacity
                     onPress={() => setQuantity(quantity + 1)}
-                    className="w-9 h-9 bg-primary/5 rounded-[4px] items-center justify-center"
+                    className="h-9 w-9 items-center justify-center rounded-[4px] bg-primary/5"
                   >
                     <Image
                       source={images.plus}
-                      className="w-5 h-5"
-                      tintColor="#FF9C01"
+                      className="h-5 w-5"
+                      tintColor="#FE8C00"
                     />
                   </TouchableOpacity>
                 </View>
@@ -297,7 +310,7 @@ const OfferDetails = () => {
                     leftIcon={
                       <Image
                         source={images.bag}
-                        className="w-5 h-5 mr-3"
+                        className="mr-3 h-5 w-5"
                         tintColor="white"
                       />
                     }

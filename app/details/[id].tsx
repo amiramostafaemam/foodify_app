@@ -49,7 +49,7 @@ const CustomizationCard = ({
   return (
     <TouchableOpacity
       onPress={onToggle}
-      className={`h-[120px] items-center rounded-2xl overflow-hidden ${
+      className={`h-[120px] items-center overflow-hidden rounded-2xl ${
         isSelected ? "bg-primary/90" : "bg-[#3C2F2F]"
       }`}
       style={{
@@ -62,19 +62,19 @@ const CustomizationCard = ({
       }}
       activeOpacity={0.7}
     >
-      <View className="w-full h-[75px] bg-white items-center justify-center rounded-b-2xl">
+      <View className="h-[75px] w-full items-center justify-center rounded-b-2xl bg-white">
         {image && (
           <Image
             source={image}
-            className="w-16 h-16 scale-125"
+            className="h-16 w-16 scale-125"
             resizeMode="contain"
           />
         )}
       </View>
 
-      <View className="w-full px-2 py-4 flex-row items-center justify-between">
+      <View className="w-full flex-row items-center justify-between px-2 py-4">
         <Text
-          className="text-white text-[12px] font-quicksand-semibold leading-[1.3] flex-1 mr-1"
+          className="mr-1 flex-1 font-quicksand-semibold text-[12px] leading-[1.3] text-white"
           numberOfLines={1}
         >
           {item.name}
@@ -82,18 +82,18 @@ const CustomizationCard = ({
 
         <TouchableOpacity
           onPress={onToggle}
-          className={`w-5 h-5 rounded-full items-center justify-center ${
+          className={`h-5 w-5 items-center justify-center rounded-full ${
             isSelected ? "bg-success" : "bg-[#EF2A39]"
           }`}
           activeOpacity={0.8}
         >
           {!isSelected && (
-            <Image source={images.plus} className="w-3 h-3" tintColor="white" />
+            <Image source={images.plus} className="h-3 w-3" tintColor="white" />
           )}
           {isSelected && (
             <Image
               source={images.check}
-              className="w-3 h-3"
+              className="h-3 w-3"
               tintColor="white"
             />
           )}
@@ -110,11 +110,11 @@ const StarRating = ({ rating }: { rating: number }) => {
         <Image
           key={star}
           source={images.star}
-          className="w-4 h-4"
-          tintColor={star <= rating ? "bg-primary" : "#D1D5DB"}
+          className="h-4 w-4"
+          tintColor={star <= rating ? "#FE8C00" : "#D1D5DB"}
         />
       ))}
-      <Text className="paragraph-semibold text-[#878787] ml-2">{rating}/5</Text>
+      <Text className="paragraph-semibold ml-2 text-[#878787]">{rating}/5</Text>
     </View>
   );
 };
@@ -241,30 +241,30 @@ const Details = () => {
 
   if (menuLoading || customizationsLoading || !menuItem) {
     return (
-      <SafeAreaView className="bg-white h-full flex-center">
-        <ActivityIndicator size="large" color="#FF9C01" />
+      <SafeAreaView className="flex-center h-full bg-white">
+        <ActivityIndicator size="large" color="#FE8C00" />
       </SafeAreaView>
     );
   }
 
   return (
     <>
-      <SafeAreaView className="bg-white h-full" edges={["top"]}>
+      <SafeAreaView className="h-full bg-white" edges={["top"]}>
         <View className="flex-1">
           <ScrollView
             contentContainerStyle={{ paddingBottom: 140 }}
             showsVerticalScrollIndicator={false}
           >
             <View className="flex-row px-5 py-4">
-              <View className="flex-1 pr-3 justify-start">
+              <View className="flex-1 justify-start pr-3">
                 <CustomHeader style="mb-7" />
                 {/* Menu Item Name */}
-                <Text className="h1-bold text-dark-100 mb-2">
+                <Text className="h1-bold mb-2 text-dark-100">
                   {menuItem.name}
                 </Text>
                 {/* Category Name */}
                 {categoryName && (
-                  <Text className="paragraph-medium text-[#878787] mb-3">
+                  <Text className="paragraph-medium mb-3 text-[#878787]">
                     {categoryName}
                   </Text>
                 )}
@@ -275,16 +275,16 @@ const Details = () => {
                 </View>
 
                 {/* Price */}
-                <Text className="font-quicksand-bold text-2xl mb-4 text-dark-100">
-                  <Text className="text-primary font-bold text-2xl">$</Text>
+                <Text className="mb-4 font-quicksand-bold text-2xl text-dark-100">
+                  <Text className="text-2xl font-bold text-primary">$</Text>
                   {menuItem.price.toFixed(2)}
                 </Text>
 
                 {/* Calories & Protein */}
-                <View className="flex-row gap-2 mb-4">
+                <View className="mb-4 flex-row gap-2">
                   {/* Calories */}
                   <View className="flex-1 py-3">
-                    <Text className="paragraph-medium text-[#878787] mb-1">
+                    <Text className="paragraph-medium mb-1 text-[#878787]">
                       Calories
                     </Text>
                     <Text className="font-quicksand-semibold text-lg text-dark-100">
@@ -294,7 +294,7 @@ const Details = () => {
 
                   {/* Protein */}
                   <View className="flex-1 py-3">
-                    <Text className="paragraph-medium text-[#878787] mb-1">
+                    <Text className="paragraph-medium mb-1 text-[#878787]">
                       Protein
                     </Text>
                     <Text className="font-quicksand-semibold text-lg text-dark-100">
@@ -308,18 +308,18 @@ const Details = () => {
               <View className="flex-1 items-center justify-center">
                 <Image
                   source={{ uri: menuItem.image_url }}
-                  className="w-full h-80 scale-125"
+                  className="h-80 w-full scale-125"
                   resizeMode="contain"
                 />
               </View>
             </View>
 
             {/* Stats Section */}
-            <View className="py-3 px-5 mb-5 bg-primary/5 rounded-full w-[390px] mx-auto">
+            <View className="mx-auto mb-5 w-[390px] rounded-full bg-primary/5 px-5 py-3">
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-base text-dark-100 font-quicksand-semibold">
-                    <Text className="text-primary font-extrabold">$</Text> Free
+                  <Text className="font-quicksand-semibold text-base text-dark-100">
+                    <Text className="font-extrabold text-primary">$</Text> Free
                     Delivery
                   </Text>
                 </View>
@@ -327,10 +327,10 @@ const Details = () => {
                 <View className="flex-row items-center gap-2">
                   <Image
                     source={images.clock}
-                    className="w-4 h-4"
-                    tintColor="text-primary"
+                    className="h-4 w-4"
+                    tintColor="#FE8C00"
                   />
-                  <Text className="text-base text-dark-100 font-quicksand-semibold">
+                  <Text className="font-quicksand-semibold text-base text-dark-100">
                     20 - 30 mins
                   </Text>
                 </View>
@@ -338,10 +338,10 @@ const Details = () => {
                 <View className="flex-row items-center gap-2">
                   <Image
                     source={images.star}
-                    className="w-4 h-4"
-                    tintColor="text-primary"
+                    className="h-4 w-4"
+                    tintColor="#FE8C00"
                   />
-                  <Text className="text-base font-quicksand-semibold text-dark-100">
+                  <Text className="font-quicksand-semibold text-base text-dark-100">
                     {menuItem.rating}
                   </Text>
                 </View>
@@ -349,8 +349,8 @@ const Details = () => {
             </View>
 
             {/* Description */}
-            <View className="px-5 mb-5">
-              <Text className="text-base font-quicksand-medium text-[#6A6A6A] leading-[1.7]">
+            <View className="mb-5 px-5">
+              <Text className="font-quicksand-medium text-base leading-[1.7] text-[#6A6A6A]">
                 {menuItem.description ||
                   "Delicious and freshly prepared meal with high-quality ingredients."}
               </Text>
@@ -359,7 +359,7 @@ const Details = () => {
             {/* Toppings */}
             {toppings.length > 0 && (
               <View className="mb-6">
-                <Text className="h3-bold text-dark-100 px-5 mb-4">
+                <Text className="h3-bold mb-4 px-5 text-dark-100">
                   Toppings
                 </Text>
                 <FlatList
@@ -390,7 +390,7 @@ const Details = () => {
             {/* Side Options */}
             {sides.length > 0 && (
               <View className="mb-6">
-                <Text className="h3-bold text-dark-100 px-5 mb-4">
+                <Text className="h3-bold mb-4 px-5 text-dark-100">
                   Side Options
                 </Text>
 
@@ -430,7 +430,7 @@ const Details = () => {
             }}
           >
             <View
-              className="bg-white rounded-t-3xl w-full px-4"
+              className="w-full rounded-t-3xl bg-white px-4"
               style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: -2 },
@@ -445,27 +445,27 @@ const Details = () => {
                 <View className="flex-row items-center gap-5 rounded-full px-5 py-3">
                   <TouchableOpacity
                     onPress={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-9 h-9 rounded-[4px] bg-primary/5 items-center justify-center"
+                    className="h-9 w-9 items-center justify-center rounded-[4px] bg-primary/5"
                   >
                     <Image
                       source={images.minus}
-                      className="w-5 h-1"
-                      tintColor="#FF9C01"
+                      className="h-1 w-5"
+                      tintColor="#FE8C00"
                     />
                   </TouchableOpacity>
 
-                  <Text className="text-xl font-quicksand-bold text-dark-100 w-[12px] text-center">
+                  <Text className="w-[12px] text-center font-quicksand-bold text-xl text-dark-100">
                     {quantity}
                   </Text>
 
                   <TouchableOpacity
                     onPress={() => setQuantity(quantity + 1)}
-                    className="w-9 h-9 bg-primary/5 rounded-[4px] items-center justify-center"
+                    className="h-9 w-9 items-center justify-center rounded-[4px] bg-primary/5"
                   >
                     <Image
                       source={images.plus}
-                      className="w-5 h-5"
-                      tintColor="#FF9C01"
+                      className="h-5 w-5"
+                      tintColor="#FE8C00"
                     />
                   </TouchableOpacity>
                 </View>
@@ -478,7 +478,7 @@ const Details = () => {
                     leftIcon={
                       <Image
                         source={images.bag}
-                        className="w-5 h-5 mr-3"
+                        className="mr-3 h-5 w-5"
                         tintColor="white"
                       />
                     }

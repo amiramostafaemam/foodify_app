@@ -1,8 +1,8 @@
-import { View, Text, FlatList, TouchableOpacity, Platform } from "react-native";
 import { Category } from "@/type";
+import cn from "clsx";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import cn from "clsx";
+import { FlatList, Platform, Text, TouchableOpacity } from "react-native";
 
 const Filter = ({ categories }: { categories: Category[] }) => {
   const searchParams = useLocalSearchParams();
@@ -31,7 +31,7 @@ const Filter = ({ categories }: { categories: Category[] }) => {
           key={item.$id}
           className={cn(
             "filter",
-            active === item.$id ? "bg-amber-500" : "bg-white"
+            active === item.$id ? "bg-amber-500" : "bg-white",
           )}
           style={
             Platform.OS === "android"
@@ -43,7 +43,7 @@ const Filter = ({ categories }: { categories: Category[] }) => {
           <Text
             className={cn(
               "body-medium",
-              active === item.$id ? "text-white" : "text-gray-200"
+              active === item.$id ? "text-white" : "text-gray-200",
             )}
           >
             {item.name}

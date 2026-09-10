@@ -38,7 +38,7 @@ const SuccessModal = ({
     } else {
       scaleAnim.setValue(0);
     }
-  }, [visible]);
+  }, [visible, scaleAnim]);
 
   return (
     <Modal
@@ -47,28 +47,28 @@ const SuccessModal = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View className="flex-1 bg-black/50 items-center justify-center px-5">
+      <View className="flex-1 items-center justify-center bg-black/50 px-5">
         <Animated.View
           style={{ transform: [{ scale: scaleAnim }] }}
-          className="bg-white rounded-3xl p-8 items-center w-full max-w-sm shadow-2xl"
+          className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl"
         >
           <Image
             source={images.successs}
-            className="w-60 h-60 items-center justify-center mb-2"
+            className="mb-2 h-60 w-60 items-center justify-center"
             resizeMode="contain"
           />
 
-          <Text className="font-quicksand-bold text-2xl text-primary mb-3 text-center">
+          <Text className="mb-3 text-center font-quicksand-bold text-2xl text-primary">
             Profile Updated!
           </Text>
-          <Text className="font-quicksand-regular text-base text-gray-400 mb-6 text-center">
+          <Text className="font-quicksand-regular mb-6 text-center text-base text-gray-400">
             Your profile information has been updated successfully.
           </Text>
 
           <View className="w-full">
             <TouchableOpacity
               onPress={onClose}
-              className="bg-primary py-4 rounded-xl items-center"
+              className="items-center rounded-xl bg-primary py-4"
               activeOpacity={0.8}
             >
               <Text className="base-bold text-white">Back to Profile</Text>
@@ -140,7 +140,7 @@ const EditProfile = () => {
   // No user state
   if (!user) {
     return (
-      <SafeAreaView className="bg-white h-full flex-center">
+      <SafeAreaView className="flex-center h-full bg-white">
         <Text className="paragraph-regular text-gray-200">No user found</Text>
         <TouchableOpacity
           onPress={() => router.replace("/sign-in")}
@@ -153,18 +153,18 @@ const EditProfile = () => {
   }
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="h-full bg-white">
       <ScrollView contentContainerClassName="px-5 pb-10 ">
         <CustomHeader title="Edit Profile" />
 
         {/* Profile Avatar Preview */}
         <View className="flex-center my-8">
-          <View className="w-32 h-32 rounded-full bg-primary items-center justify-center shadow-lg">
-            <Text className="text-6xl font-quicksand-bold text-white">
+          <View className="h-32 w-32 items-center justify-center rounded-full bg-primary shadow-lg">
+            <Text className="font-quicksand-bold text-6xl text-white">
               {form.name ? form.name.charAt(0).toUpperCase() : "?"}
             </Text>
           </View>
-          <Text className="paragraph-regular text-gray-400 mt-3">
+          <Text className="paragraph-regular mt-3 text-gray-400">
             Profile preview
           </Text>
         </View>
@@ -213,7 +213,7 @@ const EditProfile = () => {
 
             <TouchableOpacity
               onPress={() => router.back()}
-              className="flex-center py-4 rounded-xl bg-[#F3F4F6]"
+              className="flex-center rounded-xl bg-[#F3F4F6] py-4"
               disabled={isSubmitting}
             >
               <Text className="paragraph-semibold text-[#1F2937]">Cancel</Text>

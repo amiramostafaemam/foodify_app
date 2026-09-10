@@ -42,7 +42,7 @@ const Search = () => {
   }, [category, query]);
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="h-full bg-white">
       <FlatList
         data={data || []}
         renderItem={({ item, index }) => {
@@ -51,8 +51,8 @@ const Search = () => {
           return (
             <View
               className={cn(
-                "flex-1 max-w-[48%]",
-                !isFirstRightColItem ? "mt-10" : "mt-0"
+                "max-w-[48%] flex-1",
+                !isFirstRightColItem ? "mt-10" : "mt-0",
               )}
             >
               <MenuCard item={item} />
@@ -65,12 +65,12 @@ const Search = () => {
         contentContainerClassName="gap-7 px-5 pb-32"
         ListHeaderComponent={() => (
           <View className="my-5 gap-5">
-            <View className="flex-between flex-row w-full">
+            <View className="flex-between w-full flex-row">
               <View className="flex-start">
                 <Text className="small-bold uppercase text-primary">
                   Search
                 </Text>
-                <View className="flex-start flex-row gap-x-1 mt-0.5">
+                <View className="flex-start mt-0.5 flex-row gap-x-1">
                   <Text className="paragraph-semibold text-dark-100">
                     Find your favorite food
                   </Text>
@@ -90,13 +90,13 @@ const Search = () => {
             <View className="flex-center px-10">
               <Image
                 source={images.emptyState}
-                className="w-[250px] h-[300px] scale-110"
+                className="h-[300px] w-[250px] scale-110"
                 resizeMode="contain"
               />
-              <Text className="h3-bold text-dark-100 text-center mb-2">
+              <Text className="h3-bold mb-2 text-center text-dark-100">
                 Nothing matched your search
               </Text>
-              <Text className="paragraph-medium text-[#878787] text-center leading-[24px]">
+              <Text className="paragraph-medium text-center leading-[24px] text-[#878787]">
                 Try a different search term or check for typos.
               </Text>
             </View>

@@ -59,56 +59,6 @@ import tomatoes from "@/assets/images/tomatoes.png";
 import notfound from "@/assets/images/not-found.png";
 import canceled from "@/assets/images/canceled.png";
 
-export const CATEGORIES = [
-  {
-    id: "1",
-    name: "All",
-  },
-  {
-    id: "2",
-    name: "Burger",
-  },
-  {
-    id: "3",
-    name: "Pizza",
-  },
-  {
-    id: "4",
-    name: "Wrap",
-  },
-  {
-    id: "5",
-    name: "Burrito",
-  },
-];
-
-export const offers = [
-  {
-    id: 1,
-    title: "SUMMER COMBO",
-    image: burgerOne,
-    color: "#D33B0D",
-  },
-  {
-    id: 2,
-    title: "BURGER BASH",
-    image: burgerTwo,
-    color: "#DF5A0C",
-  },
-  {
-    id: 3,
-    title: "PIZZA PARTY",
-    image: pizzaOne,
-    color: "#084137",
-  },
-  {
-    id: 4,
-    title: "BURRITO DELIGHT",
-    image: buritto,
-    color: "#EB920C",
-  },
-];
-
 export const images = {
   avatar,
   avocado,
@@ -171,39 +121,36 @@ export const images = {
   notfound,
 };
 
-export const getCustomizationImage = (name: string) => {
-  const normalizedName = name.toLowerCase().replace(/\s+/g, "");
-
-  const imageMap: { [key: string]: any } = {
-    avocado: avocado,
-    bacon: bacon,
-    cheese: cheese,
-    pickles: pickles,
-    mushrooms: mushrooms,
-    onions: onions,
-    tomatoes: tomatoes,
-    fries: fries,
-    onionrings: onionRings,
-    mozarellasticks: mozarellaSticks,
-    mozzarellasticks: mozarellaSticks,
-    coleslaw: coleslaw,
-    salad: salad,
-    coke: coke,
-    olives: olives,
-    potatowedges: potato,
-    chickennuggets: chicken,
-    jalapeños: jalapeno,
-    icedtea: tea,
-    garlicbread: bread,
-    sweetcorn: corn,
-    chocolavacake: chocolava,
-    rice: rice,
-    beans: beans,
-    pepperoni: pepperoni,
-    grilledonions: grilledOnion,
-  };
-
-  return imageMap[normalizedName] || null;
+const customizationImageMap: Record<string, number> = {
+  avocado,
+  bacon,
+  cheese,
+  pickles,
+  mushrooms,
+  onions,
+  tomatoes,
+  fries,
+  onionrings: onionRings,
+  mozarellasticks: mozarellaSticks,
+  mozzarellasticks: mozarellaSticks,
+  coleslaw,
+  salad,
+  coke,
+  olives,
+  potatowedges: potato,
+  chickennuggets: chicken,
+  jalapeños: jalapeno,
+  icedtea: tea,
+  garlicbread: bread,
+  sweetcorn: corn,
+  chocolavacake: chocolava,
+  rice,
+  beans,
+  pepperoni,
+  grilledonions: grilledOnion,
 };
 
-// export * from "./offers.constants";
+export const getCustomizationImage = (name: string): number | null => {
+  const normalizedName = name.toLowerCase().replace(/\s+/g, "");
+  return customizationImageMap[normalizedName] ?? null;
+};

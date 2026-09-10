@@ -1,4 +1,3 @@
-// lib/appwrite.ts
 import {
   Category,
   CreateUserParams,
@@ -22,12 +21,30 @@ import {
   Storage,
 } from "react-native-appwrite";
 
+const requiredEnv = {
+  EXPO_PUBLIC_APPWRITE_ENDPOINT: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
+  EXPO_PUBLIC_APPWRITE_PROJECT_ID: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
+  EXPO_PUBLIC_APPWRITE_DATABASE_ID:
+    process.env.EXPO_PUBLIC_APPWRITE_DATABASE_ID,
+  EXPO_PUBLIC_APPWRITE_BUCKET_ID: process.env.EXPO_PUBLIC_APPWRITE_BUCKET_ID,
+};
+
+const missing = Object.entries(requiredEnv)
+  .filter(([, value]) => !value)
+  .map(([key]) => key);
+
+if (missing.length > 0) {
+  throw new Error(
+    `Missing env vars: ${missing.join(", ")}. Copy .env.example to .env and fill it in.`,
+  );
+}
+
 export const appwriteConfig = {
-  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT,
-  projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
-  platform: "com.amira.foodify",
-  databaseId: "69481a45003716bfd6c4",
-  bucketId: "69497c37000a13628bac",
+  endpoint: requiredEnv.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
+  projectId: requiredEnv.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
+  platform: process.env.EXPO_PUBLIC_APPWRITE_PLATFORM ?? "com.foodify.app",
+  databaseId: requiredEnv.EXPO_PUBLIC_APPWRITE_DATABASE_ID!,
+  bucketId: requiredEnv.EXPO_PUBLIC_APPWRITE_BUCKET_ID!,
   userCollectionId: "user",
   categoriesCollectionId: "categories",
   customizationsCollectionId: "customizations",
@@ -39,8 +56,8 @@ export const appwriteConfig = {
 export const client = new Client();
 
 client
-  .setEndpoint(appwriteConfig.endpoint!)
-  .setProject(appwriteConfig.projectId!)
+  .setEndpoint(appwriteConfig.endpoint)
+  .setProject(appwriteConfig.projectId)
   .setPlatform(appwriteConfig.platform);
 
 export const account = new Account(client);

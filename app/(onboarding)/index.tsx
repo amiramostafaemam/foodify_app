@@ -45,10 +45,10 @@ export default function Onboarding() {
       {!isLastSlide && (
         <TouchableOpacity
           onPress={finishOnboarding}
-          className="absolute top-14 right-6 z-10"
+          className="absolute right-6 top-14 z-10"
           activeOpacity={0.7}
         >
-          <Text className="text-gray-400 font-semibold">Skip</Text>
+          <Text className="font-semibold text-gray-400">Skip</Text>
         </TouchableOpacity>
       )}
 
@@ -68,24 +68,24 @@ export default function Onboarding() {
           <View style={{ width }} className="items-center justify-center px-6">
             <Image
               source={item.image}
-              className="w-72 h-72"
+              className="h-72 w-72"
               resizeMode="contain"
             />
-            <Text className="text-2xl font-bold mt-8 text-center">
+            <Text className="mt-8 text-center text-2xl font-bold">
               {item.title}
             </Text>
-            <Text className="text-gray-400 text-center mt-3">
+            <Text className="mt-3 text-center text-gray-400">
               {item.description}
             </Text>
           </View>
         )}
       />
 
-      <View className="flex-row justify-center mb-6">
+      <View className="mb-6 flex-row justify-center">
         {onboardingSlides.map((_, index) => (
           <View
             key={index}
-            className={`h-2 mx-1 rounded-full ${
+            className={`mx-1 h-2 rounded-full ${
               currentIndex === index ? "w-6 bg-primary" : "w-2 bg-gray-300"
             }`}
           />
@@ -94,11 +94,11 @@ export default function Onboarding() {
 
       <TouchableOpacity
         onPress={handleNext}
-        className="bg-primary mx-6 mb-10 py-4 rounded-full"
+        className="mx-6 mb-10 rounded-full bg-primary py-4"
         activeOpacity={0.7}
         disabled={isNavigating.current}
       >
-        <Text className="text-white text-center font-bold text-lg">
+        <Text className="text-center text-lg font-bold text-white">
           {isLastSlide ? "Get Started" : "Next"}
         </Text>
       </TouchableOpacity>

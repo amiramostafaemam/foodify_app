@@ -60,7 +60,7 @@ const LogoutModal = ({
       scaleAnim.setValue(0);
       shakeAnim.setValue(0);
     }
-  }, [visible]);
+  }, [visible, scaleAnim, shakeAnim]);
 
   return (
     <Modal
@@ -69,27 +69,27 @@ const LogoutModal = ({
       animationType="fade"
       onRequestClose={onCancel}
     >
-      <View className="flex-1 bg-black/50 items-center justify-center px-5">
+      <View className="flex-1 items-center justify-center bg-black/50 px-5">
         <Animated.View
           style={{
             transform: [{ scale: scaleAnim }, { translateX: shakeAnim }],
           }}
-          className="bg-white rounded-3xl p-8 items-center w-full max-w-sm shadow-2xl"
+          className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl"
         >
           {/* Warning Icon */}
-          <View className="w-24 h-24 bg-red-100 rounded-full items-center justify-center mb-6">
+          <View className="mb-6 h-24 w-24 items-center justify-center rounded-full bg-red-100">
             <Image
               source={require("@/assets/icons/logout.png")}
-              className="w-12 h-12"
+              className="h-12 w-12"
               tintColor="#EF4444"
             />
           </View>
 
           {/* Logout Text */}
-          <Text className="font-quicksand-bold text-2xl text-dark-100 mb-3 text-center">
+          <Text className="mb-3 text-center font-quicksand-bold text-2xl text-dark-100">
             Logout
           </Text>
-          <Text className="font-quicksand-regular text-base text-gray-400 mb-6 text-center">
+          <Text className="font-quicksand-regular mb-6 text-center text-base text-gray-400">
             Are you sure you want to logout?
           </Text>
 
@@ -97,7 +97,7 @@ const LogoutModal = ({
           <View className="w-full gap-3">
             <TouchableOpacity
               onPress={onConfirm}
-              className="bg-red-500 py-4 rounded-xl items-center"
+              className="items-center rounded-xl bg-red-500 py-4"
               activeOpacity={0.8}
             >
               <Text className="base-bold text-white">Logout</Text>
@@ -105,7 +105,7 @@ const LogoutModal = ({
 
             <TouchableOpacity
               onPress={onCancel}
-              className="bg-[#F3F4F6] py-4 rounded-xl items-center"
+              className="items-center rounded-xl bg-[#F3F4F6] py-4"
               activeOpacity={0.8}
             >
               <Text className="base-bold text-[#1F2937]">Cancel</Text>
@@ -145,7 +145,7 @@ const Profile = () => {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="bg-white h-full flex-center">
+      <SafeAreaView className="flex-center h-full bg-white">
         <Text className="paragraph-regular text-gray-200">Loading...</Text>
       </SafeAreaView>
     );
@@ -153,7 +153,7 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <SafeAreaView className="bg-white h-full flex-center">
+      <SafeAreaView className="flex-center h-full bg-white">
         <Text className="paragraph-regular text-gray-200">
           No user data found
         </Text>
@@ -165,7 +165,7 @@ const Profile = () => {
   const avatarLetter = user.name?.charAt(0).toUpperCase() || "?";
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <SafeAreaView className="h-full bg-white">
       <ScrollView
         contentContainerClassName="px-5 pb-32"
         showsVerticalScrollIndicator={false}
@@ -174,16 +174,16 @@ const Profile = () => {
 
         {/* Avatar Section with Letter */}
         <View className="flex-center mb-8">
-          <View className="w-32 h-32 rounded-full bg-primary items-center justify-center shadow-xl shadow-primary/30">
-            <Text className="text-6xl font-quicksand-bold text-white">
+          <View className="h-32 w-32 items-center justify-center rounded-full bg-primary shadow-xl shadow-primary/30">
+            <Text className="font-quicksand-bold text-6xl text-white">
               {avatarLetter}
             </Text>
           </View>
         </View>
 
         {/* User Info Card */}
-        <View className="bg-gray-50 rounded-2xl p-5 mb-6 shadow-sm shadow-gray/20">
-          <Text className="h3-bold text-primary mb-4">
+        <View className="shadow-gray/20 mb-6 rounded-2xl bg-gray-50 p-5 shadow-sm">
+          <Text className="h3-bold mb-4 text-primary">
             Personal Information
           </Text>
 
@@ -207,8 +207,8 @@ const Profile = () => {
         </View>
 
         {/* Addresses Card */}
-        <View className="bg-gray-50 rounded-2xl p-5 mb-6 shadow-sm shadow-gray/20">
-          <Text className="h3-bold text-primary mb-4">Addresses</Text>
+        <View className="shadow-gray/20 mb-6 rounded-2xl bg-gray-50 p-5 shadow-sm">
+          <Text className="h3-bold mb-4 text-primary">Addresses</Text>
 
           <ProfileField
             label="Home Address"
@@ -224,7 +224,7 @@ const Profile = () => {
         </View>
 
         {/* Action Buttons */}
-        <View className="gap-4 mt-2">
+        <View className="mt-2 gap-4">
           <CustomButton
             title="Edit Profile"
             onPress={handleEdit}
@@ -234,11 +234,11 @@ const Profile = () => {
 
           <TouchableOpacity
             onPress={handleLogoutPress}
-            className="border-2 border-red-500 rounded-xl p-4 w-full flex-center flex-row"
+            className="flex-center w-full flex-row rounded-xl border-2 border-red-500 p-4"
           >
             <Image
               source={require("@/assets/icons/logout.png")}
-              className="w-6 h-6 mr-2"
+              className="mr-2 h-6 w-6"
               tintColor="#EF4444"
             />
             <Text className="paragraph-bold text-red-500">Logout</Text>
