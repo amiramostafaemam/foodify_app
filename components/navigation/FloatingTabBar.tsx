@@ -6,20 +6,19 @@ import {
   User,
   type LucideIcon,
 } from "lucide-react-native";
-import { Dimensions, Pressable, Text, View } from "react-native";
-import Animated, {
-  useAnimatedProps,
-  useDerivedValue,
-  withSpring,
-} from "react-native-reanimated";
+import { useEffect } from "react";
+import {
+  Animated,
+  Dimensions,
+  Pressable,
+  Text,
+  useAnimatedValue,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Circle, Path } from "react-native-svg";
-
-const AnimatedPath = Animated.createAnimatedComponent(Path);
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const PRIMARY = "#FE8C00";
-const INACTIVE = "#9A9A9A";
+const INACTIVE = "#9AA0A6";
 
 const TABS: Record<string, { label: string; Icon: LucideIcon }> = {
   index: { label: "Home", Icon: House },
@@ -28,23 +27,17 @@ const TABS: Record<string, { label: string; Icon: LucideIcon }> = {
   profile: { label: "Profile", Icon: User },
 };
 
-const MARGIN = 20;
+const MARGIN = 18;
 const BAR_W = Dimensions.get("window").width - MARGIN * 2;
-const BAR_H = 66;
-const RADIUS = 26;
-const PAD = 16; // space above the bar for the notch + dot
-const NOTCH_W = 58;
-const NOTCH_D = 9;
+const BAR_H = 64;
+const BUBBLE = 52;
+const BUBBLE_RISE = 22; // how far the bubble pokes above the bar
 
 /** Bottom padding a tab screen should reserve so content clears the bar. */
-export const TAB_BAR_SPACE = PAD + BAR_H + 28;
+export const TAB_BAR_SPACE = BAR_H + BUBBLE_RISE + 28;
 
-// Structural slice of @react-navigation's BottomTabBarProps — just what we read.
 type TabBarProps = {
-  state: {
-    index: number;
-    routes: { key: string; name: string }[];
-  };
+  state: { index: number; routes: { key: string; name: string }[] };
   navigation: {
     emit: (event: {
       type: "tabPress";
@@ -55,35 +48,14 @@ type TabBarProps = {
   };
 };
 
-/** Rounded bar with a smooth concave notch dipping into the top edge at `cx`. */
-const buildBarPath = (cx: number) => {
-  "worklet";
-  const h = PAD + BAR_H;
-  const half = NOTCH_W / 2;
-  const l = cx - half;
-  const r = cx + half;
-  return (
-    `M ${RADIUS} ${PAD}` +
-    `L ${l} ${PAD}` +
-    `C ${l + half * 0.35} ${PAD} ${cx - half * 0.55} ${PAD + NOTCH_D} ${cx} ${PAD + NOTCH_D}` +
-    `C ${cx + half * 0.55} ${PAD + NOTCH_D} ${r - half * 0.35} ${PAD} ${r} ${PAD}` +
-    `L ${BAR_W - RADIUS} ${PAD}` +
-    `Q ${BAR_W} ${PAD} ${BAR_W} ${PAD + RADIUS}` +
-    `L ${BAR_W} ${h - RADIUS}` +
-    `Q ${BAR_W} ${h} ${BAR_W - RADIUS} ${h}` +
-    `L ${RADIUS} ${h}` +
-    `Q 0 ${h} 0 ${h - RADIUS}` +
-    `L 0 ${PAD + RADIUS}` +
-    `Q 0 ${PAD} ${RADIUS} ${PAD}` +
-    "Z"
-  );
-};
-
-const CartBadge = () => {
+const CartBadge = ({ color }: { color: string }) => {
   const count = useCartStore((s) => s.getTotalItems());
   if (count === 0) return null;
   return (
-    <View className="absolute -right-2.5 -top-1.5 h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1">
+    <View
+      className="absolute -right-2 -top-1 h-4 min-w-4 items-center justify-center rounded-full px-1"
+      style={{ backgroundColor: color }}
+    >
       <Text className="font-quicksand-bold text-[9px] text-white">
         {count > 9 ? "9+" : count}
       </Text>
@@ -93,17 +65,24 @@ const CartBadge = () => {
 
 const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
   const insets = useSafeAreaInsets();
-  const tabW = BAR_W / state.routes.length;
-  const activeIndex = state.index;
-  const targetCx = tabW * activeIndex + tabW / 2;
+  const tabs = state.routes.filter((r) => TABS[r.name]);
+  const tabW = BAR_W / tabs.length;
 
-  const cx = useDerivedValue(
-    () => withSpring(targetCx, { damping: 18, stiffness: 160 }),
-    [targetCx],
-  );
+  const bubbleLeft = (i: number) => tabW * i + tabW / 2 - BUBBLE / 2;
+  const translateX = useAnimatedValue(bubbleLeft(state.index));
 
-  const pathProps = useAnimatedProps(() => ({ d: buildBarPath(cx.value) }));
-  const dotProps = useAnimatedProps(() => ({ cx: cx.value }));
+  useEffect(() => {
+    Animated.spring(translateX, {
+      toValue: bubbleLeft(state.index),
+      useNativeDriver: true,
+      damping: 16,
+      stiffness: 170,
+      mass: 0.9,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.index, tabW]);
+
+  const ActiveIcon = TABS[tabs[state.index]?.name]?.Icon ?? House;
 
   return (
     <View
@@ -112,39 +91,26 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
         position: "absolute",
         left: MARGIN,
         right: MARGIN,
-        bottom: Math.max(insets.bottom, 12),
+        bottom: Math.max(insets.bottom, 10),
+        height: BAR_H + BUBBLE_RISE,
       }}
     >
-      <Svg
-        width={BAR_W}
-        height={PAD + BAR_H}
+      {/* Bar */}
+      <View
+        className="absolute inset-x-0 bottom-0 flex-row rounded-full bg-white"
         style={{
-          position: "absolute",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: 0.12,
-          shadowRadius: 14,
-          elevation: 10,
+          height: BAR_H,
+          shadowColor: "#8A6A3A",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.18,
+          shadowRadius: 18,
+          elevation: 12,
         }}
       >
-        <AnimatedPath animatedProps={pathProps} fill="#FFFFFF" />
-        <AnimatedCircle
-          animatedProps={dotProps}
-          cy={PAD - 3}
-          r={4}
-          fill={PRIMARY}
-        />
-      </Svg>
-
-      <View
-        style={{ height: PAD + BAR_H, paddingTop: PAD }}
-        className="flex-row"
-      >
-        {state.routes.map((route, i) => {
-          const tab = TABS[route.name];
-          if (!tab) return null;
+        {tabs.map((route, i) => {
+          const { label } = TABS[route.name];
+          const { Icon } = TABS[route.name];
           const focused = state.index === i;
-          const { Icon } = tab;
 
           const onPress = () => {
             const event = navigation.emit({
@@ -161,29 +127,52 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
             <Pressable
               key={route.key}
               onPress={onPress}
-              className="flex-1 items-center justify-center gap-1"
+              className="flex-1 items-center justify-center"
             >
-              <View
-                className="relative"
-                style={{ marginTop: focused ? -4 : 0 }}
-              >
-                <Icon
-                  size={22}
-                  color={focused ? PRIMARY : INACTIVE}
-                  strokeWidth={focused ? 2.4 : 2}
-                />
-                {route.name === "cart" && <CartBadge />}
+              <View className="h-6 items-center justify-center">
+                {!focused && (
+                  <View className="relative">
+                    <Icon size={22} color={INACTIVE} strokeWidth={2} />
+                    {route.name === "cart" && <CartBadge color={PRIMARY} />}
+                  </View>
+                )}
               </View>
               <Text
-                className="font-quicksand-medium text-[11px]"
+                className="mt-1 font-quicksand-semibold text-[11px]"
                 style={{ color: focused ? PRIMARY : INACTIVE }}
               >
-                {tab.label}
+                {label}
               </Text>
             </Pressable>
           );
         })}
       </View>
+
+      {/* Floating active bubble */}
+      <Animated.View
+        pointerEvents="none"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: BUBBLE,
+          height: BUBBLE,
+          borderRadius: BUBBLE / 2,
+          backgroundColor: PRIMARY,
+          alignItems: "center",
+          justifyContent: "center",
+          borderWidth: 4,
+          borderColor: "#FBF6EF",
+          transform: [{ translateX }],
+          shadowColor: PRIMARY,
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.35,
+          shadowRadius: 10,
+          elevation: 20,
+        }}
+      >
+        <ActiveIcon size={22} color="#fff" strokeWidth={2.4} />
+      </Animated.View>
     </View>
   );
 };
