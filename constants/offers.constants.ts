@@ -5,7 +5,6 @@ export interface Offer {
   title: string;
   description: string;
   image: string; // hero photo (remote)
-  videoUrl: string; // Video URL for details page
   color: string; // fallback / accent tint
   originalPrice: number;
   discountedPrice: number;
@@ -55,8 +54,6 @@ export const OFFERS_DATA: Offer[] = [
       "Beat the heat with our refreshing Summer Combo! Enjoy a juicy beef burger, crispy fries, and an ice-cold Pepsi - the perfect meal for sunny days.",
     image:
       "https://images.unsplash.com/photo-1550547660-d9450f859349?w=900&q=70&auto=format&fit=crop",
-    // High-quality food video from Pexels (burger & drink combo)
-    videoUrl: require("@/assets/videos/burger1.mp4"),
     color: "#D33B0D",
     originalPrice: 15.99,
     discountedPrice: 9.99,
@@ -76,8 +73,6 @@ export const OFFERS_DATA: Offer[] = [
       "Double the burger, double the fun! Get two premium juicy burgers loaded with cheese, bacon, and fresh veggies. Perfect for sharing or for the burger lover in you!",
     image:
       "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=900&q=70&auto=format&fit=crop",
-    // Delicious burger making video from Pexels
-    videoUrl: require("@/assets/videos/burger.mp4"),
     color: "#DF5A0C",
     originalPrice: 22.99,
     discountedPrice: 14.99,
@@ -98,8 +93,6 @@ export const OFFERS_DATA: Offer[] = [
       "Party time starts here! A large pizza loaded with your favorite toppings, served with garlic bread and a refreshing drink. Perfect for family nights or hanging out with friends!",
     image:
       "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=70&auto=format&fit=crop",
-    // Pizza making video from Pexels
-    videoUrl: require("@/assets/videos/pizza.mp4"),
     color: "#084137",
     originalPrice: 24.99,
     discountedPrice: 16.99,
@@ -120,8 +113,6 @@ export const OFFERS_DATA: Offer[] = [
       "Spice up your day with our authentic Mexican burrito! Packed with seasoned beef, rice, beans, cheese, and fresh salsa. Comes with crispy tortilla chips and guacamole!",
     image:
       "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=900&q=70&auto=format&fit=crop",
-    // Mexican food / burrito video from Pexels
-    videoUrl: require("@/assets/videos/burrito.mp4"),
     color: "#EB920C",
     originalPrice: 18.99,
     discountedPrice: 12.99,

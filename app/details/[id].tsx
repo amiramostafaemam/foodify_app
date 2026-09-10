@@ -1,23 +1,18 @@
+import { Image as CachedImage } from "@/components/CachedImage";
 import CustomButton from "@/components/CustomButton";
-import CustomHeader from "@/components/CustomHeader";
-import FoodImage from "@/components/FoodImage";
+import DetailHero from "@/components/DetailHero";
 import Toast from "@/components/Toast";
-import { getCustomizationImage, images } from "@/constants";
-import {
-  getCategoryById,
-  getMenuCustomizations,
-  getMenuItemById,
-} from "@/lib/appwrite";
+import { getCustomizationImage } from "@/constants";
+import { getMenuCustomizations, getMenuItemById } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import { useCartStore } from "@/store/cart.store";
 import { CartCustomization, CustomizationOption, MenuItem } from "@/type";
+import cn from "clsx";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { Check, Flame, Minus, Plus, Star } from "lucide-react-native";
+import { useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -28,215 +23,85 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
-const CARD_PADDING = 3;
-const CARD_GAP = 23;
-const CARDS_VISIBLE = 3.5;
-const CARD_WIDTH =
-  (SCREEN_WIDTH - CARD_PADDING - CARD_GAP * (CARDS_VISIBLE - 1)) /
-  CARDS_VISIBLE;
-
 const fetchMenuItem = ({ menuId }: { menuId: string }) =>
   getMenuItemById(menuId);
 const fetchCustomizations = ({ menuId }: { menuId: string }) =>
   getMenuCustomizations(menuId);
 
-const CustomizationCard = ({
-  item,
-  isSelected,
+const categoryName = (item: MenuItem) =>
+  typeof item.categories === "object" && item.categories
+    ? item.categories.name
+    : "";
+
+const CustomizationChip = ({
+  option,
+  selected,
   onToggle,
 }: {
-  item: CustomizationOption;
-  isSelected: boolean;
+  option: CustomizationOption;
+  selected: boolean;
   onToggle: () => void;
 }) => {
-  const image = getCustomizationImage(item.name);
-
+  const image = getCustomizationImage(option.name);
   return (
     <TouchableOpacity
       onPress={onToggle}
-      className={`h-[120px] items-center overflow-hidden rounded-2xl ${
-        isSelected ? "bg-primary/90" : "bg-[#3C2F2F]"
-      }`}
-      style={{
-        width: CARD_WIDTH,
-        shadowColor: "#000",
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: isSelected ? 0.25 : 0.1,
-        shadowRadius: isSelected ? 6 : 4,
-        elevation: isSelected ? 6 : 3,
-      }}
-      activeOpacity={0.7}
+      activeOpacity={0.85}
+      className={cn(
+        "w-[30%] items-center rounded-2xl border p-2.5",
+        selected
+          ? "border-primary bg-primary/5"
+          : "border-gray-200/70 bg-white",
+      )}
     >
-      <View className="h-[75px] w-full items-center justify-center rounded-b-2xl bg-white">
+      <View className="h-12 w-12 items-center justify-center">
         {image && (
-          <Image
+          <CachedImage
             source={image}
-            className="h-16 w-16 scale-125"
-            resizeMode="contain"
+            className="h-11 w-11"
+            contentFit="contain"
           />
         )}
       </View>
-
-      <View className="w-full flex-row items-center justify-between px-2 py-4">
-        <Text
-          className="mr-1 flex-1 font-quicksand-semibold text-[12px] leading-[1.3] text-white"
-          numberOfLines={1}
-        >
-          {item.name}
-        </Text>
-
-        <TouchableOpacity
-          onPress={onToggle}
-          className={`h-5 w-5 items-center justify-center rounded-full ${
-            isSelected ? "bg-success" : "bg-[#EF2A39]"
-          }`}
-          activeOpacity={0.8}
-        >
-          {!isSelected && (
-            <Image source={images.plus} className="h-3 w-3" tintColor="white" />
-          )}
-          {isSelected && (
-            <Image
-              source={images.check}
-              className="h-3 w-3"
-              tintColor="white"
-            />
-          )}
-        </TouchableOpacity>
-      </View>
+      <Text
+        className="mt-1 text-center font-quicksand-semibold text-[11px] text-dark-100"
+        numberOfLines={1}
+      >
+        {option.name}
+      </Text>
+      <Text className="mt-0.5 font-quicksand-bold text-[11px] text-primary">
+        +${option.price.toFixed(2)}
+      </Text>
+      {selected && (
+        <View className="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary">
+          <Check size={12} color="#fff" strokeWidth={3} />
+        </View>
+      )}
     </TouchableOpacity>
-  );
-};
-
-const StarRating = ({ rating }: { rating: number }) => {
-  return (
-    <View className="flex-row items-center gap-1">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <Image
-          key={star}
-          source={images.star}
-          className="h-4 w-4"
-          tintColor={star <= rating ? "#FE8C00" : "#D1D5DB"}
-        />
-      ))}
-      <Text className="paragraph-semibold ml-2 text-[#878787]">{rating}/5</Text>
-    </View>
   );
 };
 
 const Details = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const insets = useSafeAreaInsets();
+  const addItem = useCartStore((s) => s.addItem);
+
   const [quantity, setQuantity] = useState(1);
-  const [selectedCustomizations, setSelectedCustomizations] = useState<
-    CartCustomization[]
-  >([]);
-  const [categoryName, setCategoryName] = useState<string>("");
+  const [selected, setSelected] = useState<CartCustomization[]>([]);
+  const [tab, setTab] = useState<"details" | "customize">("details");
   const [showToast, setShowToast] = useState(false);
   const [isFirstItem, setIsFirstItem] = useState(false);
-  const insets = useSafeAreaInsets();
 
-  const { data: menuItem, loading: menuLoading } = useAppwrite<
-    MenuItem,
-    { menuId: string }
-  >({
+  const { data: item, loading } = useAppwrite<MenuItem, { menuId: string }>({
     fn: fetchMenuItem,
     params: { menuId: id! },
   });
-
-  const { data: customizations, loading: customizationsLoading } = useAppwrite<
+  const { data: customizations } = useAppwrite<
     CustomizationOption[],
     { menuId: string }
-  >({
-    fn: fetchCustomizations,
-    params: { menuId: id! },
-  });
+  >({ fn: fetchCustomizations, params: { menuId: id! } });
 
-  const { addItem } = useCartStore();
-
-  useEffect(() => {
-    const fetchCategoryName = async () => {
-      if (menuItem?.categories) {
-        try {
-          if (
-            typeof menuItem.categories === "object" &&
-            "$id" in menuItem.categories
-          ) {
-            setCategoryName(menuItem.categories.name);
-          } else if (typeof menuItem.categories === "string") {
-            const category = await getCategoryById(menuItem.categories);
-            setCategoryName(category.name);
-          }
-        } catch (error) {
-          console.error("Error fetching category:", error);
-          setCategoryName("");
-        }
-      }
-    };
-
-    fetchCategoryName();
-  }, [menuItem]);
-
-  const toppings = customizations?.filter((c) => c.type === "topping") || [];
-  const sides = customizations?.filter((c) => c.type === "side") || [];
-
-  const toggleCustomization = (customization: CustomizationOption) => {
-    const exists = selectedCustomizations.find(
-      (c) => c.id === customization.id,
-    );
-
-    if (exists) {
-      setSelectedCustomizations(
-        selectedCustomizations.filter((c) => c.id !== customization.id),
-      );
-    } else {
-      setSelectedCustomizations([
-        ...selectedCustomizations,
-        {
-          id: customization.id,
-          name: customization.name,
-          price: customization.price,
-          type: customization.type,
-        },
-      ]);
-    }
-  };
-
-  const isSelected = (customizationId: string) => {
-    return selectedCustomizations.some((c) => c.id === customizationId);
-  };
-
-  const calculateTotalPrice = () => {
-    if (!menuItem) return 0;
-    const basePrice = menuItem.price;
-    const customizationsPrice = selectedCustomizations.reduce(
-      (total, c) => total + c.price,
-      0,
-    );
-    return (basePrice + customizationsPrice) * quantity;
-  };
-
-  const handleAddToCart = () => {
-    if (!menuItem || quantity === 0) return;
-
-    const isCartEmpty = useCartStore.getState().items.length === 0;
-
-    addItem(
-      {
-        id: menuItem.$id,
-        name: menuItem.name,
-        price: menuItem.price,
-        image_url: menuItem.image_url,
-        customizations: selectedCustomizations,
-      },
-      quantity,
-    );
-
-    setShowToast(true);
-    setIsFirstItem(isCartEmpty);
-  };
-
-  if (menuLoading || customizationsLoading || !menuItem) {
+  if (loading || !item) {
     return (
       <SafeAreaView className="flex-center h-full bg-white">
         <ActivityIndicator size="large" color="#FE8C00" />
@@ -244,247 +109,222 @@ const Details = () => {
     );
   }
 
+  const toppings = customizations?.filter((c) => c.type === "topping") ?? [];
+  const sides = customizations?.filter((c) => c.type === "side") ?? [];
+  const hasCustomize = toppings.length > 0 || sides.length > 0;
+
+  const isSelected = (cid: string) => selected.some((c) => c.id === cid);
+  const toggle = (o: CustomizationOption) =>
+    setSelected((prev) =>
+      prev.some((c) => c.id === o.id)
+        ? prev.filter((c) => c.id !== o.id)
+        : [...prev, { id: o.id, name: o.name, price: o.price, type: o.type }],
+    );
+
+  const extras = selected.reduce((sum, c) => sum + c.price, 0);
+  const total = (item.price + extras) * quantity;
+
+  const handleAddToCart = () => {
+    const isCartEmpty = useCartStore.getState().items.length === 0;
+    addItem(
+      {
+        id: item.$id,
+        name: item.name,
+        price: item.price,
+        image_url: item.image_url,
+        customizations: selected,
+      },
+      quantity,
+    );
+    setIsFirstItem(isCartEmpty);
+    setShowToast(true);
+  };
+
   return (
     <>
-      <SafeAreaView className="h-full bg-white" edges={["top"]}>
-        <View className="flex-1">
-          <ScrollView
-            contentContainerStyle={{ paddingBottom: 140 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <View className="flex-row px-5 py-4">
-              <View className="flex-1 justify-start pr-3">
-                <CustomHeader style="mb-7" />
-                {/* Menu Item Name */}
-                <Text className="h1-bold mb-2 text-dark-100">
-                  {menuItem.name}
-                </Text>
-                {/* Category Name */}
-                {categoryName && (
-                  <Text className="paragraph-medium mb-3 text-[#878787]">
-                    {categoryName}
-                  </Text>
-                )}
+      <View className="flex-1 bg-white">
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 130 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <DetailHero imageUri={item.image_url} />
 
-                {/* Rating */}
-                <View className="mb-4">
-                  <StarRating rating={menuItem.rating} />
-                </View>
-
-                {/* Price */}
-                <Text className="mb-4 font-quicksand-bold text-2xl text-dark-100">
-                  <Text className="text-2xl font-bold text-primary">$</Text>
-                  {menuItem.price.toFixed(2)}
-                </Text>
-
-                {/* Calories & Protein */}
-                <View className="mb-4 flex-row gap-2">
-                  {/* Calories */}
-                  <View className="flex-1 py-3">
-                    <Text className="paragraph-medium mb-1 text-[#878787]">
-                      Calories
-                    </Text>
-                    <Text className="font-quicksand-semibold text-lg text-dark-100">
-                      {menuItem.calories} Cal
-                    </Text>
-                  </View>
-
-                  {/* Protein */}
-                  <View className="flex-1 py-3">
-                    <Text className="paragraph-medium mb-1 text-[#878787]">
-                      Protein
-                    </Text>
-                    <Text className="font-quicksand-semibold text-lg text-dark-100">
-                      {menuItem.protein}g
-                    </Text>
-                  </View>
-                </View>
-              </View>
-
-              {/* Menu Item Image */}
-              <View className="flex-1 items-center justify-center">
-                <FoodImage
-                  uri={menuItem.image_url}
-                  className="h-80 w-full scale-125"
-                />
-              </View>
+          <View className="px-5 pt-4">
+            <View className="flex-row items-start justify-between">
+              <Text className="h1-bold flex-1 pr-3 text-dark-100">
+                {item.name}
+              </Text>
+              <Text className="h2-bold text-primary">
+                ${item.price.toFixed(2)}
+              </Text>
             </View>
+            {categoryName(item) ? (
+              <Text className="body-medium mt-0.5 text-gray-100">
+                {categoryName(item)}
+              </Text>
+            ) : null}
 
-            {/* Stats Section */}
-            <View className="mx-auto mb-5 w-[390px] rounded-full bg-primary/5 px-5 py-3">
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-2">
-                  <Text className="font-quicksand-semibold text-base text-dark-100">
-                    <Text className="font-extrabold text-primary">$</Text> Free
-                    Delivery
-                  </Text>
-                </View>
-
-                <View className="flex-row items-center gap-2">
-                  <Image
-                    source={images.clock}
-                    className="h-4 w-4"
-                    tintColor="#FE8C00"
-                  />
-                  <Text className="font-quicksand-semibold text-base text-dark-100">
-                    20 - 30 mins
-                  </Text>
-                </View>
-
-                <View className="flex-row items-center gap-2">
-                  <Image
-                    source={images.star}
-                    className="h-4 w-4"
-                    tintColor="#FE8C00"
-                  />
-                  <Text className="font-quicksand-semibold text-base text-dark-100">
-                    {menuItem.rating}
-                  </Text>
-                </View>
+            {/* quick stats */}
+            <View className="mt-3 flex-row items-center gap-4">
+              <View className="flex-row items-center gap-1">
+                <Star size={15} color="#FFC738" fill="#FFC738" />
+                <Text className="body-medium text-gray-100">
+                  {item.rating?.toFixed(1) ?? "4.5"}
+                </Text>
               </View>
-            </View>
-
-            {/* Description */}
-            <View className="mb-5 px-5">
-              <Text className="font-quicksand-medium text-base leading-[1.7] text-[#6A6A6A]">
-                {menuItem.description ||
-                  "Delicious and freshly prepared meal with high-quality ingredients."}
+              <View className="flex-row items-center gap-1">
+                <Flame size={15} color="#FE8C00" />
+                <Text className="body-medium text-gray-100">
+                  {item.calories} cal
+                </Text>
+              </View>
+              <Text className="body-medium text-gray-100">
+                {item.protein}g protein
               </Text>
             </View>
 
-            {/* Toppings */}
-            {toppings.length > 0 && (
-              <View className="mb-6">
-                <Text className="h3-bold mb-4 px-5 text-dark-100">
-                  Toppings
+            {/* tabs */}
+            <View className="mt-5 flex-row gap-2">
+              <TouchableOpacity
+                onPress={() => setTab("details")}
+                className={cn(
+                  "rounded-full px-5 py-2",
+                  tab === "details" ? "bg-primary" : "bg-gray-100/10",
+                )}
+              >
+                <Text
+                  className={cn(
+                    "font-quicksand-bold text-sm",
+                    tab === "details" ? "text-white" : "text-gray-100",
+                  )}
+                >
+                  Details
                 </Text>
-                <FlatList
-                  data={toppings}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingHorizontal: 20,
-                  }}
-                  ItemSeparatorComponent={() => (
-                    <View style={{ width: CARD_GAP }} />
+              </TouchableOpacity>
+              {hasCustomize && (
+                <TouchableOpacity
+                  onPress={() => setTab("customize")}
+                  className={cn(
+                    "rounded-full px-5 py-2",
+                    tab === "customize" ? "bg-primary" : "bg-gray-100/10",
                   )}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <CustomizationCard
-                      item={item}
-                      isSelected={isSelected(item.id)}
-                      onToggle={() => toggleCustomization(item)}
-                    />
-                  )}
-                  decelerationRate="fast"
-                  snapToInterval={CARD_WIDTH + CARD_GAP}
-                  snapToAlignment="start"
-                />
-              </View>
-            )}
-
-            {/* Side Options */}
-            {sides.length > 0 && (
-              <View className="mb-6">
-                <Text className="h3-bold mb-4 px-5 text-dark-100">
-                  Side Options
-                </Text>
-
-                <FlatList
-                  data={sides}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{
-                    paddingHorizontal: 20,
-                  }}
-                  ItemSeparatorComponent={() => (
-                    <View style={{ width: CARD_GAP }} />
-                  )}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <CustomizationCard
-                      item={item}
-                      isSelected={isSelected(item.id)}
-                      onToggle={() => toggleCustomization(item)}
-                    />
-                  )}
-                  decelerationRate="fast"
-                  snapToInterval={CARD_WIDTH + CARD_GAP}
-                  snapToAlignment="start"
-                />
-              </View>
-            )}
-          </ScrollView>
-
-          {/* Add to Cart Button - Fixed at Bottom */}
-          <View
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              right: 0,
-            }}
-          >
-            <View
-              className="w-full rounded-t-3xl bg-white px-4"
-              style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: -2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 8,
-                elevation: 5,
-                paddingBottom: Math.max(insets.bottom, 16),
-                paddingTop: 16,
-              }}
-            >
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-5 rounded-full px-5 py-3">
-                  <TouchableOpacity
-                    onPress={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="h-9 w-9 items-center justify-center rounded-[4px] bg-primary/5"
+                >
+                  <Text
+                    className={cn(
+                      "font-quicksand-bold text-sm",
+                      tab === "customize" ? "text-white" : "text-gray-100",
+                    )}
                   >
-                    <Image
-                      source={images.minus}
-                      className="h-1 w-5"
-                      tintColor="#FE8C00"
-                    />
-                  </TouchableOpacity>
-
-                  <Text className="w-[12px] text-center font-quicksand-bold text-xl text-dark-100">
-                    {quantity}
+                    Customize
+                    {selected.length > 0 ? ` (${selected.length})` : ""}
                   </Text>
+                </TouchableOpacity>
+              )}
+            </View>
 
-                  <TouchableOpacity
-                    onPress={() => setQuantity(quantity + 1)}
-                    className="h-9 w-9 items-center justify-center rounded-[4px] bg-primary/5"
-                  >
-                    <Image
-                      source={images.plus}
-                      className="h-5 w-5"
-                      tintColor="#FE8C00"
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                <View className="flex-1 py-4 font-quicksand-bold text-[14px]">
-                  <CustomButton
-                    title={`Add to cart ($${calculateTotalPrice().toFixed(2)})`}
-                    onPress={handleAddToCart}
-                    style="px-6 py-4 rounded-[100px]"
-                    leftIcon={
-                      <Image
-                        source={images.bag}
-                        className="mr-3 h-5 w-5"
-                        tintColor="white"
-                      />
-                    }
-                  />
+            {tab === "details" ? (
+              <View className="mt-4">
+                <Text className="paragraph-medium leading-[1.7] text-[#6A6A6A]">
+                  {item.description ||
+                    "Delicious and freshly prepared with high-quality ingredients."}
+                </Text>
+                <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-primary/5 px-5 py-3.5">
+                  <View className="items-center">
+                    <Text className="paragraph-bold text-dark-100">Free</Text>
+                    <Text className="body-regular text-gray-100">Delivery</Text>
+                  </View>
+                  <View className="items-center">
+                    <Text className="paragraph-bold text-dark-100">20–30</Text>
+                    <Text className="body-regular text-gray-100">Minutes</Text>
+                  </View>
+                  <View className="items-center">
+                    <Text className="paragraph-bold text-dark-100">
+                      {item.rating?.toFixed(1) ?? "4.5"}
+                    </Text>
+                    <Text className="body-regular text-gray-100">Rating</Text>
+                  </View>
                 </View>
               </View>
-            </View>
+            ) : (
+              <View className="mt-4 gap-5">
+                {toppings.length > 0 && (
+                  <View>
+                    <Text className="paragraph-bold mb-3 text-dark-100">
+                      Toppings
+                    </Text>
+                    <View className="flex-row flex-wrap gap-3">
+                      {toppings.map((o) => (
+                        <CustomizationChip
+                          key={o.id}
+                          option={o}
+                          selected={isSelected(o.id)}
+                          onToggle={() => toggle(o)}
+                        />
+                      ))}
+                    </View>
+                  </View>
+                )}
+                {sides.length > 0 && (
+                  <View>
+                    <Text className="paragraph-bold mb-3 text-dark-100">
+                      Sides
+                    </Text>
+                    <View className="flex-row flex-wrap gap-3">
+                      {sides.map((o) => (
+                        <CustomizationChip
+                          key={o.id}
+                          option={o}
+                          selected={isSelected(o.id)}
+                          onToggle={() => toggle(o)}
+                        />
+                      ))}
+                    </View>
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        </ScrollView>
+
+        {/* Bottom bar */}
+        <View
+          className="absolute inset-x-0 bottom-0 flex-row items-center gap-4 rounded-t-3xl bg-white px-5 pt-4"
+          style={{
+            paddingBottom: Math.max(insets.bottom, 16),
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: -3 },
+            shadowOpacity: 0.08,
+            shadowRadius: 10,
+            elevation: 12,
+          }}
+        >
+          <View className="flex-row items-center gap-3">
+            <TouchableOpacity
+              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+              className="h-9 w-9 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Minus size={16} color="#FE8C00" />
+            </TouchableOpacity>
+            <Text className="w-4 text-center font-quicksand-bold text-lg text-dark-100">
+              {quantity}
+            </Text>
+            <TouchableOpacity
+              onPress={() => setQuantity((q) => q + 1)}
+              className="h-9 w-9 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Plus size={16} color="#FE8C00" />
+            </TouchableOpacity>
+          </View>
+
+          <View className="flex-1">
+            <CustomButton
+              title={`Add to Cart · $${total.toFixed(2)}`}
+              onPress={handleAddToCart}
+            />
           </View>
         </View>
-      </SafeAreaView>
+      </View>
+
       <Toast
         visible={showToast}
         onClose={() => setShowToast(false)}

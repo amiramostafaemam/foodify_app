@@ -1,9 +1,7 @@
-import { Image } from "@/components/CachedImage";
-import { getCategoryImage } from "@/constants";
 import { Category } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TouchableOpacity } from "react-native";
 
 type Chip = { $id: string; name: string };
 
@@ -21,35 +19,23 @@ const CategoryStrip = ({ categories }: { categories: Category[] }) => {
       keyExtractor={(c) => c.$id}
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ gap: 16, paddingRight: 8 }}
+      contentContainerStyle={{ gap: 10, paddingRight: 8 }}
       renderItem={({ item, index }) => {
         const active = index === 0;
         return (
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={0.85}
             onPress={() => open(item)}
-            className="w-16 items-center"
+            className={cn(
+              "rounded-full border px-5 py-2.5",
+              active ? "border-primary bg-primary" : "border-gray-200 bg-white",
+            )}
           >
-            <View
-              className={cn(
-                "h-16 w-16 items-center justify-center rounded-full",
-                active ? "bg-accent" : "bg-white shadow-sm shadow-black/5",
-              )}
-            >
-              <Image
-                source={getCategoryImage(item.name)}
-                className="h-10 w-10"
-                contentFit="contain"
-              />
-            </View>
             <Text
               className={cn(
-                "mt-1.5 text-xs",
-                active
-                  ? "font-quicksand-bold text-dark-100"
-                  : "font-quicksand-medium text-gray-100",
+                "font-quicksand-semibold text-sm",
+                active ? "text-white" : "text-gray-100",
               )}
-              numberOfLines={1}
             >
               {item.name}
             </Text>

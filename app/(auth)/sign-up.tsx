@@ -102,11 +102,17 @@ const SignUp = () => {
           label="Password"
           placeholder="Enter Your Password"
           value={form.password}
-          onChangeText={(password) => setForm((prev) => ({ ...prev, password }))}
+          onChangeText={(password) =>
+            setForm((prev) => ({ ...prev, password }))
+          }
           secureTextEntry
         />
 
-        <CustomButton title="Sign Up" isLoading={isSubmitting} onPress={submit} />
+        <CustomButton
+          title="Sign Up"
+          isLoading={isSubmitting}
+          onPress={submit}
+        />
 
         <View className="mt-3 flex-row justify-center gap-2">
           <Text className="base-regular text-gray-100">
