@@ -4,7 +4,7 @@ import { images } from "@/constants";
 import useAuthStore from "@/store/auth.store";
 import { User } from "@/type";
 import { Link, Redirect } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   Image,
@@ -12,6 +12,7 @@ import {
   Modal,
   Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from "react-native";
 
@@ -24,8 +25,8 @@ const ErrorModal = ({
   message: string;
   onClose: () => void;
 }) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useAnimatedValue(0);
+  const shakeAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {
@@ -152,8 +153,8 @@ const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [userData, setUserData] = useState<User | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const successAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useAnimatedValue(1);
+  const successAnim = useAnimatedValue(0);
 
   const [form, setForm] = useState({
     email: "",

@@ -3,7 +3,7 @@ import CustomInput from "@/components/CustomInput";
 import { images } from "@/constants";
 import { createUser } from "@/lib/appwrite";
 import { Link, Redirect } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   Image,
@@ -11,6 +11,7 @@ import {
   Modal,
   Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from "react-native";
 
@@ -23,8 +24,8 @@ const ErrorModal = ({
   message: string;
   onClose: () => void;
 }) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useAnimatedValue(0);
+  const shakeAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {
@@ -148,8 +149,8 @@ const SignUp = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
-  const successAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useAnimatedValue(1);
+  const successAnim = useAnimatedValue(0);
 
   const [form, setForm] = useState({
     name: "",

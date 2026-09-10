@@ -1,4 +1,3 @@
-// app/index.tsx
 import { hasSeenOnboarding } from "@/lib/onboarding";
 import useAuthStore from "@/store/auth.store";
 import { Redirect } from "expo-router";
@@ -12,17 +11,13 @@ export default function Index() {
   );
 
   useEffect(() => {
-    checkInitialRoute();
+    hasSeenOnboarding().then(setOnboardingComplete);
   }, []);
 
-  const checkInitialRoute = async () => {
-    const seen = await hasSeenOnboarding();
-    setOnboardingComplete(seen);
-  };
   if (isLoading || onboardingComplete === null) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#FE8C00" />
       </View>
     );
   }

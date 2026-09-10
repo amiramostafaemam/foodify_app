@@ -17,13 +17,13 @@ const { width } = Dimensions.get("window");
 export default function Onboarding() {
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isNavigating = useRef(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const isLastSlide = currentIndex === onboardingSlides.length - 1;
 
   const finishOnboarding = async () => {
-    if (isNavigating.current) return;
-    isNavigating.current = true;
+    if (isNavigating) return;
+    setIsNavigating(true);
 
     await setOnboardingSeen();
     router.replace("/(auth)/sign-in");
@@ -59,7 +59,7 @@ export default function Onboarding() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
-        scrollEnabled={!isNavigating.current}
+        scrollEnabled={!isNavigating}
         onMomentumScrollEnd={(e) => {
           const index = Math.round(e.nativeEvent.contentOffset.x / width);
           setCurrentIndex(index);
@@ -96,7 +96,7 @@ export default function Onboarding() {
         onPress={handleNext}
         className="mx-6 mb-10 rounded-full bg-primary py-4"
         activeOpacity={0.7}
-        disabled={isNavigating.current}
+        disabled={isNavigating}
       >
         <Text className="text-center text-lg font-bold text-white">
           {isLastSlide ? "Get Started" : "Next"}

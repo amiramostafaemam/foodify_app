@@ -10,7 +10,7 @@ import { useCartStore } from "@/store/cart.store";
 import { PaymentInfoStripeProps, PaymentMethod } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -20,6 +20,7 @@ import {
   Modal,
   Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -48,8 +49,8 @@ const SuccessModal = ({
   visible: boolean;
   onClose: () => void;
 }) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const checkAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useAnimatedValue(0);
+  const checkAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {
@@ -122,8 +123,8 @@ const CancelModal = ({
   visible: boolean;
   onClose: () => void;
 }) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useAnimatedValue(0);
+  const shakeAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {

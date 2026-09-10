@@ -35,6 +35,11 @@ const CARD_WIDTH =
   (SCREEN_WIDTH - CARD_PADDING - CARD_GAP * (CARDS_VISIBLE - 1)) /
   CARDS_VISIBLE;
 
+const fetchMenuItem = ({ menuId }: { menuId: string }) =>
+  getMenuItemById(menuId);
+const fetchCustomizations = ({ menuId }: { menuId: string }) =>
+  getMenuCustomizations(menuId);
+
 const CustomizationCard = ({
   item,
   isSelected,
@@ -134,7 +139,7 @@ const Details = () => {
     MenuItem,
     { menuId: string }
   >({
-    fn: async ({ menuId }) => getMenuItemById(menuId),
+    fn: fetchMenuItem,
     params: { menuId: id! },
   });
 
@@ -142,11 +147,11 @@ const Details = () => {
     CustomizationOption[],
     { menuId: string }
   >({
-    fn: async ({ menuId }) => getMenuCustomizations(menuId),
+    fn: fetchCustomizations,
     params: { menuId: id! },
   });
 
-  const { addItem, increaseQty } = useCartStore();
+  const { addItem } = useCartStore();
 
   useEffect(() => {
     const fetchCategoryName = async () => {
@@ -215,25 +220,16 @@ const Details = () => {
 
     const isCartEmpty = useCartStore.getState().items.length === 0;
 
-    const newItem = {
-      cartItemId: `${menuItem.$id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      id: menuItem.$id,
-      name: menuItem.name,
-      price: menuItem.price,
-      image_url: menuItem.image_url,
-      customizations: selectedCustomizations,
-    };
-
-    addItem(newItem);
-
-    if (quantity > 1) {
-      const cartItems = useCartStore.getState().items;
-      const addedItem = cartItems[cartItems.length - 1];
-
-      for (let i = 1; i < quantity; i++) {
-        increaseQty(addedItem.cartItemId);
-      }
-    }
+    addItem(
+      {
+        id: menuItem.$id,
+        name: menuItem.name,
+        price: menuItem.price,
+        image_url: menuItem.image_url,
+        customizations: selectedCustomizations,
+      },
+      quantity,
+    );
 
     setShowToast(true);
     setIsFirstItem(isCartEmpty);

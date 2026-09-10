@@ -1,12 +1,13 @@
 import { images } from "@/constants";
 import { router } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   Animated,
   Image,
   Modal,
   Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from "react-native";
 
@@ -17,7 +18,7 @@ interface ToastProps {
 }
 
 const Toast = ({ visible, onClose, isFirstItem = false }: ToastProps) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {

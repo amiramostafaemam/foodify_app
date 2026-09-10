@@ -38,7 +38,7 @@ const OfferDetails = () => {
   const [isMuted, setIsMuted] = useState(true);
   const insets = useSafeAreaInsets();
 
-  const { addItem, increaseQty } = useCartStore();
+  const { addItem } = useCartStore();
 
   // Get offer data
   const offer: Offer | undefined = getOfferById(id!);
@@ -51,6 +51,8 @@ const OfferDetails = () => {
   });
 
   useEffect(() => {
+    // expo-video exposes the player as a mutable object by design.
+    // eslint-disable-next-line react-hooks/immutability
     player.muted = isMuted;
   }, [player, isMuted]);
 
@@ -76,26 +78,15 @@ const OfferDetails = () => {
 
     const isCartEmpty = useCartStore.getState().items.length === 0;
 
-    const newItem = {
-      cartItemId: `${offer.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      id: offer.id,
-      name: offer.title,
-      price: offer.discountedPrice,
-      image_url: Image.resolveAssetSource(offer.image).uri,
-      customizations: undefined,
-    };
-
-    addItem(newItem);
-
-    // Add additional quantities if needed
-    if (quantity > 1) {
-      const cartItems = useCartStore.getState().items;
-      const addedItem = cartItems[cartItems.length - 1];
-
-      for (let i = 1; i < quantity; i++) {
-        increaseQty(addedItem.cartItemId);
-      }
-    }
+    addItem(
+      {
+        id: offer.id,
+        name: offer.title,
+        price: offer.discountedPrice,
+        image_url: Image.resolveAssetSource(offer.image).uri,
+      },
+      quantity,
+    );
 
     setShowToast(true);
     setIsFirstItem(isCartEmpty);

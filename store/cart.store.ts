@@ -8,13 +8,17 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
 
-      addItem: (item) => {
+      addItem: (item, quantity = 1) => {
+        const cartItemId = `${item.id}-${Date.now()}-${Math.round(
+          Math.random() * 1e9,
+        )}`;
         set({
           items: [
             ...get().items,
             {
               ...item,
-              quantity: 1,
+              cartItemId,
+              quantity,
               customizations: item.customizations ?? [],
             },
           ],

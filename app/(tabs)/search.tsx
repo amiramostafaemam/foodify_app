@@ -8,7 +8,6 @@ import useAppwrite from "@/lib/useAppwrite";
 import { Category, GetMenuParams, MenuItem } from "@/type";
 import cn from "clsx";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,7 +17,8 @@ const Search = () => {
     category?: string;
   }>();
 
-  const { data, refetch, loading } = useAppwrite<MenuItem[], GetMenuParams>({
+  // useAppwrite re-fetches automatically when these params change.
+  const { data, loading } = useAppwrite<MenuItem[], GetMenuParams>({
     fn: getMenu,
     params: {
       category: category || undefined,
@@ -31,15 +31,6 @@ const Search = () => {
     fn: getCategories,
     params: {} as Record<string, never>,
   });
-
-  useEffect(() => {
-    refetch({
-      category: category || undefined,
-      query: query || undefined,
-      limit: 12,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, query]);
 
   return (
     <SafeAreaView className="h-full bg-white">

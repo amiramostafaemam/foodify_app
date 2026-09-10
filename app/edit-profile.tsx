@@ -4,7 +4,7 @@ import CustomInput from "@/components/CustomInput";
 import { images } from "@/constants";
 import useAuthStore from "@/store/auth.store";
 import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Animated,
@@ -13,6 +13,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,7 +26,7 @@ const SuccessModal = ({
   visible: boolean;
   onClose: () => void;
 }) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {
@@ -85,24 +86,14 @@ const EditProfile = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+  // The root layout blocks rendering until auth has resolved, so `user` is
+  // already populated here — initialise the form straight from it.
   const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    address_home: "",
-    address_work: "",
+    name: user?.name ?? "",
+    phone: user?.phone ?? "",
+    address_home: user?.address_home ?? "",
+    address_work: user?.address_work ?? "",
   });
-
-  // Initialize form when user data is available
-  useEffect(() => {
-    if (user) {
-      setForm({
-        name: user.name || "",
-        phone: user.phone || "",
-        address_home: user.address_home || "",
-        address_work: user.address_work || "",
-      });
-    }
-  }, [user]);
 
   const handleSubmit = async () => {
     if (!form.name.trim()) {

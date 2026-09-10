@@ -4,7 +4,7 @@ import ProfileField from "@/components/ProfileField";
 import useAuthStore from "@/store/auth.store";
 import { router } from "expo-router";
 import { Mail, MapPin, Phone, User } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Animated,
   Image,
@@ -12,6 +12,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  useAnimatedValue,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,8 +27,8 @@ const LogoutModal = ({
   onConfirm: () => void;
   onCancel: () => void;
 }) => {
-  const scaleAnim = useRef(new Animated.Value(0)).current;
-  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useAnimatedValue(0);
+  const shakeAnim = useAnimatedValue(0);
 
   useEffect(() => {
     if (visible) {
