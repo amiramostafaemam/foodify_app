@@ -19,16 +19,16 @@ export const lightVars = vars({
 });
 
 export const darkVars = vars({
-  "--bg": "22 21 19", // #161513 warm near-black
-  "--surface": "38 35 32", // #262320
-  "--card": "31 29 26", // #1F1D1A
-  "--elevated": "43 40 36", // #2B2824
-  "--content": "240 238 234", // #F0EEEA soft off-white
-  "--muted": "162 156 148", // #A29C94 warm grey
+  "--bg": "22 21 20", // #161514 warm near-black
+  "--surface": "37 34 32", // #252220
+  "--card": "31 29 27", // #1F1D1B
+  "--elevated": "44 40 37", // #2C2825
+  "--content": "241 239 236", // #F1EFEC soft off-white
+  "--muted": "165 160 154", // #A5A09A warm grey
   "--line": "255 255 255",
-  "--cream": "46 37 27", // #2E251B
-  "--hero-1": "51 36 21", // #332415
-  "--hero-2": "33 27 20", // #211B14
+  "--cream": "44 35 26", // #2C231A
+  "--hero-1": "56 39 22", // #382716
+  "--hero-2": "34 28 21", // #221C15
 });
 
 /** Raw colours for places that can't use classes (gradients, icon props). */
@@ -42,11 +42,11 @@ export const palette = {
     hero: ["#FFE7C4", "#FFF3E1", "#FFFFFF"] as const,
   },
   dark: {
-    content: "#F0EEEA",
-    muted: "#A29C94",
-    canvas: "#161513",
-    card: "#1F1D1A",
-    surface: "#262320",
-    hero: ["#332415", "#211B14", "#161513"] as const,
+    content: "#F1EFEC",
+    muted: "#A5A09A",
+    canvas: "#161514",
+    card: "#1F1D1B",
+    surface: "#252220",
+    hero: ["#382716", "#221C15", "#161514"] as const,
   },
 };

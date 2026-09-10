@@ -58,10 +58,10 @@ export default function Onboarding() {
         }
         renderItem={({ item }) => (
           <View style={{ width }} className="flex-1 items-center px-8 pt-4">
-            <View className="aspect-square w-full max-w-[320px] items-center justify-center rounded-[40px] bg-primary/5">
+            <View className="h-[300px] w-[300px] items-center justify-center rounded-[44px] bg-primary/5">
               <Image
                 source={item.image}
-                className="h-3/4 w-3/4"
+                className="h-[210px] w-[210px]"
                 resizeMode="contain"
               />
             </View>

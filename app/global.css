@@ -39,7 +39,7 @@
   }
 
   .cart-badge {
-    @apply absolute -right-1 -top-2 flex size-5 items-center justify-center rounded-full bg-primary;
+    @apply absolute -right-1.5 -top-1.5 flex size-5 items-center justify-center rounded-full border-2 border-canvas bg-error;
   }
 
   .cart-item {

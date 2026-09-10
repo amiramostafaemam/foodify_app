@@ -11,6 +11,7 @@ import {
   Sun,
   type LucideIcon,
 } from "lucide-react-native";
+import { type ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -19,7 +20,7 @@ const Section = ({
   children,
 }: {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => (
   <View className="mt-6">
     <Text className="mb-2 px-1 font-quicksand-bold text-[13px] uppercase tracking-wide text-muted">
