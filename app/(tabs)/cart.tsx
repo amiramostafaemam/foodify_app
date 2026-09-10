@@ -1,6 +1,7 @@
 import CartItem from "@/components/CartItem";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
+import { TAB_BAR_SPACE } from "@/components/navigation/FloatingTabBar";
 import { images } from "@/constants";
 import { createOrder } from "@/lib/appwrite";
 import { createPaymentIntent } from "@/lib/payment.service";
@@ -391,7 +392,10 @@ const Cart = () => {
           }
         />
 
-        <View className="border-t border-gray-100/40 bg-white px-5 pb-2 pt-4">
+        <View
+          className="border-t border-gray-100/40 bg-white px-5 pt-4"
+          style={{ paddingBottom: TAB_BAR_SPACE }}
+        >
           <CustomButton
             title={`Proceed to Checkout · $${finalAmount.toFixed(2)}`}
             onPress={() => setStep("payment")}
@@ -490,7 +494,10 @@ const Cart = () => {
         </View>
       </ScrollView>
 
-      <View className="border-t border-gray-100/40 bg-white px-5 pb-2 pt-4">
+      <View
+        className="border-t border-gray-100/40 bg-white px-5 pt-4"
+        style={{ paddingBottom: TAB_BAR_SPACE }}
+      >
         <CustomButton
           title={
             isProcessing
