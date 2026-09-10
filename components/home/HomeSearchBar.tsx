@@ -10,9 +10,7 @@ const HomeSearchBar = () => (
     className="h-14 flex-row items-center gap-3 rounded-2xl bg-surface px-4"
   >
     <Search size={20} color="#9AA0A6" />
-    <Text className="paragraph-medium text-muted">
-      Search meals, restaurants…
-    </Text>
+    <Text className="paragraph-medium text-muted">Search for meals…</Text>
   </TouchableOpacity>
 );
 

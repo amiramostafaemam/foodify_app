@@ -4,13 +4,13 @@ import { Dimensions, View } from "react-native";
 const { width } = Dimensions.get("window");
 
 /** Shared geometry for the "floating dish over the hero seam" detail layout. */
-export const PANEL_H = 235;
-const DISH = Math.round(width * 0.66);
-export const SHEET_PULL = 28;
-const OVERHANG = 118; // how far the dish dips past the seam into the sheet
+export const PANEL_H = 250;
+const DISH = Math.round(width * 0.76);
+export const SHEET_PULL = 30;
+const OVERHANG = 132; // how far the dish dips past the seam into the sheet
 const DISH_TOP = PANEL_H - SHEET_PULL + OVERHANG - DISH;
 /** paddingTop the content sheet needs so text clears the floating dish */
-export const CONTENT_PT = OVERHANG + 16;
+export const CONTENT_PT = OVERHANG + 14;
 
 /**
  * The dish that straddles the warm hero panel and the white sheet. Render it as

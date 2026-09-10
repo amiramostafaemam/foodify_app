@@ -99,13 +99,13 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
     >
       {/* Bar */}
       <View
-        className="absolute inset-x-0 bottom-0 flex-row rounded-full bg-elevated"
+        className="absolute inset-x-0 bottom-0 flex-row rounded-full border border-line/10 bg-elevated"
         style={{
           height: BAR_H,
-          shadowColor: "#8A6A3A",
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.18,
-          shadowRadius: 18,
+          shadowOpacity: 0.14,
+          shadowRadius: 16,
           elevation: 12,
         }}
       >

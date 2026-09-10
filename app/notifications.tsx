@@ -16,6 +16,7 @@ import {
   Percent,
   ShoppingBag,
 } from "lucide-react-native";
+import { useEffect } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -104,6 +105,13 @@ const Notifications = () => {
   const markAllRead = useNotificationsStore((s) => s.markAllRead);
   const clearAll = useNotificationsStore((s) => s.clearAll);
   const c = useColors();
+
+  // Opening the screen counts as seeing everything — clear the badge.
+  useEffect(() => {
+    if (useNotificationsStore.getState().items.some((n) => !n.read)) {
+      markAllRead();
+    }
+  }, [markAllRead]);
 
   return (
     <SafeAreaView className="flex-1 bg-canvas" edges={["top"]}>
