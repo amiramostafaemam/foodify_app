@@ -254,7 +254,8 @@ export const getMenuCustomizations = async (
   return res.documents.map((doc) => ({
     id: doc.$id,
     name: doc.customization_name,
-    price: doc.customization_price,
+    // Seed data stores add-on prices in cents (e.g. 25 = $0.25).
+    price: doc.customization_price / 100,
     type: doc.customization_type,
   }));
 };

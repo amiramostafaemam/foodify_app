@@ -1,11 +1,10 @@
-import CustomButton from "@/components/CustomButton";
 import DetailHero from "@/components/DetailHero";
 import Toast from "@/components/Toast";
 import { images } from "@/constants";
 import { getOfferById, getOfferValidity } from "@/constants/offers.constants";
 import { useCartStore } from "@/store/cart.store";
 import { router, useLocalSearchParams } from "expo-router";
-import { Clock, Minus, Plus, Star } from "lucide-react-native";
+import { Clock, Minus, Plus, ShoppingBag, Star } from "lucide-react-native";
 import { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
@@ -20,7 +19,7 @@ const OfferDetails = () => {
   const [showToast, setShowToast] = useState(false);
   const [isFirstItem, setIsFirstItem] = useState(false);
 
-  const { addItem } = useCartStore();
+  const addItem = useCartStore((s) => s.addItem);
   const validity = getOfferValidity();
   const offer = getOfferById(id!);
 
@@ -41,6 +40,7 @@ const OfferDetails = () => {
 
   const total = offer.discountedPrice * quantity;
   const saved = offer.originalPrice - offer.discountedPrice;
+  const totalItems = offer.items.reduce((n, i) => n + i.quantity, 0);
 
   const handleAddToCart = () => {
     const isCartEmpty = useCartStore.getState().items.length === 0;
@@ -65,11 +65,15 @@ const OfferDetails = () => {
           showsVerticalScrollIndicator={false}
         >
           <DetailHero
-            imageUri={offer.image}
+            uri={offer.image}
+            mode="photo"
             badge={`Save ${offer.discount}%`}
+            height={280}
           />
 
-          <View className="px-5 pt-4">
+          <View className="-mt-6 rounded-t-[28px] bg-white px-5 pt-5">
+            <View className="mb-4 h-1 w-10 self-center rounded-full bg-gray-200" />
+
             <View className="flex-row items-start justify-between">
               <Text className="h1-bold flex-1 pr-3 text-dark-100">
                 {offer.title}
@@ -85,68 +89,72 @@ const OfferDetails = () => {
             </View>
 
             <View className="mt-2 flex-row items-center gap-2">
-              <View className="flex-row items-center gap-1">
-                <Star size={15} color="#FFC738" fill="#FFC738" />
-                <Text className="body-medium text-gray-100">
+              <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1">
+                <Star size={13} color="#FFC738" fill="#FFC738" />
+                <Text className="font-quicksand-bold text-xs text-dark-100">
                   {offer.rating}
                 </Text>
               </View>
-              <Text className="text-gray-300">·</Text>
-              <View className="rounded-full bg-success/10 px-2.5 py-0.5">
+              <View className="rounded-full bg-success/10 px-2.5 py-1">
                 <Text className="small-bold text-success">
                   You save ${saved.toFixed(2)}
                 </Text>
               </View>
             </View>
 
-            {/* Stats */}
-            <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-primary/5 px-5 py-3.5">
-              <View className="items-center">
-                <Text className="paragraph-bold text-dark-100">Free</Text>
-                <Text className="body-regular text-gray-100">Delivery</Text>
+            <View className="mt-4 flex-row gap-2.5">
+              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+                <Text className="font-quicksand-bold text-sm text-dark-100">
+                  Free
+                </Text>
+                <Text className="font-quicksand-medium text-[11px] text-gray-100">
+                  Delivery
+                </Text>
               </View>
-              <View className="items-center">
-                <Text className="paragraph-bold text-dark-100">
+              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+                <Text className="font-quicksand-bold text-sm text-dark-100">
                   {offer.deliveryTime.split(" ")[0]}
                 </Text>
-                <Text className="body-regular text-gray-100">Minutes</Text>
-              </View>
-              <View className="items-center">
-                <Text className="paragraph-bold text-dark-100">
-                  {offer.items.reduce((n, i) => n + i.quantity, 0)}
+                <Text className="font-quicksand-medium text-[11px] text-gray-100">
+                  Minutes
                 </Text>
-                <Text className="body-regular text-gray-100">Items</Text>
+              </View>
+              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+                <Text className="font-quicksand-bold text-sm text-dark-100">
+                  {totalItems}
+                </Text>
+                <Text className="font-quicksand-medium text-[11px] text-gray-100">
+                  Items
+                </Text>
               </View>
             </View>
 
-            {/* Description */}
-            <Text className="paragraph-medium mt-5 leading-[1.7] text-[#6A6A6A]">
+            <Text className="h3-bold mt-6 text-dark-100">About this deal</Text>
+            <Text className="paragraph-medium mt-2 leading-[1.7] text-gray-100">
               {offer.description}
             </Text>
 
-            {/* What's included */}
             <Text className="h3-bold mt-6 text-dark-100">
               What&#39;s included
             </Text>
             <View className="mt-3 gap-2">
-              {offer.items.map((item, i) => (
+              {offer.items.map((it, i) => (
                 <View
                   key={i}
                   className="flex-row items-center justify-between rounded-2xl border border-gray-200/70 px-4 py-3"
                 >
                   <Text className="paragraph-semibold text-dark-100">
-                    {item.name}
+                    {it.name}
                   </Text>
                   <View className="rounded-full bg-primary/10 px-2.5 py-1">
                     <Text className="small-bold text-primary">
-                      x{item.quantity}
+                      x{it.quantity}
                     </Text>
                   </View>
                 </View>
               ))}
             </View>
 
-            {/* Validity */}
             <View className="mt-5 flex-row items-center gap-3 self-start rounded-2xl border border-primary/15 bg-primary/5 px-4 py-3">
               <Clock size={18} color="#FE8C00" />
               <View>
@@ -162,41 +170,46 @@ const OfferDetails = () => {
           </View>
         </ScrollView>
 
-        {/* Bottom bar */}
         <View
-          className="absolute inset-x-0 bottom-0 flex-row items-center gap-4 rounded-t-3xl bg-white px-5 pt-4"
+          className="absolute inset-x-0 bottom-0 bg-white px-5 pt-3"
           style={{
-            paddingBottom: Math.max(insets.bottom, 16),
+            paddingBottom: Math.max(insets.bottom, 14) + 4,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: -3 },
-            shadowOpacity: 0.08,
-            shadowRadius: 10,
-            elevation: 12,
+            shadowOpacity: 0.07,
+            shadowRadius: 12,
+            elevation: 16,
           }}
         >
           <View className="flex-row items-center gap-3">
-            <TouchableOpacity
-              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="h-9 w-9 items-center justify-center rounded-full bg-primary/10"
-            >
-              <Minus size={16} color="#FE8C00" />
-            </TouchableOpacity>
-            <Text className="w-4 text-center font-quicksand-bold text-lg text-dark-100">
-              {quantity}
-            </Text>
-            <TouchableOpacity
-              onPress={() => setQuantity((q) => q + 1)}
-              className="h-9 w-9 items-center justify-center rounded-full bg-primary/10"
-            >
-              <Plus size={16} color="#FE8C00" />
-            </TouchableOpacity>
-          </View>
+            <View className="flex-row items-center gap-3 rounded-full bg-primary/5 px-3 py-2.5">
+              <TouchableOpacity
+                onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                hitSlop={6}
+              >
+                <Minus size={16} color="#FE8C00" strokeWidth={2.5} />
+              </TouchableOpacity>
+              <Text className="w-4 text-center font-quicksand-bold text-base text-dark-100">
+                {quantity}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setQuantity((q) => q + 1)}
+                hitSlop={6}
+              >
+                <Plus size={16} color="#FE8C00" strokeWidth={2.5} />
+              </TouchableOpacity>
+            </View>
 
-          <View className="flex-1">
-            <CustomButton
-              title={`Add to Cart · $${total.toFixed(2)}`}
+            <TouchableOpacity
               onPress={handleAddToCart}
-            />
+              activeOpacity={0.9}
+              className="flex-1 flex-row items-center justify-center gap-2 rounded-full bg-primary py-4"
+            >
+              <ShoppingBag size={17} color="#fff" />
+              <Text className="font-quicksand-bold text-base text-white">
+                Add to Cart · ${total.toFixed(2)}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

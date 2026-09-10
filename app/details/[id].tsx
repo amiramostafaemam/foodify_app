@@ -1,5 +1,4 @@
 import { Image as CachedImage } from "@/components/CachedImage";
-import CustomButton from "@/components/CustomButton";
 import DetailHero from "@/components/DetailHero";
 import Toast from "@/components/Toast";
 import { getCustomizationImage } from "@/constants";
@@ -9,10 +8,21 @@ import { useCartStore } from "@/store/cart.store";
 import { CartCustomization, CustomizationOption, MenuItem } from "@/type";
 import cn from "clsx";
 import { useLocalSearchParams } from "expo-router";
-import { Check, Flame, Minus, Plus, Star } from "lucide-react-native";
+import {
+  Check,
+  Clock,
+  Dumbbell,
+  Flame,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Star,
+  type LucideIcon,
+} from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -33,7 +43,27 @@ const categoryName = (item: MenuItem) =>
     ? item.categories.name
     : "";
 
-const CustomizationChip = ({
+const StatCard = ({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+}) => (
+  <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+    <Icon size={17} color="#FE8C00" />
+    <Text className="mt-1.5 font-quicksand-bold text-sm text-dark-100">
+      {value}
+    </Text>
+    <Text className="font-quicksand-medium text-[11px] text-gray-100">
+      {label}
+    </Text>
+  </View>
+);
+
+const AddonCard = ({
   option,
   selected,
   onToggle,
@@ -48,38 +78,79 @@ const CustomizationChip = ({
       onPress={onToggle}
       activeOpacity={0.85}
       className={cn(
-        "w-[30%] items-center rounded-2xl border p-2.5",
+        "w-[104px] rounded-2xl border p-2.5",
         selected
           ? "border-primary bg-primary/5"
           : "border-gray-200/70 bg-white",
       )}
     >
-      <View className="h-12 w-12 items-center justify-center">
-        {image && (
+      <View className="h-14 items-center justify-center">
+        {image ? (
           <CachedImage
             source={image}
-            className="h-11 w-11"
+            className="h-14 w-14"
             contentFit="contain"
           />
+        ) : (
+          <View className="h-12 w-12 rounded-full bg-primary/10" />
         )}
       </View>
       <Text
-        className="mt-1 text-center font-quicksand-semibold text-[11px] text-dark-100"
+        className="mt-1 font-quicksand-semibold text-[12px] text-dark-100"
         numberOfLines={1}
       >
         {option.name}
       </Text>
-      <Text className="mt-0.5 font-quicksand-bold text-[11px] text-primary">
-        +${option.price.toFixed(2)}
-      </Text>
-      {selected && (
-        <View className="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full bg-primary">
-          <Check size={12} color="#fff" strokeWidth={3} />
+      <View className="mt-1 flex-row items-center justify-between">
+        <Text className="font-quicksand-bold text-[12px] text-primary">
+          +${option.price.toFixed(2)}
+        </Text>
+        <View
+          className={cn(
+            "h-6 w-6 items-center justify-center rounded-full",
+            selected ? "bg-primary" : "bg-primary/10",
+          )}
+        >
+          {selected ? (
+            <Check size={13} color="#fff" strokeWidth={3} />
+          ) : (
+            <Plus size={13} color="#FE8C00" strokeWidth={3} />
+          )}
         </View>
-      )}
+      </View>
     </TouchableOpacity>
   );
 };
+
+const AddonRow = ({
+  title,
+  data,
+  isSelected,
+  onToggle,
+}: {
+  title: string;
+  data: CustomizationOption[];
+  isSelected: (id: string) => boolean;
+  onToggle: (o: CustomizationOption) => void;
+}) => (
+  <View className="mt-6">
+    <Text className="h3-bold mb-3 text-dark-100">{title}</Text>
+    <FlatList
+      data={data}
+      horizontal
+      keyExtractor={(o) => o.id}
+      showsHorizontalScrollIndicator={false}
+      ItemSeparatorComponent={() => <View className="w-3" />}
+      renderItem={({ item }) => (
+        <AddonCard
+          option={item}
+          selected={isSelected(item.id)}
+          onToggle={() => onToggle(item)}
+        />
+      )}
+    />
+  </View>
+);
 
 const Details = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -88,7 +159,6 @@ const Details = () => {
 
   const [quantity, setQuantity] = useState(1);
   const [selected, setSelected] = useState<CartCustomization[]>([]);
-  const [tab, setTab] = useState<"details" | "customize">("details");
   const [showToast, setShowToast] = useState(false);
   const [isFirstItem, setIsFirstItem] = useState(false);
 
@@ -111,7 +181,6 @@ const Details = () => {
 
   const toppings = customizations?.filter((c) => c.type === "topping") ?? [];
   const sides = customizations?.filter((c) => c.type === "side") ?? [];
-  const hasCustomize = toppings.length > 0 || sides.length > 0;
 
   const isSelected = (cid: string) => selected.some((c) => c.id === cid);
   const toggle = (o: CustomizationOption) =>
@@ -147,180 +216,112 @@ const Details = () => {
           contentContainerStyle={{ paddingBottom: 130 }}
           showsVerticalScrollIndicator={false}
         >
-          <DetailHero imageUri={item.image_url} />
+          <DetailHero uri={item.image_url} />
 
-          <View className="px-5 pt-4">
+          <View className="-mt-6 rounded-t-[28px] bg-white px-5 pt-5">
+            <View className="mb-4 h-1 w-10 self-center rounded-full bg-gray-200" />
+
             <View className="flex-row items-start justify-between">
-              <Text className="h1-bold flex-1 pr-3 text-dark-100">
-                {item.name}
-              </Text>
-              <Text className="h2-bold text-primary">
-                ${item.price.toFixed(2)}
-              </Text>
-            </View>
-            {categoryName(item) ? (
-              <Text className="body-medium mt-0.5 text-gray-100">
-                {categoryName(item)}
-              </Text>
-            ) : null}
-
-            {/* quick stats */}
-            <View className="mt-3 flex-row items-center gap-4">
-              <View className="flex-row items-center gap-1">
-                <Star size={15} color="#FFC738" fill="#FFC738" />
-                <Text className="body-medium text-gray-100">
+              <View className="flex-1 pr-3">
+                <Text className="h1-bold text-dark-100">{item.name}</Text>
+                {categoryName(item) ? (
+                  <Text className="body-medium mt-0.5 text-gray-100">
+                    {categoryName(item)}
+                  </Text>
+                ) : null}
+              </View>
+              <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1">
+                <Star size={13} color="#FFC738" fill="#FFC738" />
+                <Text className="font-quicksand-bold text-xs text-dark-100">
                   {item.rating?.toFixed(1) ?? "4.5"}
                 </Text>
               </View>
-              <View className="flex-row items-center gap-1">
-                <Flame size={15} color="#FE8C00" />
-                <Text className="body-medium text-gray-100">
-                  {item.calories} cal
-                </Text>
-              </View>
-              <Text className="body-medium text-gray-100">
-                {item.protein}g protein
-              </Text>
             </View>
 
-            {/* tabs */}
-            <View className="mt-5 flex-row gap-2">
-              <TouchableOpacity
-                onPress={() => setTab("details")}
-                className={cn(
-                  "rounded-full px-5 py-2",
-                  tab === "details" ? "bg-primary" : "bg-gray-100/10",
-                )}
-              >
-                <Text
-                  className={cn(
-                    "font-quicksand-bold text-sm",
-                    tab === "details" ? "text-white" : "text-gray-100",
-                  )}
-                >
-                  Details
-                </Text>
-              </TouchableOpacity>
-              {hasCustomize && (
-                <TouchableOpacity
-                  onPress={() => setTab("customize")}
-                  className={cn(
-                    "rounded-full px-5 py-2",
-                    tab === "customize" ? "bg-primary" : "bg-gray-100/10",
-                  )}
-                >
-                  <Text
-                    className={cn(
-                      "font-quicksand-bold text-sm",
-                      tab === "customize" ? "text-white" : "text-gray-100",
-                    )}
-                  >
-                    Customize
-                    {selected.length > 0 ? ` (${selected.length})` : ""}
-                  </Text>
-                </TouchableOpacity>
-              )}
+            <Text className="h2-bold mt-2 text-primary">
+              ${item.price.toFixed(2)}
+            </Text>
+
+            <View className="mt-4 flex-row gap-2.5">
+              <StatCard
+                icon={Flame}
+                label="Calories"
+                value={`${item.calories}`}
+              />
+              <StatCard
+                icon={Dumbbell}
+                label="Protein"
+                value={`${item.protein}g`}
+              />
+              <StatCard icon={Clock} label="Delivery" value="25 min" />
             </View>
 
-            {tab === "details" ? (
-              <View className="mt-4">
-                <Text className="paragraph-medium leading-[1.7] text-[#6A6A6A]">
-                  {item.description ||
-                    "Delicious and freshly prepared with high-quality ingredients."}
-                </Text>
-                <View className="mt-4 flex-row items-center justify-between rounded-2xl bg-primary/5 px-5 py-3.5">
-                  <View className="items-center">
-                    <Text className="paragraph-bold text-dark-100">Free</Text>
-                    <Text className="body-regular text-gray-100">Delivery</Text>
-                  </View>
-                  <View className="items-center">
-                    <Text className="paragraph-bold text-dark-100">20–30</Text>
-                    <Text className="body-regular text-gray-100">Minutes</Text>
-                  </View>
-                  <View className="items-center">
-                    <Text className="paragraph-bold text-dark-100">
-                      {item.rating?.toFixed(1) ?? "4.5"}
-                    </Text>
-                    <Text className="body-regular text-gray-100">Rating</Text>
-                  </View>
-                </View>
-              </View>
-            ) : (
-              <View className="mt-4 gap-5">
-                {toppings.length > 0 && (
-                  <View>
-                    <Text className="paragraph-bold mb-3 text-dark-100">
-                      Toppings
-                    </Text>
-                    <View className="flex-row flex-wrap gap-3">
-                      {toppings.map((o) => (
-                        <CustomizationChip
-                          key={o.id}
-                          option={o}
-                          selected={isSelected(o.id)}
-                          onToggle={() => toggle(o)}
-                        />
-                      ))}
-                    </View>
-                  </View>
-                )}
-                {sides.length > 0 && (
-                  <View>
-                    <Text className="paragraph-bold mb-3 text-dark-100">
-                      Sides
-                    </Text>
-                    <View className="flex-row flex-wrap gap-3">
-                      {sides.map((o) => (
-                        <CustomizationChip
-                          key={o.id}
-                          option={o}
-                          selected={isSelected(o.id)}
-                          onToggle={() => toggle(o)}
-                        />
-                      ))}
-                    </View>
-                  </View>
-                )}
-              </View>
+            <Text className="h3-bold mt-6 text-dark-100">About this meal</Text>
+            <Text className="paragraph-medium mt-2 leading-[1.7] text-gray-100">
+              {item.description ||
+                "Freshly prepared with high-quality ingredients and delivered hot to your door."}
+            </Text>
+
+            {toppings.length > 0 && (
+              <AddonRow
+                title="Add toppings"
+                data={toppings}
+                isSelected={isSelected}
+                onToggle={toggle}
+              />
+            )}
+            {sides.length > 0 && (
+              <AddonRow
+                title="Add sides"
+                data={sides}
+                isSelected={isSelected}
+                onToggle={toggle}
+              />
             )}
           </View>
         </ScrollView>
 
-        {/* Bottom bar */}
+        {/* Sticky bottom bar */}
         <View
-          className="absolute inset-x-0 bottom-0 flex-row items-center gap-4 rounded-t-3xl bg-white px-5 pt-4"
+          className="absolute inset-x-0 bottom-0 bg-white px-5 pt-3"
           style={{
-            paddingBottom: Math.max(insets.bottom, 16),
+            paddingBottom: Math.max(insets.bottom, 14) + 4,
             shadowColor: "#000",
             shadowOffset: { width: 0, height: -3 },
-            shadowOpacity: 0.08,
-            shadowRadius: 10,
-            elevation: 12,
+            shadowOpacity: 0.07,
+            shadowRadius: 12,
+            elevation: 16,
           }}
         >
           <View className="flex-row items-center gap-3">
-            <TouchableOpacity
-              onPress={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="h-9 w-9 items-center justify-center rounded-full bg-primary/10"
-            >
-              <Minus size={16} color="#FE8C00" />
-            </TouchableOpacity>
-            <Text className="w-4 text-center font-quicksand-bold text-lg text-dark-100">
-              {quantity}
-            </Text>
-            <TouchableOpacity
-              onPress={() => setQuantity((q) => q + 1)}
-              className="h-9 w-9 items-center justify-center rounded-full bg-primary/10"
-            >
-              <Plus size={16} color="#FE8C00" />
-            </TouchableOpacity>
-          </View>
+            <View className="flex-row items-center gap-3 rounded-full bg-primary/5 px-3 py-2.5">
+              <TouchableOpacity
+                onPress={() => setQuantity((q) => Math.max(1, q - 1))}
+                hitSlop={6}
+              >
+                <Minus size={16} color="#FE8C00" strokeWidth={2.5} />
+              </TouchableOpacity>
+              <Text className="w-4 text-center font-quicksand-bold text-base text-dark-100">
+                {quantity}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setQuantity((q) => q + 1)}
+                hitSlop={6}
+              >
+                <Plus size={16} color="#FE8C00" strokeWidth={2.5} />
+              </TouchableOpacity>
+            </View>
 
-          <View className="flex-1">
-            <CustomButton
-              title={`Add to Cart · $${total.toFixed(2)}`}
+            <TouchableOpacity
               onPress={handleAddToCart}
-            />
+              activeOpacity={0.9}
+              className="flex-1 flex-row items-center justify-center gap-2 rounded-full bg-primary py-4"
+            >
+              <ShoppingBag size={17} color="#fff" />
+              <Text className="font-quicksand-bold text-base text-white">
+                Add to Cart · ${total.toFixed(2)}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
