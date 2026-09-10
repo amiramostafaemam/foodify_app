@@ -154,3 +154,33 @@ export const getCustomizationImage = (name: string): number | null => {
   const normalizedName = name.toLowerCase().replace(/\s+/g, "");
   return customizationImageMap[normalizedName] ?? null;
 };
+
+const categoryImageMap: Record<string, number> = {
+  all: burgerTwo,
+  burger: burgerOne,
+  burgers: burgerOne,
+  pizza: pizzaOne,
+  pizzas: pizzaOne,
+  burrito: buritto,
+  burritos: buritto,
+  wrap: buritto,
+  wraps: buritto,
+  sandwich: bread,
+  sandwiches: bread,
+  bowl: rice,
+  bowls: rice,
+  salad: salad,
+  salads: salad,
+  drink: coke,
+  drinks: coke,
+  dessert: chocolava,
+  desserts: chocolava,
+  side: fries,
+  sides: fries,
+  chicken: chicken,
+};
+
+export const getCategoryImage = (name: string): number => {
+  const key = name.toLowerCase().replace(/\s+/g, "");
+  return categoryImageMap[key] ?? burgerTwo;
+};

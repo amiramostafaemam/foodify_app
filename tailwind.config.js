@@ -5,7 +5,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#FE8C00",
+        primary: {
+          DEFAULT: "#FE8C00",
+          dark: "#E67E00",
+        },
+        accent: "#FFC738", // golden yellow — badges, active category
+        cream: {
+          DEFAULT: "#FBF6EF", // app background
+          100: "#FFFDF9",
+          200: "#F3E9DA", // soft offer banner
+        },
         white: {
           DEFAULT: "#ffffff",
           100: "#fafafa",
