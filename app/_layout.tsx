@@ -1,4 +1,3 @@
-import { darkVars, lightVars } from "@/constants/theme";
 import { StripeProvider } from "@/lib/stripe";
 import useAuthStore from "@/store/auth.store";
 import { selectScheme, useThemeStore } from "@/store/theme.store";
@@ -44,10 +43,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View
-        style={scheme === "dark" ? darkVars : lightVars}
-        className="flex-1 bg-canvas"
-      >
+      <View className="flex-1 bg-canvas">
         <StatusBar style={scheme === "dark" ? "light" : "dark"} />
         <KeyboardProvider>
           <StripeProvider

@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { colorScheme } from "nativewind";
 import { Appearance } from "react-native";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
@@ -11,6 +12,15 @@ const systemScheme = (): ResolvedScheme =>
 
 const resolve = (mode: ThemeMode): ResolvedScheme =>
   mode === "dark" ? "dark" : mode === "light" ? "light" : systemScheme();
+
+/** Push the choice into NativeWind so every semantic class flips app-wide. */
+const applyScheme = (mode: ThemeMode) => {
+  try {
+    colorScheme.set(mode);
+  } catch {
+    // colorScheme may not be ready during the very first module eval
+  }
+};
 
 type ThemeState = {
   mode: ThemeMode;
@@ -27,11 +37,15 @@ export const useThemeStore = create<ThemeState>()(
       mode: "system",
       scheme: systemScheme(),
 
-      setMode: (mode) => set({ mode, scheme: resolve(mode) }),
+      setMode: (mode) => {
+        applyScheme(mode);
+        set({ mode, scheme: resolve(mode) });
+      },
 
       toggle: () => {
         const next: ResolvedScheme =
           get().scheme === "dark" ? "light" : "dark";
+        applyScheme(next);
         set({ mode: next, scheme: next });
       },
 
@@ -44,13 +58,17 @@ export const useThemeStore = create<ThemeState>()(
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (s) => ({ mode: s.mode }),
       onRehydrateStorage: () => (state) => {
-        if (state) state.scheme = resolve(state.mode);
+        if (state) {
+          applyScheme(state.mode);
+          state.scheme = resolve(state.mode);
+        }
       },
     },
   ),
 );
 
-// Follow OS theme changes while in "system" mode.
+// Apply the default before rehydration completes, then follow OS changes.
+applyScheme(useThemeStore.getState().mode);
 Appearance.addChangeListener(() => useThemeStore.getState().syncSystem());
 
 export const selectScheme = (s: ThemeState) => s.scheme;

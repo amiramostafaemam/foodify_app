@@ -1,5 +1,3 @@
-import { darkVars, lightVars } from "@/constants/theme";
-import { selectScheme, useThemeStore } from "@/store/theme.store";
 import cn from "clsx";
 import { type LucideIcon } from "lucide-react-native";
 import { useEffect } from "react";
@@ -63,7 +61,6 @@ const AppModal = ({
   const scale = useAnimatedValue(0.9);
   const opacity = useAnimatedValue(0);
   const t = TONE[tone];
-  const scheme = useThemeStore(selectScheme);
 
   useEffect(() => {
     if (visible) {
@@ -94,10 +91,7 @@ const AppModal = ({
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      <View
-        style={scheme === "dark" ? darkVars : lightVars}
-        className="flex-1 items-center justify-center bg-black/50 px-6"
-      >
+      <View className="flex-1 items-center justify-center bg-black/50 px-6">
         <Animated.View
           style={{
             opacity,

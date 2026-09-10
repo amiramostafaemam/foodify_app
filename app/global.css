@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  /* Light fallback for the semantic tokens; constants/theme.ts overrides these
-     at the app root per theme, and again inside modal portals. */
+  /* Semantic theme tokens. NativeWind evaluates prefers-color-scheme against
+     the effective scheme (which store/theme.store.ts drives via
+     `colorScheme.set()`), so this flips the whole app globally — light + dark. */
   :root {
     --bg: 255 255 255;
     --surface: 245 245 244;
@@ -14,8 +15,19 @@
     --muted: 135 135 135;
     --line: 0 0 0;
     --cream: 243 233 218;
-    --hero-1: 255 231 196;
-    --hero-2: 255 243 225;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: 22 21 20; /* #161514 */
+      --surface: 39 36 33; /* #272421 */
+      --card: 32 30 27; /* #201E1B */
+      --elevated: 45 42 38; /* #2D2A26 */
+      --content: 241 239 236; /* #F1EFEC */
+      --muted: 165 160 154; /* #A5A09A */
+      --line: 255 255 255;
+      --cream: 46 37 27; /* #2E251B */
+    }
   }
 }
 
