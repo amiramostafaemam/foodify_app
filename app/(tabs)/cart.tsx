@@ -1,6 +1,7 @@
 import AddressPicker from "@/components/AddressPicker";
 import AppModal from "@/components/AppModal";
 import CartItem from "@/components/CartItem";
+import MockCardSheet from "@/components/MockCardSheet";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import { TAB_BAR_SPACE } from "@/components/navigation/FloatingTabBar";
@@ -115,6 +116,7 @@ const Cart = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [showAddressPicker, setShowAddressPicker] = useState(false);
+  const [showMockCard, setShowMockCard] = useState(false);
   const [address, setAddress] = useState(user?.address_home || "");
 
   const totalItems = getTotalItems();
@@ -197,12 +199,20 @@ const Cart = () => {
     await saveOrder(payment.paymentIntentId!, "succeeded");
   };
 
+  const stripeAvailable = process.env.EXPO_PUBLIC_ENABLE_STRIPE === "true";
+
   const placeOrder = async () => {
     if (!user) {
       Alert.alert("Sign in required", "Please sign in to place an order.");
       return;
     }
     if (!method) return;
+
+    // Card via the demo sheet unless a real Stripe build is enabled.
+    if (method === "card" && !stripeAvailable) {
+      setShowMockCard(true);
+      return;
+    }
 
     setIsProcessing(true);
     try {
@@ -211,6 +221,21 @@ const Cart = () => {
       } else {
         await saveOrder("cash_on_delivery", "cash_on_delivery");
       }
+    } catch (error) {
+      Alert.alert(
+        "Order failed",
+        error instanceof Error ? error.message : "Something went wrong.",
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const completeMockCard = async () => {
+    setShowMockCard(false);
+    setIsProcessing(true);
+    try {
+      await saveOrder("demo_card_payment", "succeeded");
     } catch (error) {
       Alert.alert(
         "Order failed",
@@ -353,8 +378,6 @@ const Cart = () => {
   }
 
   /* ------------------------------ Payment ------------------------------ */
-  const stripeAvailable = process.env.EXPO_PUBLIC_ENABLE_STRIPE === "true";
-
   return (
     <SafeAreaView className="h-full bg-canvas">
       <View className="flex-row items-center px-5 pt-5">
@@ -408,11 +431,8 @@ const Cart = () => {
           onPress={() => setMethod("card")}
           title="Credit / Debit Card"
           subtitle={
-            stripeAvailable
-              ? "Pay securely with Stripe"
-              : "Needs a development build"
+            stripeAvailable ? "Pay securely with Stripe" : "Visa, Mastercard"
           }
-          disabled={!stripeAvailable}
         />
         <PaymentOption
           selected={method === "cash"}
@@ -475,6 +495,14 @@ const Cart = () => {
         workAddress={user?.address_work}
         selected={address}
         onSelect={setAddress}
+      />
+
+      <MockCardSheet
+        visible={showMockCard}
+        amount={finalAmount}
+        name={user?.name}
+        onClose={() => setShowMockCard(false)}
+        onSuccess={completeMockCard}
       />
     </SafeAreaView>
   );

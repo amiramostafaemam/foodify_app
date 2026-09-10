@@ -1,10 +1,11 @@
+import AuthScaffold from "@/components/AuthScaffold";
 import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
 import ErrorModal from "@/components/ErrorModal";
 import { createUser } from "@/lib/appwrite";
 import useAuthStore from "@/store/auth.store";
 import { Link, Redirect } from "expo-router";
-import { Lock, Mail, User, UtensilsCrossed } from "lucide-react-native";
+import { Lock, Mail, User } from "lucide-react-native";
 import { useState } from "react";
 import { Keyboard, Text, View } from "react-native";
 
@@ -83,19 +84,10 @@ const SignUp = () => {
   }
 
   return (
-    <View className="flex-1 justify-center">
-      <View className="mb-8 items-center">
-        <View className="h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30">
-          <UtensilsCrossed size={30} color="#fff" />
-        </View>
-        <Text className="mt-5 font-quicksand-bold text-3xl text-content">
-          Create account
-        </Text>
-        <Text className="mt-1.5 text-center font-quicksand-medium text-base text-muted">
-          Join Foodify — your first delivery is on us
-        </Text>
-      </View>
-
+    <AuthScaffold
+      title="Create account"
+      subtitle="Join Foodify — your first delivery is on us"
+    >
       <View className="gap-4">
         <CustomInput
           label="Full name"
@@ -145,7 +137,7 @@ const SignUp = () => {
         message={errorMessage}
         onClose={() => setErrorMessage("")}
       />
-    </View>
+    </AuthScaffold>
   );
 };
 
