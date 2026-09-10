@@ -1,117 +1,19 @@
 import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
+import ErrorModal from "@/components/ErrorModal";
 import { images } from "@/constants";
 import useAuthStore from "@/store/auth.store";
 import { User } from "@/type";
 import { Link, Redirect } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Animated,
   Image,
   Keyboard,
-  Modal,
   Text,
-  TouchableOpacity,
   useAnimatedValue,
   View,
 } from "react-native";
-
-const ErrorModal = ({
-  visible,
-  message,
-  onClose,
-}: {
-  visible: boolean;
-  message: string;
-  onClose: () => void;
-}) => {
-  const scaleAnim = useAnimatedValue(0);
-  const shakeAnim = useAnimatedValue(0);
-
-  useEffect(() => {
-    if (visible) {
-      Animated.sequence([
-        Animated.spring(scaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.timing(shakeAnim, {
-            toValue: 10,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(shakeAnim, {
-            toValue: -10,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(shakeAnim, {
-            toValue: 10,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(shakeAnim, {
-            toValue: 0,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start();
-    } else {
-      scaleAnim.setValue(0);
-      shakeAnim.setValue(0);
-    }
-  }, [visible, scaleAnim, shakeAnim]);
-
-  return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(0,0,0,0.5)",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Animated.View
-          style={{
-            transform: [{ scale: scaleAnim }, { translateX: shakeAnim }],
-          }}
-          className="mx-5 w-5/6 items-center rounded-3xl bg-white p-8 shadow-2xl"
-        >
-          <View className="mb-6 h-24 w-24 items-center justify-center rounded-full bg-red-100">
-            <Text className="text-5xl">❌</Text>
-          </View>
-
-          <Text className="mb-3 text-center font-quicksand-bold text-2xl text-red-500">
-            Error
-          </Text>
-          <Text className="font-quicksand-regular mb-6 text-center text-base text-gray-400">
-            {message}
-          </Text>
-
-          <View className="w-full">
-            <TouchableOpacity
-              onPress={onClose}
-              className="items-center rounded-xl bg-red-500 py-4"
-              activeOpacity={0.8}
-            >
-              <Text className="base-bold text-white">Try Again</Text>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-      </View>
-    </Modal>
-  );
-};
 
 const getErrorMessage = (error: unknown): string => {
   const message =
@@ -156,13 +58,11 @@ const SignIn = () => {
   const fadeAnim = useAnimatedValue(1);
   const successAnim = useAnimatedValue(0);
 
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const [form, setForm] = useState({ email: "", password: "" });
 
   const submit = async () => {
-    const { email, password } = form;
+    const email = form.email.toLowerCase().trim();
+    const { password } = form;
 
     Keyboard.dismiss();
 
@@ -172,8 +72,7 @@ const SignIn = () => {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setErrorMessage("Please enter a valid email address");
       setShowErrorModal(true);
       return;
@@ -181,7 +80,7 @@ const SignIn = () => {
 
     setIsSubmitting(true);
     try {
-      const user = await login(email.toLowerCase().trim(), password);
+      const user = await login(email, password);
       setUserData(user);
 
       Animated.timing(fadeAnim, {
@@ -191,7 +90,6 @@ const SignIn = () => {
       }).start(() => {
         setShowSuccess(true);
         setIsSubmitting(false);
-
         Animated.spring(successAnim, {
           toValue: 1,
           tension: 50,
@@ -220,30 +118,25 @@ const SignIn = () => {
   if (showSuccess) {
     return (
       <View className="flex-1 justify-center p-5">
-        <Animated.View
-          style={{ transform: [{ scale: successAnim }] }}
-          className="items-center rounded-3xl bg-white p-8 shadow-xl"
-        >
-          <View className="mb-6 items-center">
+        <Animated.View style={{ transform: [{ scale: successAnim }] }}>
+          <View className="items-center rounded-3xl bg-white p-8 shadow-xl">
             <Image
               source={images.successs}
-              className="h-48 w-48"
+              className="mb-6 h-48 w-48"
               resizeMode="contain"
             />
+            <Text className="mb-3 text-center font-quicksand-bold text-3xl text-dark-100">
+              Login Successful
+            </Text>
+            <Text className="mb-8 px-4 text-center font-quicksand text-base text-gray-100">
+              You are all set to continue where you left off.
+            </Text>
+            <CustomButton
+              title="Go to Homepage"
+              onPress={handleGoToHome}
+              style="w-full"
+            />
           </View>
-
-          <Text className="mb-3 text-center font-quicksand-bold text-3xl text-dark-100">
-            Login Successful
-          </Text>
-          <Text className="font-quicksand-regular mb-8 px-4 text-center text-base text-gray-400">
-            You are all set to continue where you left off.
-          </Text>
-
-          <CustomButton
-            title="Go to Homepage"
-            onPress={handleGoToHome}
-            style="w-full"
-          />
         </Animated.View>
       </View>
     );
@@ -251,42 +144,40 @@ const SignIn = () => {
 
   return (
     <View className="flex-1">
-      <Animated.View
-        style={{ opacity: fadeAnim }}
-        className="mt-5 gap-10 rounded-lg bg-white p-5"
-      >
-        <CustomInput
-          label="Email"
-          placeholder="Enter Your Email"
-          value={form.email}
-          onChangeText={(text) => setForm((prev) => ({ ...prev, email: text }))}
-          secureTextEntry={false}
-          keyboardType="email-address"
-        />
+      <Animated.View style={{ opacity: fadeAnim }}>
+        <View className="mt-5 gap-8 rounded-lg bg-white p-5">
+          <CustomInput
+            label="Email"
+            placeholder="Enter Your Email"
+            value={form.email}
+            onChangeText={(email) => setForm((prev) => ({ ...prev, email }))}
+            keyboardType="email-address"
+          />
 
-        <CustomInput
-          label="Password"
-          placeholder="Enter Your Password"
-          value={form.password}
-          onChangeText={(text) =>
-            setForm((prev) => ({ ...prev, password: text }))
-          }
-          secureTextEntry={true}
-        />
+          <CustomInput
+            label="Password"
+            placeholder="Enter Your Password"
+            value={form.password}
+            onChangeText={(password) =>
+              setForm((prev) => ({ ...prev, password }))
+            }
+            secureTextEntry
+          />
 
-        <CustomButton
-          title="Sign In"
-          isLoading={isSubmitting}
-          onPress={submit}
-        />
+          <CustomButton
+            title="Sign In"
+            isLoading={isSubmitting}
+            onPress={submit}
+          />
 
-        <View className="mt-3 flex flex-row justify-center gap-2">
-          <Text className="base-regular text-gray-100">
-            Don&apos;t have an account?
-          </Text>
-          <Link href="/sign-up" className="base-bold text-primary">
-            <Text> Sign Up</Text>
-          </Link>
+          <View className="mt-3 flex-row justify-center gap-2">
+            <Text className="base-regular text-gray-100">
+              Don&apos;t have an account?
+            </Text>
+            <Link href="/sign-up" className="base-bold text-primary">
+              Sign Up
+            </Link>
+          </View>
         </View>
       </Animated.View>
 

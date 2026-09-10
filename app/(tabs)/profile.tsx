@@ -75,42 +75,40 @@ const LogoutModal = ({
           style={{
             transform: [{ scale: scaleAnim }, { translateX: shakeAnim }],
           }}
-          className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl"
         >
-          {/* Warning Icon */}
-          <View className="mb-6 h-24 w-24 items-center justify-center rounded-full bg-red-100">
-            <Image
-              source={require("@/assets/icons/logout.png")}
-              className="h-12 w-12"
-              tintColor="#EF4444"
-            />
-          </View>
+          <View className="w-full max-w-sm items-center rounded-3xl bg-white p-8 shadow-2xl">
+            <View className="mb-6 h-24 w-24 items-center justify-center rounded-full bg-red-100">
+              <Image
+                source={require("@/assets/icons/logout.png")}
+                className="h-12 w-12"
+                tintColor="#EF4444"
+              />
+            </View>
 
-          {/* Logout Text */}
-          <Text className="mb-3 text-center font-quicksand-bold text-2xl text-dark-100">
-            Logout
-          </Text>
-          <Text className="font-quicksand-regular mb-6 text-center text-base text-gray-400">
-            Are you sure you want to logout?
-          </Text>
+            <Text className="mb-3 text-center font-quicksand-bold text-2xl text-dark-100">
+              Logout
+            </Text>
+            <Text className="mb-6 text-center font-quicksand text-base text-gray-100">
+              Are you sure you want to logout?
+            </Text>
 
-          {/* Action Buttons */}
-          <View className="w-full gap-3">
-            <TouchableOpacity
-              onPress={onConfirm}
-              className="items-center rounded-xl bg-red-500 py-4"
-              activeOpacity={0.8}
-            >
-              <Text className="base-bold text-white">Logout</Text>
-            </TouchableOpacity>
+            <View className="w-full gap-3">
+              <TouchableOpacity
+                onPress={onConfirm}
+                className="items-center rounded-xl bg-error py-4"
+                activeOpacity={0.8}
+              >
+                <Text className="base-bold text-white">Logout</Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={onCancel}
-              className="items-center rounded-xl bg-[#F3F4F6] py-4"
-              activeOpacity={0.8}
-            >
-              <Text className="base-bold text-[#1F2937]">Cancel</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={onCancel}
+                className="items-center rounded-xl bg-gray-100/20 py-4"
+                activeOpacity={0.8}
+              >
+                <Text className="base-bold text-dark-100">Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </Animated.View>
       </View>
