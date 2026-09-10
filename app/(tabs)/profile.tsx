@@ -101,6 +101,7 @@ const Profile = () => {
       setUploadingAvatar(true);
       const avatar = await uploadImage(file);
       await updateUserProfile({ avatar });
+      Alert.alert("Photo updated", "Your new profile picture is live.");
     } catch (error) {
       Alert.alert(
         "Upload failed",

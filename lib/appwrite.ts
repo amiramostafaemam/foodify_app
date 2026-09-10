@@ -17,7 +17,9 @@ import {
   Databases,
   Functions,
   ID,
+  Permission,
   Query,
+  Role,
   Storage,
 } from "react-native-appwrite";
 
@@ -134,14 +136,49 @@ export type UploadFile = {
  * Uploads an image to the storage bucket and returns a public view URL.
  * Keep files under 5 MB (Appwrite's single-request limit) — the picker already
  * compresses avatars well below that.
+ *
+ * We attach a public-read permission to every file so the returned URL renders
+ * in `<Image>` without a session. That only takes effect when the bucket has
+ * "File Security" enabled; otherwise the bucket itself must grant Read to "Any".
  */
 export const uploadImage = async (file: UploadFile): Promise<string> => {
-  const uploaded = await storage.createFile(
-    appwriteConfig.bucketId,
-    ID.unique(),
-    file,
-  );
-  return storage.getFileView(appwriteConfig.bucketId, uploaded.$id).toString();
+  let uploadedId: string;
+  try {
+    const uploaded = await storage.createFile(
+      appwriteConfig.bucketId,
+      ID.unique(),
+      file,
+      [Permission.read(Role.any())],
+    );
+    uploadedId = uploaded.$id;
+  } catch (e: any) {
+    throw new Error(
+      e?.message
+        ? `Appwrite rejected the upload: ${e.message}`
+        : "Could not upload the image. Check your connection and try again.",
+    );
+  }
+
+  const url = storage
+    .getFileView(appwriteConfig.bucketId, uploadedId)
+    .toString();
+
+  // The file is stored, but if the bucket doesn't grant public read the image
+  // will silently fail to load. Turn that into a clear, fixable error.
+  try {
+    const res = await fetch(url, { method: "GET" });
+    if (!res.ok) {
+      throw new Error(
+        `Uploaded, but the image isn't publicly readable (HTTP ${res.status}). ` +
+          `In the Appwrite console open Storage → your bucket → Settings and add a Read permission for "Any".`,
+      );
+    }
+  } catch (e: any) {
+    if (e instanceof Error && e.message.startsWith("Uploaded, but")) throw e;
+    // A transient network error here shouldn't block an otherwise-good upload.
+  }
+
+  return url;
 };
 
 export const getCurrentUser = async (): Promise<User | undefined> => {

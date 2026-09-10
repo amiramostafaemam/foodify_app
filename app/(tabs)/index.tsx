@@ -93,7 +93,7 @@ export default function Home() {
                 horizontal
                 keyExtractor={(item) => item.$id}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 14, paddingHorizontal: 20 }}
+                contentContainerStyle={{ gap: 16, paddingHorizontal: 20 }}
                 renderItem={({ item, index }) => (
                   <PopularMealCard item={item} badge={badgeFor(item, index)} />
                 )}

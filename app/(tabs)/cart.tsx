@@ -8,6 +8,7 @@ import { createPaymentIntent } from "@/lib/payment.service";
 import { useStripe } from "@/lib/stripe";
 import useAuthStore from "@/store/auth.store";
 import { useCartStore } from "@/store/cart.store";
+import { useNotificationsStore } from "@/store/notifications.store";
 import { PaymentInfoStripeProps, PaymentMethod } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
@@ -216,6 +217,15 @@ const Cart = () => {
       customerPhone: user.phone || "",
     });
     clearCart();
+
+    useNotificationsStore.getState().add({
+      type: "order",
+      title: "Order confirmed 🎉",
+      body: `We've received your $${finalAmount.toFixed(
+        2,
+      )} order — the kitchen is on it. Track updates right here.`,
+    });
+
     setStep("review");
     setMethod(null);
     setShowSuccess(true);

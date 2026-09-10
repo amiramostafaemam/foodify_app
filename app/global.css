@@ -98,7 +98,7 @@
   }
 
   .home-card {
-    @apply rounded-3xl bg-white shadow-sm shadow-black/5;
+    @apply rounded-3xl bg-white shadow-md shadow-black/10;
   }
 
   .h1-bold {

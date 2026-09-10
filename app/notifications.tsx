@@ -1,0 +1,172 @@
+import { images } from "@/constants";
+import {
+  AppNotification,
+  NotificationType,
+  selectUnreadCount,
+  useNotificationsStore,
+} from "@/store/notifications.store";
+import cn from "clsx";
+import { router } from "expo-router";
+import {
+  Bell,
+  Bike,
+  ChevronLeft,
+  type LucideIcon,
+  Percent,
+  ShoppingBag,
+} from "lucide-react-native";
+import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const HOUR = 3_600_000;
+const DAY = 24 * HOUR;
+
+const relativeTime = (ts: number) => {
+  const diff = Date.now() - ts;
+  if (diff < HOUR) return `${Math.max(1, Math.floor(diff / 60_000))}m ago`;
+  if (diff < DAY) return `${Math.floor(diff / HOUR)}h ago`;
+  if (diff < 7 * DAY) return `${Math.floor(diff / DAY)}d ago`;
+  return new Date(ts).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+};
+
+const META: Record<
+  NotificationType,
+  { Icon: LucideIcon; color: string; tile: string }
+> = {
+  order: { Icon: ShoppingBag, color: "#FE8C00", tile: "bg-primary/10" },
+  offer: { Icon: Percent, color: "#B57D00", tile: "bg-accent/20" },
+  delivery: { Icon: Bike, color: "#2F9B65", tile: "bg-success/10" },
+  system: { Icon: Bell, color: "#181C2E", tile: "bg-gray-100/10" },
+};
+
+const NotificationRow = ({
+  item,
+  onPress,
+}: {
+  item: AppNotification;
+  onPress: () => void;
+}) => {
+  const { Icon, color, tile } = META[item.type];
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={onPress}
+      className={cn(
+        "flex-row gap-3 rounded-2xl p-3.5",
+        item.read ? "bg-white" : "bg-primary/5",
+      )}
+    >
+      <View
+        className={cn(
+          "h-11 w-11 items-center justify-center rounded-full",
+          tile,
+        )}
+      >
+        <Icon size={19} color={color} />
+      </View>
+
+      <View className="flex-1">
+        <View className="flex-row items-center justify-between">
+          <Text
+            className="paragraph-bold flex-1 pr-2 text-dark-100"
+            numberOfLines={1}
+          >
+            {item.title}
+          </Text>
+          <Text className="font-quicksand-medium text-[11px] text-gray-100">
+            {relativeTime(item.createdAt)}
+          </Text>
+        </View>
+        <Text
+          className="body-regular mt-1 leading-[1.5] text-gray-100"
+          numberOfLines={2}
+        >
+          {item.body}
+        </Text>
+      </View>
+
+      {!item.read && (
+        <View className="mt-1.5 h-2 w-2 rounded-full bg-primary" />
+      )}
+    </TouchableOpacity>
+  );
+};
+
+const Notifications = () => {
+  const items = useNotificationsStore((s) => s.items);
+  const unread = useNotificationsStore(selectUnreadCount);
+  const markRead = useNotificationsStore((s) => s.markRead);
+  const markAllRead = useNotificationsStore((s) => s.markAllRead);
+  const clearAll = useNotificationsStore((s) => s.clearAll);
+
+  return (
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+      <View className="flex-row items-center justify-between px-5 pb-2 pt-2">
+        <View className="flex-row items-center gap-2">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            hitSlop={10}
+            className="h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm shadow-black/10"
+          >
+            <ChevronLeft size={22} color="#181C2E" />
+          </TouchableOpacity>
+          <Text className="h3-bold text-dark-100">Notifications</Text>
+        </View>
+
+        {unread > 0 && (
+          <TouchableOpacity onPress={markAllRead} hitSlop={8}>
+            <Text className="paragraph-bold text-primary">Mark all read</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      <FlatList
+        data={items}
+        keyExtractor={(n) => n.id}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingTop: 8,
+          paddingBottom: 40,
+          flexGrow: 1,
+        }}
+        ItemSeparatorComponent={() => <View className="h-1.5" />}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <NotificationRow item={item} onPress={() => markRead(item.id)} />
+        )}
+        ListEmptyComponent={
+          <View className="flex-1 items-center justify-center px-8">
+            <Image
+              source={images.emptyState}
+              className="mb-5 h-56 w-56"
+              resizeMode="contain"
+            />
+            <Text className="h3-bold text-dark-100">You&#39;re all caught up</Text>
+            <Text className="body-regular mt-2 text-center text-gray-100">
+              Order updates and fresh deals will show up here.
+            </Text>
+          </View>
+        }
+        ListFooterComponent={
+          items.length > 0 ? (
+            <TouchableOpacity
+              onPress={clearAll}
+              className="mt-4 items-center py-3"
+              hitSlop={8}
+            >
+              <Text className="paragraph-semibold text-gray-100">
+                Clear all
+              </Text>
+            </TouchableOpacity>
+          ) : null
+        }
+      />
+    </SafeAreaView>
+  );
+};
+
+export default Notifications;

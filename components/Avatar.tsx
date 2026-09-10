@@ -21,6 +21,15 @@ const Avatar = ({
   onEditPress,
 }: AvatarProps) => {
   const [failed, setFailed] = useState(false);
+
+  // A fresh upload gives a new uri — clear any earlier load failure so it gets
+  // a real chance to render.
+  const [lastUri, setLastUri] = useState(uri);
+  if (uri !== lastUri) {
+    setLastUri(uri);
+    setFailed(false);
+  }
+
   const letter = name?.trim().charAt(0).toUpperCase() || "?";
   const showImage = !!uri && !failed;
 

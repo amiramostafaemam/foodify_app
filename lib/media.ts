@@ -28,9 +28,11 @@ export const pickSquareImage = async (): Promise<UploadFile | null> => {
   const asset = result.assets[0];
   const extension = asset.uri.split(".").pop()?.toLowerCase() || "jpg";
 
+  // `size` only steers the SDK's chunk decision (0 → single-request upload),
+  // it isn't sent to the server, so the picker's value or 0 is always safe.
   return {
     uri: asset.uri,
-    name: asset.fileName ?? `avatar.${extension}`,
+    name: asset.fileName ?? `avatar-${Date.now()}.${extension}`,
     type: asset.mimeType ?? `image/${extension === "jpg" ? "jpeg" : extension}`,
     size: asset.fileSize ?? 0,
   };

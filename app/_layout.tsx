@@ -46,6 +46,10 @@ export default function RootLayout() {
             <Stack.Screen name="(onboarding)/index" />
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(tabs)" />
+            <Stack.Screen
+              name="notifications"
+              options={{ animation: "slide_from_right" }}
+            />
           </Stack>
         </StripeProvider>
       </KeyboardProvider>

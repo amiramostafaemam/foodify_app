@@ -1,4 +1,8 @@
 import { useCartStore } from "@/store/cart.store";
+import {
+  selectUnreadCount,
+  useNotificationsStore,
+} from "@/store/notifications.store";
 import { router } from "expo-router";
 import { Bell, ShoppingBag } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -21,6 +25,7 @@ const Badge = ({ count }: { count: number }) =>
 
 const HomeHeader = ({ name }: { name?: string }) => {
   const cartCount = useCartStore((s) => s.getTotalItems());
+  const unreadCount = useNotificationsStore(selectUnreadCount);
   const first = name?.trim().split(" ")[0];
 
   return (
@@ -33,9 +38,13 @@ const HomeHeader = ({ name }: { name?: string }) => {
       </View>
 
       <View className="flex-row gap-2">
-        <TouchableOpacity className="icon-btn" activeOpacity={0.8}>
+        <TouchableOpacity
+          className="icon-btn"
+          activeOpacity={0.8}
+          onPress={() => router.push("/notifications")}
+        >
           <Bell size={20} color="#181C2E" />
-          <Badge count={0} />
+          <Badge count={unreadCount} />
         </TouchableOpacity>
         <TouchableOpacity
           className="icon-btn"

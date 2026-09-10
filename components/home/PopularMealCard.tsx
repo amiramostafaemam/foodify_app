@@ -23,13 +23,19 @@ const PopularMealCard = ({ item, badge }: Props) => {
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={open}
-      className="home-card w-48 p-3"
+      className="home-card w-64 overflow-hidden"
     >
-      <View className="mb-2 flex-row items-start justify-between">
+      <View className="relative">
+        <FoodImage
+          uri={item.image_url}
+          className="h-44 w-full bg-primary/5"
+          contentFit="cover"
+        />
+
         {badge ? (
           <View
             className={cn(
-              "rounded-full px-2.5 py-1",
+              "absolute left-3 top-3 rounded-full px-2.5 py-1",
               badge.tone === "primary" ? "bg-primary" : "bg-accent",
             )}
           >
@@ -42,51 +48,58 @@ const PopularMealCard = ({ item, badge }: Props) => {
               {badge.label}
             </Text>
           </View>
-        ) : (
-          <View />
-        )}
+        ) : null}
 
-        <TouchableOpacity onPress={() => setLiked((v) => !v)} hitSlop={8}>
+        <TouchableOpacity
+          onPress={() => setLiked((v) => !v)}
+          hitSlop={8}
+          className="absolute right-3 top-3 h-8 w-8 items-center justify-center rounded-full bg-white/95 shadow-sm shadow-black/10"
+        >
           <Heart
-            size={18}
+            size={15}
             color={liked ? "#F14141" : "#878787"}
             fill={liked ? "#F14141" : "transparent"}
           />
         </TouchableOpacity>
       </View>
 
-      <FoodImage uri={item.image_url} className="h-28 w-full" />
+      <View className="p-4">
+        <View className="flex-row items-center justify-between">
+          <Text
+            className="paragraph-bold flex-1 pr-2 text-dark-100"
+            numberOfLines={1}
+          >
+            {item.name}
+          </Text>
+          <View className="flex-row items-center gap-1">
+            <Star size={12} color="#FFC738" fill="#FFC738" />
+            <Text className="body-medium text-gray-100">
+              {item.rating?.toFixed(1) ?? "4.5"}
+            </Text>
+          </View>
+        </View>
 
-      <Text className="paragraph-bold mt-2 text-dark-100" numberOfLines={1}>
-        {item.name}
-      </Text>
-      <Text className="body-regular mt-0.5 text-gray-100" numberOfLines={2}>
-        {item.description || "Freshly prepared, delivered hot."}
-      </Text>
-
-      <View className="mt-2 flex-row items-center gap-1">
-        <Star size={13} color="#FFC738" fill="#FFC738" />
-        <Text className="body-medium text-gray-100">
-          {item.rating?.toFixed(1) ?? "4.5"}
+        <Text className="body-regular mt-1 text-gray-100" numberOfLines={1}>
+          {item.description || "Freshly prepared, delivered hot."}
         </Text>
-      </View>
 
-      <View className="mt-2 flex-row items-center justify-between">
-        <Text className="h3-bold text-dark-100">${item.price}</Text>
-        <TouchableOpacity
-          onPress={() =>
-            addItem({
-              id: item.$id,
-              name: item.name,
-              price: item.price,
-              image_url: item.image_url,
-            })
-          }
-          className="h-9 w-9 items-center justify-center rounded-full bg-primary"
-          activeOpacity={0.8}
-        >
-          <Plus size={18} color="#fff" />
-        </TouchableOpacity>
+        <View className="mt-3 flex-row items-center justify-between">
+          <Text className="h3-bold text-dark-100">${item.price}</Text>
+          <TouchableOpacity
+            onPress={() =>
+              addItem({
+                id: item.$id,
+                name: item.name,
+                price: item.price,
+                image_url: item.image_url,
+              })
+            }
+            className="h-10 w-10 items-center justify-center rounded-full bg-primary shadow-sm shadow-primary/30"
+            activeOpacity={0.85}
+          >
+            <Plus size={20} color="#fff" strokeWidth={2.5} />
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
