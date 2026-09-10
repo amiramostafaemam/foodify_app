@@ -1,3 +1,4 @@
+import { useColors } from "@/hooks/useColors";
 import { CustomInputProps } from "@/type";
 import cn from "clsx";
 import { Eye, EyeOff } from "lucide-react-native";
@@ -16,6 +17,7 @@ const CustomInput = ({
 }: CustomInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [hidden, setHidden] = useState(secureTextEntry);
+  const c = useColors();
 
   return (
     <View className="w-full">
@@ -27,7 +29,7 @@ const CustomInput = ({
           autoCorrect={false}
           keyboardType={keyboardType}
           placeholder={placeholder}
-          placeholderTextColor="#888"
+          placeholderTextColor={c.muted}
           value={value}
           onChangeText={onChangeText}
           secureTextEntry={hidden}
@@ -36,7 +38,7 @@ const CustomInput = ({
           className={cn(
             "input",
             secureTextEntry && "pr-12",
-            isFocused ? "border-primary" : "border-gray-300",
+            isFocused ? "border-primary" : "border-line/20",
             containerStyle,
           )}
           style={inputStyle}
@@ -50,9 +52,9 @@ const CustomInput = ({
             accessibilityLabel={hidden ? "Show password" : "Hide password"}
           >
             {hidden ? (
-              <EyeOff size={20} color="#878787" />
+              <EyeOff size={20} color={c.muted} />
             ) : (
-              <Eye size={20} color="#878787" />
+              <Eye size={20} color={c.muted} />
             )}
           </TouchableOpacity>
         )}

@@ -4,6 +4,7 @@ import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import { TAB_BAR_SPACE } from "@/components/navigation/FloatingTabBar";
 import { images } from "@/constants";
+import { useColors } from "@/hooks/useColors";
 import { createOrder } from "@/lib/appwrite";
 import { createPaymentIntent } from "@/lib/payment.service";
 import { useStripe } from "@/lib/stripe";
@@ -38,10 +39,10 @@ const SummaryRow = ({
   valueStyle,
 }: PaymentInfoStripeProps) => (
   <View className="flex-between my-1 flex-row">
-    <Text className={cn("paragraph-medium text-gray-200", labelStyle)}>
+    <Text className={cn("paragraph-medium text-muted", labelStyle)}>
       {label}
     </Text>
-    <Text className={cn("paragraph-bold text-dark-100", valueStyle)}>
+    <Text className={cn("paragraph-bold text-content", valueStyle)}>
       {value}
     </Text>
   </View>
@@ -66,18 +67,18 @@ const PaymentOption = ({
     activeOpacity={0.8}
     className={cn(
       "mb-3 flex-row items-center rounded-2xl p-4",
-      selected ? "bg-primary/10" : "bg-gray-50",
+      selected ? "bg-primary/10" : "bg-surface",
       disabled && "opacity-40",
     )}
   >
     <View className="flex-1">
-      <Text className="base-bold text-dark-100">{title}</Text>
-      <Text className="body-regular text-gray-100">{subtitle}</Text>
+      <Text className="base-bold text-content">{title}</Text>
+      <Text className="body-regular text-muted">{subtitle}</Text>
     </View>
     <View
       className={cn(
         "h-6 w-6 items-center justify-center rounded-full border-2",
-        selected ? "border-primary bg-primary" : "border-gray-300",
+        selected ? "border-primary bg-primary" : "border-line/20",
       )}
     >
       {selected && <View className="h-2 w-2 rounded-full bg-white" />}
@@ -91,6 +92,7 @@ const Cart = () => {
   const { items, getTotalItems, getTotalPrice, clearCart } = useCartStore();
   const { user } = useAuthStore();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const c = useColors();
 
   const [step, setStep] = useState<Step>("review");
   const [method, setMethod] = useState<PaymentMethod | null>(null);
@@ -243,7 +245,7 @@ const Cart = () => {
   /* ----------------------------- Empty cart ----------------------------- */
   if (totalItems === 0) {
     return (
-      <SafeAreaView className="h-full bg-white">
+      <SafeAreaView className="h-full bg-canvas">
         <View className="px-5 pt-5">
           <CustomHeader title="Your Cart" />
         </View>
@@ -253,8 +255,8 @@ const Cart = () => {
             className="mb-6 h-72 w-72"
             resizeMode="contain"
           />
-          <Text className="h3-bold text-dark-100">Your cart is empty</Text>
-          <Text className="paragraph-regular mt-2 text-center text-gray-100">
+          <Text className="h3-bold text-content">Your cart is empty</Text>
+          <Text className="paragraph-regular mt-2 text-center text-muted">
             Add some delicious items to get started!
           </Text>
           <CustomButton
@@ -271,7 +273,7 @@ const Cart = () => {
   /* ------------------------------- Review ------------------------------- */
   if (step === "review") {
     return (
-      <SafeAreaView className="h-full bg-white">
+      <SafeAreaView className="h-full bg-canvas">
         <FlatList
           data={items}
           renderItem={({ item }) => <CartItem item={item} />}
@@ -286,8 +288,8 @@ const Cart = () => {
             <CustomHeader title={`Your Cart (${totalItems})`} />
           }
           ListFooterComponent={
-            <View className="mt-6 rounded-2xl bg-gray-50 p-5">
-              <Text className="paragraph-bold mb-4 text-dark-100">
+            <View className="mt-6 rounded-2xl bg-surface p-5">
+              <Text className="paragraph-bold mb-4 text-content">
                 Order Summary
               </Text>
               <SummaryRow
@@ -305,19 +307,19 @@ const Cart = () => {
                 value={`- $${discount.toFixed(2)}`}
                 valueStyle="!text-success"
               />
-              <View className="my-2 border-t border-black/5" />
+              <View className="my-2 border-t border-line/10" />
               <SummaryRow
                 label="Total"
                 value={`$${finalAmount.toFixed(2)}`}
-                labelStyle="base-bold !text-dark-100"
-                valueStyle="base-bold !text-dark-100"
+                labelStyle="base-bold !text-content"
+                valueStyle="base-bold !text-content"
               />
             </View>
           }
         />
 
         <View
-          className="border-t border-gray-100/40 bg-white px-5 pt-4"
+          className="border-t border-line/10 bg-elevated px-5 pt-4"
           style={{ paddingBottom: TAB_BAR_SPACE }}
         >
           <CustomButton
@@ -334,16 +336,16 @@ const Cart = () => {
   const stripeAvailable = process.env.EXPO_PUBLIC_ENABLE_STRIPE === "true";
 
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className="h-full bg-canvas">
       <View className="flex-row items-center px-5 pt-5">
         <TouchableOpacity
           onPress={() => setStep("review")}
           hitSlop={10}
           className="mr-2"
         >
-          <ChevronLeft size={26} color="#181C2E" />
+          <ChevronLeft size={26} color={c.content} />
         </TouchableOpacity>
-        <Text className="h3-bold text-dark-100">Checkout</Text>
+        <Text className="h3-bold text-content">Checkout</Text>
       </View>
 
       <ScrollView
@@ -351,20 +353,20 @@ const Cart = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Deliver to */}
-        <Text className="paragraph-bold mb-2 text-dark-100">Deliver to</Text>
+        <Text className="paragraph-bold mb-2 text-content">Deliver to</Text>
         <TouchableOpacity
           onPress={() => router.push("/edit-profile")}
           activeOpacity={0.8}
-          className="mb-6 flex-row items-center gap-3 rounded-2xl bg-gray-50 p-4"
+          className="mb-6 flex-row items-center gap-3 rounded-2xl bg-surface p-4"
         >
           <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
             <MapPin size={18} color="#FE8C00" />
           </View>
           <View className="flex-1">
-            <Text className="paragraph-semibold text-dark-100">
+            <Text className="paragraph-semibold text-content">
               {user?.address_home ? "Home" : "No address yet"}
             </Text>
-            <Text className="body-regular text-gray-100" numberOfLines={1}>
+            <Text className="body-regular text-muted" numberOfLines={1}>
               {user?.address_home || "Tap to add a delivery address"}
             </Text>
           </View>
@@ -372,7 +374,7 @@ const Cart = () => {
         </TouchableOpacity>
 
         {/* Payment method */}
-        <Text className="paragraph-bold mb-2 text-dark-100">
+        <Text className="paragraph-bold mb-2 text-content">
           Payment method
         </Text>
         <PaymentOption
@@ -412,14 +414,14 @@ const Cart = () => {
           <SummaryRow
             label="Total"
             value={`$${finalAmount.toFixed(2)}`}
-            labelStyle="base-bold !text-dark-100"
-            valueStyle="base-bold !text-dark-100"
+            labelStyle="base-bold !text-content"
+            valueStyle="base-bold !text-content"
           />
         </View>
       </ScrollView>
 
       <View
-        className="border-t border-gray-100/40 bg-white px-5 pt-4"
+        className="border-t border-line/10 bg-elevated px-5 pt-4"
         style={{ paddingBottom: TAB_BAR_SPACE }}
       >
         <CustomButton

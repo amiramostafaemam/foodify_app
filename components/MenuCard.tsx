@@ -25,12 +25,12 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
       </View>
 
       <Text
-        className="base-bold mb-2 text-center text-dark-100"
+        className="base-bold mb-2 text-center text-content"
         numberOfLines={1}
       >
         {name}
       </Text>
-      <Text className="body-regular mb-4 text-gray-200">From ${price}</Text>
+      <Text className="body-regular mb-4 text-muted">From ${price}</Text>
       <Text className="paragraph-bold text-primary">View Details</Text>
     </TouchableOpacity>
   );

@@ -68,7 +68,7 @@ const Avatar = ({
         <TouchableOpacity
           onPress={onEditPress}
           disabled={uploading}
-          className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-primary"
+          className="absolute bottom-0 right-0 h-10 w-10 items-center justify-center rounded-full border-4 border-canvas bg-primary"
           accessibilityLabel="Change profile photo"
         >
           <Camera size={16} color="#fff" />

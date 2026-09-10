@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  /* Light fallback for the semantic tokens; constants/theme.ts overrides these
+     at the app root per theme, and again inside modal portals. */
+  :root {
+    --bg: 255 255 255;
+    --surface: 245 245 244;
+    --card: 255 255 255;
+    --elevated: 255 255 255;
+    --content: 24 28 46;
+    --muted: 135 135 135;
+    --line: 0 0 0;
+    --cream: 243 233 218;
+    --hero-1: 255 231 196;
+    --hero-2: 255 243 225;
+  }
+}
+
 @layer utilities {
   .flex-center {
     @apply flex items-center justify-center;
@@ -18,7 +35,7 @@
 
 @layer components {
   .cart-btn {
-    @apply flex size-10 items-center justify-center rounded-full bg-dark-100;
+    @apply flex size-10 items-center justify-center rounded-full bg-primary;
   }
 
   .cart-badge {
@@ -26,7 +43,7 @@
   }
 
   .cart-item {
-    @apply mb-4 flex flex-row items-end justify-between rounded-xl bg-white p-3 shadow-md shadow-dark-100/10;
+    @apply mb-4 flex flex-row items-end justify-between rounded-xl bg-card p-3 shadow-md shadow-dark-100/10;
   }
 
   .cart-item__image {
@@ -46,11 +63,11 @@
   }
 
   .label {
-    @apply w-full pl-2 text-start font-quicksand-medium text-base text-gray-500;
+    @apply w-full pl-2 text-start font-quicksand-medium text-base text-muted;
   }
 
   .input {
-    @apply w-full rounded-lg border-b p-3 font-quicksand-semibold text-base leading-5 text-dark-100;
+    @apply w-full rounded-lg border-b p-3 font-quicksand-semibold text-base leading-5 text-content;
   }
 
   .filter {
@@ -58,7 +75,7 @@
   }
 
   .menu-card {
-    @apply relative flex items-center justify-end rounded-3xl bg-white px-3.5 py-9 pt-24 shadow-md shadow-black/10;
+    @apply relative flex items-center justify-end rounded-3xl bg-card px-3.5 py-9 pt-24 shadow-md shadow-black/10;
   }
 
   .profile-field {
@@ -70,7 +87,7 @@
   }
 
   .searchbar {
-    @apply relative flex w-full flex-row items-center justify-center gap-5 rounded-full bg-white font-quicksand-medium  text-dark-100 shadow-md shadow-black/10;
+    @apply relative flex w-full flex-row items-center justify-center gap-5 rounded-full bg-white font-quicksand-medium  text-content shadow-md shadow-black/10;
   }
 
   .tab-icon {
@@ -86,19 +103,19 @@
   }
 
   .profile-avatar {
-    @apply relative size-28 rounded-full border-2 border-white;
+    @apply relative size-28 rounded-full border-2 border-canvas;
   }
 
   .profile-edit {
-    @apply absolute bottom-2 right-0 flex size-7 items-center justify-center rounded-full border-2 border-white bg-primary p-2;
+    @apply absolute bottom-2 right-0 flex size-7 items-center justify-center rounded-full border-2 border-canvas bg-primary p-2;
   }
 
   .icon-btn {
-    @apply size-11 items-center justify-center rounded-2xl bg-white shadow-sm shadow-black/5;
+    @apply size-10 items-center justify-center rounded-2xl bg-card shadow-sm shadow-black/5;
   }
 
   .home-card {
-    @apply rounded-3xl bg-white shadow-md shadow-black/10;
+    @apply rounded-3xl bg-card shadow-md shadow-black/10;
   }
 
   .h1-bold {

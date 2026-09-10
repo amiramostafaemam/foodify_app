@@ -1,3 +1,4 @@
+import { useColors } from "@/hooks/useColors";
 import { useCartStore } from "@/store/cart.store";
 import {
   House,
@@ -65,6 +66,7 @@ const CartBadge = ({ color }: { color: string }) => {
 
 const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
   const insets = useSafeAreaInsets();
+  const c = useColors();
   const tabs = state.routes.filter((r) => TABS[r.name]);
   const tabW = BAR_W / tabs.length;
 
@@ -97,7 +99,7 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
     >
       {/* Bar */}
       <View
-        className="absolute inset-x-0 bottom-0 flex-row rounded-full bg-white"
+        className="absolute inset-x-0 bottom-0 flex-row rounded-full bg-elevated"
         style={{
           height: BAR_H,
           shadowColor: "#8A6A3A",
@@ -162,7 +164,7 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
           alignItems: "center",
           justifyContent: "center",
           borderWidth: 3.5,
-          borderColor: "#FFFFFF",
+          borderColor: c.card,
           transform: [{ translateX }],
           shadowColor: PRIMARY,
           shadowOffset: { width: 0, height: 5 },

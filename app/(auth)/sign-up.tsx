@@ -84,7 +84,7 @@ const SignUp = () => {
 
   return (
     <View className="flex-1">
-      <View className="mt-5 gap-8 rounded-lg bg-white p-5">
+      <View className="mt-5 gap-8 rounded-lg bg-card p-5">
         <CustomInput
           label="Full Name"
           placeholder="Enter Your Full Name"
@@ -115,7 +115,7 @@ const SignUp = () => {
         />
 
         <View className="mt-3 flex-row justify-center gap-2">
-          <Text className="base-regular text-gray-100">
+          <Text className="base-regular text-muted">
             Already have an account?
           </Text>
           <Link href="/sign-in" className="base-bold text-primary">

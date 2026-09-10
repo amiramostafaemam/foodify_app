@@ -49,12 +49,12 @@ const NavRow = ({
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
-    className="flex-row items-center gap-3 rounded-2xl bg-gray-50 p-4"
+    className="flex-row items-center gap-3 rounded-2xl bg-surface p-4"
   >
     <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
       <Icon size={18} color="#FE8C00" />
     </View>
-    <Text className="paragraph-semibold flex-1 text-dark-100">{label}</Text>
+    <Text className="paragraph-semibold flex-1 text-content">{label}</Text>
     {count > 0 ? (
       <View className="h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5">
         <Text className="font-quicksand-bold text-[11px] text-white">
@@ -104,16 +104,16 @@ const Profile = () => {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-center h-full bg-white">
-        <Text className="paragraph-regular text-gray-200">Loading…</Text>
+      <SafeAreaView className="flex-center h-full bg-canvas">
+        <Text className="paragraph-regular text-muted">Loading…</Text>
       </SafeAreaView>
     );
   }
 
   if (!user) {
     return (
-      <SafeAreaView className="flex-center h-full bg-white">
-        <Text className="paragraph-regular text-gray-200">
+      <SafeAreaView className="flex-center h-full bg-canvas">
+        <Text className="paragraph-regular text-muted">
           No user data found
         </Text>
       </SafeAreaView>
@@ -121,7 +121,7 @@ const Profile = () => {
   }
 
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className="h-full bg-canvas">
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 130 }}
         showsVerticalScrollIndicator={false}
@@ -137,10 +137,10 @@ const Profile = () => {
             uploading={uploadingAvatar}
             onEditPress={handleChangeAvatar}
           />
-          <Text className="mt-4 font-quicksand-bold text-2xl text-dark-100">
+          <Text className="mt-4 font-quicksand-bold text-2xl text-content">
             {user.name}
           </Text>
-          <Text className="body-regular text-gray-100">{user.email}</Text>
+          <Text className="body-regular text-muted">{user.email}</Text>
         </View>
 
         {/* Quick links */}
@@ -160,8 +160,8 @@ const Profile = () => {
         </View>
 
         {/* Personal information */}
-        <View className="mb-4 rounded-2xl bg-gray-50 p-5">
-          <Text className="paragraph-bold mb-4 text-dark-100">
+        <View className="mb-4 rounded-2xl bg-surface p-5">
+          <Text className="paragraph-bold mb-4 text-content">
             Personal information
           </Text>
           <ProfileField label="Full Name" value={user.name} icon={User} />
@@ -174,8 +174,8 @@ const Profile = () => {
         </View>
 
         {/* Addresses */}
-        <View className="mb-6 rounded-2xl bg-gray-50 p-5">
-          <Text className="paragraph-bold mb-4 text-dark-100">Addresses</Text>
+        <View className="mb-6 rounded-2xl bg-surface p-5">
+          <Text className="paragraph-bold mb-4 text-content">Addresses</Text>
           <ProfileField
             label="Home Address"
             value={user.address_home || "Not provided"}

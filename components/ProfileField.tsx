@@ -14,8 +14,8 @@ const ProfileField = ({ label, value, icon: Icon }: ProfileFieldProps) => {
         <Icon size={20} color="#FE8C00" />
       </View>
       <View className="flex-1">
-        <Text className="body-regular text-gray-500">{label}</Text>
-        <Text className="paragraph-semibold text-dark-100">{value}</Text>
+        <Text className="body-regular text-muted">{label}</Text>
+        <Text className="paragraph-semibold text-content">{value}</Text>
       </View>
     </View>
   );

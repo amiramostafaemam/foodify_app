@@ -33,7 +33,7 @@ const Search = () => {
   });
 
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className="h-full bg-canvas">
       <FlatList
         data={data || []}
         renderItem={({ item, index }) => {
@@ -66,7 +66,7 @@ const Search = () => {
                   Search
                 </Text>
                 <View className="flex-start mt-0.5 flex-row gap-x-1">
-                  <Text className="paragraph-semibold text-dark-100">
+                  <Text className="paragraph-semibold text-content">
                     Find your favorite food
                   </Text>
                 </View>
@@ -88,10 +88,10 @@ const Search = () => {
                 className="h-[300px] w-[250px] scale-110"
                 resizeMode="contain"
               />
-              <Text className="h3-bold mb-2 text-center text-dark-100">
+              <Text className="h3-bold mb-2 text-center text-content">
                 Nothing matched your search
               </Text>
-              <Text className="paragraph-medium text-center leading-[24px] text-[#878787]">
+              <Text className="paragraph-medium text-center leading-[24px] text-muted">
                 Try a different search term or check for typos.
               </Text>
             </View>

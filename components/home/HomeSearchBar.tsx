@@ -7,10 +7,10 @@ const HomeSearchBar = () => (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => router.push("/search")}
-      className="h-14 flex-1 flex-row items-center gap-3 rounded-2xl bg-white px-4 shadow-sm shadow-black/5"
+      className="h-14 flex-1 flex-row items-center gap-3 rounded-2xl bg-surface px-4 shadow-sm shadow-black/5"
     >
       <Search size={20} color="#878787" />
-      <Text className="paragraph-medium text-gray-100">
+      <Text className="paragraph-medium text-muted">
         Search your favorite meal…
       </Text>
     </TouchableOpacity>

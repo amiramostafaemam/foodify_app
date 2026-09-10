@@ -51,7 +51,7 @@ const PopularMealsCarousel = ({ data }: { data: MenuItem[] }) => {
               className={
                 i === index
                   ? "h-1.5 w-5 rounded-full bg-primary"
-                  : "h-1.5 w-1.5 rounded-full bg-gray-300"
+                  : "h-1.5 w-1.5 rounded-full bg-line/20"
               }
             />
           ))}

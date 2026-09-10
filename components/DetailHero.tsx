@@ -1,5 +1,6 @@
 import { Image } from "@/components/CachedImage";
 import FavoriteButton from "@/components/FavoriteButton";
+import { useColors } from "@/hooks/useColors";
 import type { FavoriteItem } from "@/store/favorites.store";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -32,6 +33,7 @@ const DetailHero = ({
   favorite,
 }: DetailHeroProps) => {
   const insets = useSafeAreaInsets();
+  const c = useColors();
 
   return (
     <View style={{ height }}>
@@ -52,7 +54,7 @@ const DetailHero = ({
         </>
       ) : (
         <LinearGradient
-          colors={["#FFE7C4", "#FFF3E1", "#FFFFFF"]}
+          colors={c.hero}
           style={StyleSheet.absoluteFill}
         />
       )}

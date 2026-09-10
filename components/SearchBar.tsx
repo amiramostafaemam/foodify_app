@@ -17,10 +17,10 @@ const SearchBar = () => {
   }, [value]);
 
   return (
-    <View className="h-14 flex-row items-center gap-3 rounded-2xl bg-gray-50 px-4">
+    <View className="h-14 flex-row items-center gap-3 rounded-2xl bg-surface px-4">
       <Search size={20} color="#878787" />
       <TextInput
-        className="flex-1 font-quicksand-medium text-base text-dark-100"
+        className="flex-1 font-quicksand-medium text-base text-content"
         placeholder="Search for pizzas, burgers…"
         value={value}
         onChangeText={setValue}
@@ -31,7 +31,7 @@ const SearchBar = () => {
       />
       {value.length > 0 ? (
         <TouchableOpacity onPress={() => setValue("")} hitSlop={8}>
-          <View className="h-6 w-6 items-center justify-center rounded-full bg-gray-300">
+          <View className="h-6 w-6 items-center justify-center rounded-full bg-muted">
             <X size={13} color="#fff" strokeWidth={3} />
           </View>
         </TouchableOpacity>

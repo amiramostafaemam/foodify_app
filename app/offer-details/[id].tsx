@@ -25,7 +25,7 @@ const OfferDetails = () => {
 
   if (!offer) {
     return (
-      <SafeAreaView className="flex-center h-full bg-white">
+      <SafeAreaView className="flex-center h-full bg-canvas">
         <Image
           source={images.notfound}
           className="h-72 w-72"
@@ -58,7 +58,7 @@ const OfferDetails = () => {
 
   return (
     <>
-      <View className="flex-1 bg-white">
+      <View className="flex-1 bg-canvas">
         <ScrollView
           contentContainerStyle={{ paddingBottom: 130 }}
           showsVerticalScrollIndicator={false}
@@ -77,15 +77,15 @@ const OfferDetails = () => {
           />
 
           <View
-            className="rounded-t-[28px] bg-white px-5 pt-5"
+            className="rounded-t-[28px] bg-card px-5 pt-5"
             style={{ marginTop: -24 }}
           >
             <View className="flex-row items-start justify-between">
-              <Text className="h1-bold flex-1 pr-3 text-dark-100">
+              <Text className="h1-bold flex-1 pr-3 text-content">
                 {offer.title}
               </Text>
               <View className="items-end">
-                <Text className="body-regular text-gray-100 line-through">
+                <Text className="body-regular text-muted line-through">
                   ${offer.originalPrice.toFixed(2)}
                 </Text>
                 <Text className="h2-bold text-primary">
@@ -97,7 +97,7 @@ const OfferDetails = () => {
             <View className="mt-2 flex-row items-center gap-2">
               <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1">
                 <Star size={13} color="#FFC738" fill="#FFC738" />
-                <Text className="font-quicksand-bold text-xs text-dark-100">
+                <Text className="font-quicksand-bold text-xs text-content">
                   {offer.rating}
                 </Text>
               </View>
@@ -114,11 +114,11 @@ const OfferDetails = () => {
                 <Clock size={18} color="#FE8C00" />
               </View>
               <View className="flex-1">
-                <Text className="paragraph-bold text-dark-100">
+                <Text className="paragraph-bold text-content">
                   Ends in {validity.daysLeft}{" "}
                   {validity.daysLeft === 1 ? "day" : "days"}
                 </Text>
-                <Text className="body-regular text-gray-100">
+                <Text className="body-regular text-muted">
                   Valid until {validity.date}
                 </Text>
               </View>
@@ -126,49 +126,49 @@ const OfferDetails = () => {
 
             <View className="mt-4 flex-row gap-2.5">
               <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
-                <Text className="font-quicksand-bold text-sm text-dark-100">
+                <Text className="font-quicksand-bold text-sm text-content">
                   Free
                 </Text>
-                <Text className="font-quicksand-medium text-[11px] text-gray-100">
+                <Text className="font-quicksand-medium text-[11px] text-muted">
                   Delivery
                 </Text>
               </View>
               <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
-                <Text className="font-quicksand-bold text-sm text-dark-100">
+                <Text className="font-quicksand-bold text-sm text-content">
                   {offer.deliveryTime.split(" ")[0]}
                 </Text>
-                <Text className="font-quicksand-medium text-[11px] text-gray-100">
+                <Text className="font-quicksand-medium text-[11px] text-muted">
                   Minutes
                 </Text>
               </View>
               <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
-                <Text className="font-quicksand-bold text-sm text-dark-100">
+                <Text className="font-quicksand-bold text-sm text-content">
                   {totalItems}
                 </Text>
-                <Text className="font-quicksand-medium text-[11px] text-gray-100">
+                <Text className="font-quicksand-medium text-[11px] text-muted">
                   Items
                 </Text>
               </View>
             </View>
 
-            <Text className="h3-bold mt-7 text-dark-100">About this deal</Text>
-            <Text className="paragraph-medium mt-2 leading-[1.7] text-gray-100">
+            <Text className="h3-bold mt-7 text-content">About this deal</Text>
+            <Text className="paragraph-medium mt-2 leading-[1.7] text-muted">
               {offer.description}
             </Text>
 
-            <Text className="h3-bold mt-7 text-dark-100">
+            <Text className="h3-bold mt-7 text-content">
               What&#39;s included
             </Text>
             <View className="mt-3 gap-2">
               {offer.items.map((it, i) => (
                 <View
                   key={i}
-                  className="flex-row items-center justify-between rounded-2xl bg-gray-50 px-4 py-3.5"
+                  className="flex-row items-center justify-between rounded-2xl bg-surface px-4 py-3.5"
                 >
-                  <Text className="paragraph-semibold text-dark-100">
+                  <Text className="paragraph-semibold text-content">
                     {it.name}
                   </Text>
-                  <View className="rounded-full bg-white px-2.5 py-1">
+                  <View className="rounded-full bg-card px-2.5 py-1">
                     <Text className="small-bold text-primary">
                       x{it.quantity}
                     </Text>
@@ -180,7 +180,7 @@ const OfferDetails = () => {
         </ScrollView>
 
         <View
-          className="absolute inset-x-0 bottom-0 bg-white px-5 pt-3"
+          className="absolute inset-x-0 bottom-0 bg-elevated px-5 pt-3"
           style={{
             paddingBottom: Math.max(insets.bottom, 14) + 4,
             shadowColor: "#000",
@@ -198,7 +198,7 @@ const OfferDetails = () => {
               >
                 <Minus size={16} color="#FE8C00" strokeWidth={2.5} />
               </TouchableOpacity>
-              <Text className="w-4 text-center font-quicksand-bold text-base text-dark-100">
+              <Text className="w-4 text-center font-quicksand-bold text-base text-content">
                 {quantity}
               </Text>
               <TouchableOpacity

@@ -66,10 +66,10 @@ const StatCard = ({
 }) => (
   <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
     <Icon size={17} color="#FE8C00" />
-    <Text className="mt-1.5 font-quicksand-bold text-sm text-dark-100">
+    <Text className="mt-1.5 font-quicksand-bold text-sm text-content">
       {value}
     </Text>
-    <Text className="font-quicksand-medium text-[11px] text-gray-100">
+    <Text className="font-quicksand-medium text-[11px] text-muted">
       {label}
     </Text>
   </View>
@@ -91,7 +91,7 @@ const AddonCard = ({
       activeOpacity={0.85}
       className={cn(
         "w-[116px] rounded-[20px] p-3",
-        selected ? "bg-primary/10" : "bg-gray-50",
+        selected ? "bg-primary/10" : "bg-surface",
       )}
     >
       <View className="items-center">
@@ -106,14 +106,14 @@ const AddonCard = ({
             <View className="h-12 w-12 rounded-full bg-primary/10" />
           )}
           {selected ? (
-            <View className="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-primary">
+            <View className="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full border-2 border-card bg-primary">
               <Check size={11} color="#fff" strokeWidth={3.5} />
             </View>
           ) : null}
         </View>
       </View>
       <Text
-        className="mt-2.5 text-center font-quicksand-semibold text-[13px] text-dark-100"
+        className="mt-2.5 text-center font-quicksand-semibold text-[13px] text-content"
         numberOfLines={1}
       >
         {option.name}
@@ -137,7 +137,7 @@ const AddonRow = ({
   onToggle: (o: CustomizationOption) => void;
 }) => (
   <View className="mt-7">
-    <Text className="h3-bold mb-3 text-dark-100">{title}</Text>
+    <Text className="h3-bold mb-3 text-content">{title}</Text>
     <FlatList
       data={data}
       horizontal
@@ -176,7 +176,7 @@ const Details = () => {
 
   if (loading || !item) {
     return (
-      <SafeAreaView className="flex-center h-full bg-white">
+      <SafeAreaView className="flex-center h-full bg-canvas">
         <ActivityIndicator size="large" color="#FE8C00" />
       </SafeAreaView>
     );
@@ -214,7 +214,7 @@ const Details = () => {
 
   return (
     <>
-      <View className="flex-1 bg-white">
+      <View className="flex-1 bg-canvas">
         <ScrollView
           contentContainerStyle={{ paddingBottom: 130 }}
           showsVerticalScrollIndicator={false}
@@ -232,21 +232,21 @@ const Details = () => {
           />
 
           <View
-            className="rounded-t-[30px] bg-white px-5"
+            className="rounded-t-[30px] bg-card px-5"
             style={{ marginTop: -SHEET_PULL, paddingTop: CONTENT_PT }}
           >
             <View className="flex-row items-start justify-between">
               <View className="flex-1 pr-3">
-                <Text className="h1-bold text-dark-100">{item.name}</Text>
+                <Text className="h1-bold text-content">{item.name}</Text>
                 {categoryName(item) ? (
-                  <Text className="body-medium mt-0.5 text-gray-100">
+                  <Text className="body-medium mt-0.5 text-muted">
                     {categoryName(item)}
                   </Text>
                 ) : null}
               </View>
               <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1">
                 <Star size={13} color="#FFC738" fill="#FFC738" />
-                <Text className="font-quicksand-bold text-xs text-dark-100">
+                <Text className="font-quicksand-bold text-xs text-content">
                   {item.rating?.toFixed(1) ?? "4.5"}
                 </Text>
               </View>
@@ -270,8 +270,8 @@ const Details = () => {
               <StatCard icon={Clock} label="Delivery" value="25 min" />
             </View>
 
-            <Text className="h3-bold mt-7 text-dark-100">About this meal</Text>
-            <Text className="paragraph-medium mt-2 leading-[1.7] text-gray-100">
+            <Text className="h3-bold mt-7 text-content">About this meal</Text>
+            <Text className="paragraph-medium mt-2 leading-[1.7] text-muted">
               {item.description ||
                 "Freshly prepared with high-quality ingredients and delivered hot to your door."}
             </Text>
@@ -323,7 +323,7 @@ const Details = () => {
 
         {/* Sticky bottom bar */}
         <View
-          className="absolute inset-x-0 bottom-0 bg-white px-5 pt-3"
+          className="absolute inset-x-0 bottom-0 bg-elevated px-5 pt-3"
           style={{
             paddingBottom: Math.max(insets.bottom, 14) + 4,
             shadowColor: "#000",
@@ -341,7 +341,7 @@ const Details = () => {
               >
                 <Minus size={16} color="#FE8C00" strokeWidth={2.5} />
               </TouchableOpacity>
-              <Text className="w-4 text-center font-quicksand-bold text-base text-dark-100">
+              <Text className="w-4 text-center font-quicksand-bold text-base text-content">
                 {quantity}
               </Text>
               <TouchableOpacity

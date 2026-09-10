@@ -5,6 +5,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Theme-aware semantic tokens (values set by constants/theme.ts vars()).
+        canvas: "rgb(var(--bg) / <alpha-value>)",
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        card: "rgb(var(--card) / <alpha-value>)",
+        elevated: "rgb(var(--elevated) / <alpha-value>)",
+        content: "rgb(var(--content) / <alpha-value>)",
+        muted: "rgb(var(--muted) / <alpha-value>)",
+        line: "rgb(var(--line) / <alpha-value>)",
+        warm: "rgb(var(--cream) / <alpha-value>)",
+
         primary: {
           DEFAULT: "#FE8C00",
           dark: "#E67E00",

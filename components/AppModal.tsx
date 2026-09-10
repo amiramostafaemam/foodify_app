@@ -95,7 +95,7 @@ const AppModal = ({
         <Animated.View
           style={{ opacity, transform: [{ scale }], width: "100%", maxWidth: 360 }}
         >
-          <View className="items-center rounded-[28px] bg-white p-6 shadow-2xl">
+          <View className="items-center rounded-[28px] bg-elevated p-6 shadow-2xl">
             {image ? (
               <Image
                 source={image}
@@ -113,11 +113,11 @@ const AppModal = ({
               </View>
             ) : null}
 
-            <Text className="text-center font-quicksand-bold text-xl text-dark-100">
+            <Text className="text-center font-quicksand-bold text-xl text-content">
               {title}
             </Text>
             {message ? (
-              <Text className="mt-2 text-center font-quicksand-medium text-[15px] leading-[1.5] text-gray-100">
+              <Text className="mt-2 text-center font-quicksand-medium text-[15px] leading-[1.5] text-muted">
                 {message}
               </Text>
             ) : null}
@@ -140,9 +140,9 @@ const AppModal = ({
                 <TouchableOpacity
                   onPress={secondary.onPress}
                   activeOpacity={0.9}
-                  className="items-center rounded-full bg-gray-50 py-4"
+                  className="items-center rounded-full bg-surface py-4"
                 >
-                  <Text className="font-quicksand-bold text-base text-dark-100">
+                  <Text className="font-quicksand-bold text-base text-content">
                     {secondary.label}
                   </Text>
                 </TouchableOpacity>

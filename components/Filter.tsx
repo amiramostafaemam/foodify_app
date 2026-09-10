@@ -31,14 +31,14 @@ const Filter = ({ categories }: { categories: Category[] }) => {
           key={item.$id}
           className={cn(
             "mr-2 rounded-full px-5 py-2.5",
-            active === item.$id ? "bg-primary" : "bg-gray-50",
+            active === item.$id ? "bg-primary" : "bg-surface",
           )}
           onPress={() => handlePress(item.$id)}
         >
           <Text
             className={cn(
               "font-quicksand-semibold text-sm",
-              active === item.$id ? "text-white" : "text-gray-100",
+              active === item.$id ? "text-white" : "text-muted",
             )}
           >
             {item.name}

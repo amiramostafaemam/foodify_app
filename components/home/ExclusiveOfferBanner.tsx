@@ -17,16 +17,16 @@ const ExclusiveOfferBanner = () => {
           params: { id: best.id },
         })
       }
-      className="flex-row items-center gap-3 overflow-hidden rounded-3xl bg-cream-200 p-4"
+      className="flex-row items-center gap-3 overflow-hidden rounded-3xl bg-warm p-4"
     >
       <View className="flex-1">
         <Text className="font-quicksand-bold text-[11px] uppercase tracking-wide text-primary">
           Exclusive Offer
         </Text>
-        <Text className="h2-bold mt-1 text-dark-100">
+        <Text className="h2-bold mt-1 text-content">
           Up to {best.discount}% OFF
         </Text>
-        <Text className="body-regular mt-0.5 text-gray-100">
+        <Text className="body-regular mt-0.5 text-muted">
           On selected combo meals
         </Text>
 
@@ -48,7 +48,7 @@ const ExclusiveOfferBanner = () => {
           transition={250}
           cachePolicy="memory-disk"
         />
-        <View className="absolute -left-3 top-1/2 h-14 w-14 -translate-y-7 items-center justify-center rounded-full border-4 border-cream-200 bg-white">
+        <View className="absolute -left-3 top-1/2 h-14 w-14 -translate-y-7 items-center justify-center rounded-full border-4 border-warm bg-white">
           <Text className="font-quicksand-bold text-sm leading-4 text-primary">
             {best.discount}%
           </Text>

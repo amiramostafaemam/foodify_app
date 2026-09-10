@@ -23,12 +23,12 @@ const CartItem = ({ item }: { item: CartItemType }) => {
         </View>
 
         <View className="flex-1">
-          <Text className="base-bold text-dark-100" numberOfLines={1}>
+          <Text className="base-bold text-content" numberOfLines={1}>
             {item.name}
           </Text>
 
           {item.customizations && item.customizations.length > 0 && (
-            <Text className="mt-1 text-xs text-gray-400" numberOfLines={2}>
+            <Text className="mt-1 text-xs text-muted" numberOfLines={2}>
               {item.customizations.map((c) => c.name).join(", ")}
             </Text>
           )}
@@ -50,7 +50,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
               />
             </TouchableOpacity>
 
-            <Text className="base-bold text-dark-100">{item.quantity}</Text>
+            <Text className="base-bold text-content">{item.quantity}</Text>
 
             <TouchableOpacity
               onPress={() => increaseQty(item.cartItemId)}
@@ -71,7 +71,12 @@ const CartItem = ({ item }: { item: CartItemType }) => {
         onPress={() => removeItem(item.cartItemId)}
         className="flex-center"
       >
-        <Image source={images.trash} className="size-5" resizeMode="contain" />
+        <Image
+          source={images.trash}
+          className="size-5"
+          resizeMode="contain"
+          tintColor="#F14141"
+        />
       </TouchableOpacity>
     </View>
   );

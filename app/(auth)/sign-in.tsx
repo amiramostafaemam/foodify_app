@@ -73,7 +73,7 @@ const SignIn = () => {
 
   return (
     <View className="flex-1">
-      <View className="mt-5 gap-8 rounded-lg bg-white p-5">
+      <View className="mt-5 gap-8 rounded-lg bg-card p-5">
         <CustomInput
           label="Email"
           placeholder="Enter Your Email"
@@ -99,7 +99,7 @@ const SignIn = () => {
         />
 
         <View className="mt-3 flex-row justify-center gap-2">
-          <Text className="base-regular text-gray-100">
+          <Text className="base-regular text-muted">
             Don&apos;t have an account?
           </Text>
           <Link href="/sign-up" className="base-bold text-primary">

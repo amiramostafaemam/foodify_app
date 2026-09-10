@@ -28,13 +28,13 @@ const CategoryStrip = ({ categories }: { categories: Category[] }) => {
             onPress={() => open(item)}
             className={cn(
               "rounded-full px-5 py-2.5",
-              active ? "bg-primary" : "bg-gray-50",
+              active ? "bg-primary" : "bg-surface",
             )}
           >
             <Text
               className={cn(
                 "font-quicksand-semibold text-sm",
-                active ? "text-white" : "text-gray-100",
+                active ? "text-white" : "text-muted",
               )}
             >
               {item.name}

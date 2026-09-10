@@ -41,14 +41,14 @@ export default function Onboarding() {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-canvas">
       {!isLastSlide && (
         <TouchableOpacity
           onPress={finishOnboarding}
           className="absolute right-6 top-14 z-10"
           activeOpacity={0.7}
         >
-          <Text className="font-semibold text-gray-400">Skip</Text>
+          <Text className="font-quicksand-semibold text-muted">Skip</Text>
         </TouchableOpacity>
       )}
 
@@ -71,10 +71,10 @@ export default function Onboarding() {
               className="h-72 w-72"
               resizeMode="contain"
             />
-            <Text className="mt-8 text-center text-2xl font-bold">
+            <Text className="mt-8 text-center font-quicksand-bold text-2xl text-content">
               {item.title}
             </Text>
-            <Text className="mt-3 text-center text-gray-400">
+            <Text className="mt-3 text-center font-quicksand text-muted">
               {item.description}
             </Text>
           </View>
@@ -86,7 +86,7 @@ export default function Onboarding() {
           <View
             key={index}
             className={`mx-1 h-2 rounded-full ${
-              currentIndex === index ? "w-6 bg-primary" : "w-2 bg-gray-300"
+              currentIndex === index ? "w-6 bg-primary" : "w-2 bg-line/20"
             }`}
           />
         ))}

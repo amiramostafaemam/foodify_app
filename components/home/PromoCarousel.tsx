@@ -66,7 +66,7 @@ const PromoCarousel = () => {
 
             <View className="flex-1 justify-center px-5">
               <View className="mb-2 self-start rounded-full bg-accent px-2.5 py-1">
-                <Text className="font-quicksand-bold text-[10px] text-dark-100">
+                <Text className="font-quicksand-bold text-[10px] text-content">
                   LIMITED TIME
                 </Text>
               </View>
@@ -100,7 +100,7 @@ const PromoCarousel = () => {
             className={
               i === index
                 ? "h-1.5 w-5 rounded-full bg-primary"
-                : "h-1.5 w-1.5 rounded-full bg-gray-300"
+                : "h-1.5 w-1.5 rounded-full bg-line/20"
             }
           />
         ))}

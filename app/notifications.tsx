@@ -1,4 +1,5 @@
 import { images } from "@/constants";
+import { useColors } from "@/hooks/useColors";
 import {
   AppNotification,
   NotificationType,
@@ -39,7 +40,7 @@ const META: Record<
   order: { Icon: ShoppingBag, color: "#FE8C00", tile: "bg-primary/10" },
   offer: { Icon: Percent, color: "#B57D00", tile: "bg-accent/20" },
   delivery: { Icon: Bike, color: "#2F9B65", tile: "bg-success/10" },
-  system: { Icon: Bell, color: "#181C2E", tile: "bg-gray-100/10" },
+  system: { Icon: Bell, color: "#9AA0A6", tile: "bg-muted/10" },
 };
 
 const NotificationRow = ({
@@ -57,7 +58,7 @@ const NotificationRow = ({
       onPress={onPress}
       className={cn(
         "flex-row gap-3 rounded-2xl p-3.5",
-        item.read ? "bg-white" : "bg-primary/5",
+        item.read ? "bg-card" : "bg-primary/5",
       )}
     >
       <View
@@ -72,17 +73,17 @@ const NotificationRow = ({
       <View className="flex-1">
         <View className="flex-row items-center justify-between">
           <Text
-            className="paragraph-bold flex-1 pr-2 text-dark-100"
+            className="paragraph-bold flex-1 pr-2 text-content"
             numberOfLines={1}
           >
             {item.title}
           </Text>
-          <Text className="font-quicksand-medium text-[11px] text-gray-100">
+          <Text className="font-quicksand-medium text-[11px] text-muted">
             {relativeTime(item.createdAt)}
           </Text>
         </View>
         <Text
-          className="body-regular mt-1 leading-[1.5] text-gray-100"
+          className="body-regular mt-1 leading-[1.5] text-muted"
           numberOfLines={2}
         >
           {item.body}
@@ -102,19 +103,20 @@ const Notifications = () => {
   const markRead = useNotificationsStore((s) => s.markRead);
   const markAllRead = useNotificationsStore((s) => s.markAllRead);
   const clearAll = useNotificationsStore((s) => s.clearAll);
+  const c = useColors();
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-canvas" edges={["top"]}>
       <View className="flex-row items-center justify-between px-5 pb-2 pt-2">
         <View className="flex-row items-center gap-2">
           <TouchableOpacity
             onPress={() => router.back()}
             hitSlop={10}
-            className="h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm shadow-black/10"
+            className="h-10 w-10 items-center justify-center rounded-full bg-surface"
           >
-            <ChevronLeft size={22} color="#181C2E" />
+            <ChevronLeft size={22} color={c.content} />
           </TouchableOpacity>
-          <Text className="h3-bold text-dark-100">Notifications</Text>
+          <Text className="h3-bold text-content">Notifications</Text>
         </View>
 
         {unread > 0 && (
@@ -145,8 +147,8 @@ const Notifications = () => {
               className="mb-5 h-56 w-56"
               resizeMode="contain"
             />
-            <Text className="h3-bold text-dark-100">You&#39;re all caught up</Text>
-            <Text className="body-regular mt-2 text-center text-gray-100">
+            <Text className="h3-bold text-content">You&#39;re all caught up</Text>
+            <Text className="body-regular mt-2 text-center text-muted">
               Order updates and fresh deals will show up here.
             </Text>
           </View>
@@ -158,7 +160,7 @@ const Notifications = () => {
               className="mt-4 items-center py-3"
               hitSlop={8}
             >
-              <Text className="paragraph-semibold text-gray-100">
+              <Text className="paragraph-semibold text-muted">
                 Clear all
               </Text>
             </TouchableOpacity>

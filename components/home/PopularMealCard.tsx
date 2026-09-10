@@ -41,7 +41,7 @@ const PopularMealCard = ({ item, badge }: Props) => {
             <Text
               className={cn(
                 "font-quicksand-bold text-[11px]",
-                badge.tone === "primary" ? "text-white" : "text-dark-100",
+                badge.tone === "primary" ? "text-white" : "text-content",
               )}
             >
               {badge.label}
@@ -66,25 +66,25 @@ const PopularMealCard = ({ item, badge }: Props) => {
       <View className="p-4">
         <View className="flex-row items-center justify-between">
           <Text
-            className="h3-bold flex-1 pr-2 text-dark-100"
+            className="h3-bold flex-1 pr-2 text-content"
             numberOfLines={1}
           >
             {item.name}
           </Text>
           <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5">
             <Star size={12} color="#FFC738" fill="#FFC738" />
-            <Text className="font-quicksand-bold text-xs text-dark-100">
+            <Text className="font-quicksand-bold text-xs text-content">
               {item.rating?.toFixed(1) ?? "4.5"}
             </Text>
           </View>
         </View>
 
-        <Text className="body-regular mt-1 text-gray-100" numberOfLines={1}>
+        <Text className="body-regular mt-1 text-muted" numberOfLines={1}>
           {item.description || "Freshly prepared, delivered hot to your door."}
         </Text>
 
         <View className="mt-3 flex-row items-center justify-between">
-          <Text className="h2-bold text-dark-100">
+          <Text className="h2-bold text-content">
             ${item.price.toFixed(2)}
           </Text>
           <TouchableOpacity

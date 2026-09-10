@@ -1,5 +1,6 @@
 import FoodImage from "@/components/FoodImage";
 import { images } from "@/constants";
+import { useColors } from "@/hooks/useColors";
 import {
   FavoriteItem,
   useFavoritesStore,
@@ -21,18 +22,18 @@ const FavRow = ({
   <TouchableOpacity
     activeOpacity={0.8}
     onPress={onOpen}
-    className="flex-row items-center gap-3 rounded-2xl bg-gray-50 p-3"
+    className="flex-row items-center gap-3 rounded-2xl bg-surface p-3"
   >
     <FoodImage
       uri={item.image}
       contentFit="cover"
-      className="h-16 w-16 rounded-xl bg-white"
+      className="h-16 w-16 rounded-xl bg-surface"
     />
     <View className="flex-1">
-      <Text className="paragraph-bold text-dark-100" numberOfLines={1}>
+      <Text className="paragraph-bold text-content" numberOfLines={1}>
         {item.name}
       </Text>
-      <Text className="body-regular mt-0.5 text-gray-100">
+      <Text className="body-regular mt-0.5 text-muted">
         {item.kind === "offer" ? "Deal" : "Meal"}
       </Text>
       <Text className="paragraph-bold mt-0.5 text-primary">
@@ -42,7 +43,7 @@ const FavRow = ({
     <TouchableOpacity
       onPress={onRemove}
       hitSlop={10}
-      className="h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm shadow-black/10"
+      className="h-9 w-9 items-center justify-center rounded-full bg-card shadow-sm shadow-black/10"
     >
       <Heart size={16} color="#F14141" fill="#F14141" />
     </TouchableOpacity>
@@ -53,6 +54,7 @@ const Favorites = () => {
   const items = useFavoritesStore((s) => s.items);
   const remove = useFavoritesStore((s) => s.remove);
   const clear = useFavoritesStore((s) => s.clear);
+  const c = useColors();
 
   const open = (item: FavoriteItem) =>
     router.push(
@@ -62,17 +64,17 @@ const Favorites = () => {
     );
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-canvas" edges={["top"]}>
       <View className="flex-row items-center justify-between px-5 pb-2 pt-2">
         <View className="flex-row items-center gap-2">
           <TouchableOpacity
             onPress={() => router.back()}
             hitSlop={10}
-            className="h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm shadow-black/10"
+            className="h-10 w-10 items-center justify-center rounded-full bg-surface"
           >
-            <ChevronLeft size={22} color="#181C2E" />
+            <ChevronLeft size={22} color={c.content} />
           </TouchableOpacity>
-          <Text className="h3-bold text-dark-100">Favorites</Text>
+          <Text className="h3-bold text-content">Favorites</Text>
         </View>
 
         {items.length > 0 && (
@@ -107,8 +109,8 @@ const Favorites = () => {
               className="mb-5 h-56 w-56"
               resizeMode="contain"
             />
-            <Text className="h3-bold text-dark-100">No favorites yet</Text>
-            <Text className="body-regular mt-2 text-center text-gray-100">
+            <Text className="h3-bold text-content">No favorites yet</Text>
+            <Text className="body-regular mt-2 text-center text-muted">
               Tap the heart on any meal or deal to save it here.
             </Text>
           </View>

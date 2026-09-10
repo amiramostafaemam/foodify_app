@@ -61,8 +61,8 @@ const EditProfile = () => {
   // No user state
   if (!user) {
     return (
-      <SafeAreaView className="flex-center h-full bg-white">
-        <Text className="paragraph-regular text-gray-200">No user found</Text>
+      <SafeAreaView className="flex-center h-full bg-canvas">
+        <Text className="paragraph-regular text-muted">No user found</Text>
         <TouchableOpacity
           onPress={() => router.replace("/sign-in")}
           className="mt-4"
@@ -74,7 +74,7 @@ const EditProfile = () => {
   }
 
   return (
-    <SafeAreaView className="h-full bg-white">
+    <SafeAreaView className="h-full bg-canvas">
       <KeyboardAwareScrollView
         bottomOffset={24}
         keyboardShouldPersistTaps="handled"
@@ -85,7 +85,7 @@ const EditProfile = () => {
         {/* Profile Avatar Preview */}
         <View className="my-8 items-center">
           <Avatar name={form.name} uri={user.avatar} />
-          <Text className="body-regular mt-3 text-gray-100">
+          <Text className="body-regular mt-3 text-muted">
             Change your photo from the Profile screen
           </Text>
         </View>
@@ -134,10 +134,10 @@ const EditProfile = () => {
 
             <TouchableOpacity
               onPress={() => router.back()}
-              className="flex-center rounded-xl bg-[#F3F4F6] py-4"
+              className="flex-center rounded-xl bg-surface py-4"
               disabled={isSubmitting}
             >
-              <Text className="paragraph-semibold text-[#1F2937]">Cancel</Text>
+              <Text className="paragraph-semibold text-content">Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>

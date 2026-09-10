@@ -26,7 +26,7 @@ const SectionHeader = ({
   onSeeAll: () => void;
 }) => (
   <View className="mb-4 flex-row items-center justify-between px-5">
-    <Text className="h3-bold text-dark-100">{title}</Text>
+    <Text className="h3-bold text-content">{title}</Text>
     <TouchableOpacity onPress={onSeeAll} hitSlop={8}>
       <Text className="paragraph-bold text-primary">View All →</Text>
     </TouchableOpacity>
@@ -74,7 +74,7 @@ export default function Home() {
             {loading && popular.length === 0 ? (
               <ActivityIndicator color="#FE8C00" className="ml-5" />
             ) : popular.length === 0 ? (
-              <Text className="px-5 font-quicksand text-gray-100">
+              <Text className="px-5 font-quicksand text-muted">
                 No meals yet — seed the menu to see them here.
               </Text>
             ) : (
