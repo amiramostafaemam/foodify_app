@@ -39,7 +39,6 @@ const OfferDetails = () => {
   }
 
   const total = offer.discountedPrice * quantity;
-  const saved = offer.originalPrice - offer.discountedPrice;
   const totalItems = offer.items.reduce((n, i) => n + i.quantity, 0);
 
   const handleAddToCart = () => {
@@ -67,13 +66,29 @@ const OfferDetails = () => {
           <DetailHero
             uri={offer.image}
             mode="photo"
-            badge={`Save ${offer.discount}%`}
             height={280}
+            favorite={{
+              id: offer.id,
+              kind: "offer",
+              name: offer.title,
+              image: offer.image,
+              price: offer.discountedPrice,
+            }}
+            overlay={
+              <View className="flex-row items-center gap-2 self-start rounded-full bg-black/55 px-3 py-1.5">
+                <Clock size={13} color="#fff" />
+                <Text className="font-quicksand-bold text-xs text-white">
+                  Ends in {validity.daysLeft}{" "}
+                  {validity.daysLeft === 1 ? "day" : "days"} · {validity.date}
+                </Text>
+              </View>
+            }
           />
 
-          <View className="-mt-6 rounded-t-[28px] bg-white px-5 pt-5">
-            <View className="mb-4 h-1 w-10 self-center rounded-full bg-gray-200" />
-
+          <View
+            className="rounded-t-[28px] bg-white px-5 pt-5"
+            style={{ marginTop: -24 }}
+          >
             <View className="flex-row items-start justify-between">
               <Text className="h1-bold flex-1 pr-3 text-dark-100">
                 {offer.title}
@@ -95,15 +110,15 @@ const OfferDetails = () => {
                   {offer.rating}
                 </Text>
               </View>
-              <View className="rounded-full bg-success/10 px-2.5 py-1">
-                <Text className="small-bold text-success">
-                  You save ${saved.toFixed(2)}
+              <View className="rounded-full bg-primary/10 px-2.5 py-1">
+                <Text className="small-bold text-primary">
+                  Save {offer.discount}%
                 </Text>
               </View>
             </View>
 
             <View className="mt-4 flex-row gap-2.5">
-              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
                 <Text className="font-quicksand-bold text-sm text-dark-100">
                   Free
                 </Text>
@@ -111,7 +126,7 @@ const OfferDetails = () => {
                   Delivery
                 </Text>
               </View>
-              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
                 <Text className="font-quicksand-bold text-sm text-dark-100">
                   {offer.deliveryTime.split(" ")[0]}
                 </Text>
@@ -119,7 +134,7 @@ const OfferDetails = () => {
                   Minutes
                 </Text>
               </View>
-              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+              <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
                 <Text className="font-quicksand-bold text-sm text-dark-100">
                   {totalItems}
                 </Text>
@@ -129,43 +144,30 @@ const OfferDetails = () => {
               </View>
             </View>
 
-            <Text className="h3-bold mt-6 text-dark-100">About this deal</Text>
+            <Text className="h3-bold mt-7 text-dark-100">About this deal</Text>
             <Text className="paragraph-medium mt-2 leading-[1.7] text-gray-100">
               {offer.description}
             </Text>
 
-            <Text className="h3-bold mt-6 text-dark-100">
+            <Text className="h3-bold mt-7 text-dark-100">
               What&#39;s included
             </Text>
             <View className="mt-3 gap-2">
               {offer.items.map((it, i) => (
                 <View
                   key={i}
-                  className="flex-row items-center justify-between rounded-2xl border border-gray-200/70 px-4 py-3"
+                  className="flex-row items-center justify-between rounded-2xl bg-gray-50 px-4 py-3.5"
                 >
                   <Text className="paragraph-semibold text-dark-100">
                     {it.name}
                   </Text>
-                  <View className="rounded-full bg-primary/10 px-2.5 py-1">
+                  <View className="rounded-full bg-white px-2.5 py-1">
                     <Text className="small-bold text-primary">
                       x{it.quantity}
                     </Text>
                   </View>
                 </View>
               ))}
-            </View>
-
-            <View className="mt-5 flex-row items-center gap-3 self-start rounded-2xl border border-primary/15 bg-primary/5 px-4 py-3">
-              <Clock size={18} color="#FE8C00" />
-              <View>
-                <Text className="paragraph-bold text-dark-100">
-                  Ends in {validity.daysLeft}{" "}
-                  {validity.daysLeft === 1 ? "day" : "days"}
-                </Text>
-                <Text className="body-regular text-gray-100">
-                  Valid until {validity.date}
-                </Text>
-              </View>
             </View>
           </View>
         </ScrollView>

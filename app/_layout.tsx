@@ -50,6 +50,10 @@ export default function RootLayout() {
               name="notifications"
               options={{ animation: "slide_from_right" }}
             />
+            <Stack.Screen
+              name="favorites"
+              options={{ animation: "slide_from_right" }}
+            />
           </Stack>
         </StripeProvider>
       </KeyboardProvider>

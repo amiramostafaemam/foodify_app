@@ -5,8 +5,25 @@ import ProfileField from "@/components/ProfileField";
 import { uploadImage } from "@/lib/appwrite";
 import { pickSquareImage } from "@/lib/media";
 import useAuthStore from "@/store/auth.store";
+import {
+  selectFavoriteCount,
+  useFavoritesStore,
+} from "@/store/favorites.store";
+import {
+  selectUnreadCount,
+  useNotificationsStore,
+} from "@/store/notifications.store";
 import { router } from "expo-router";
-import { LogOut, Mail, MapPin, Phone, User } from "lucide-react-native";
+import {
+  Bell,
+  ChevronRight,
+  Heart,
+  LogOut,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+} from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -88,10 +105,43 @@ const LogoutModal = ({
   );
 };
 
+const NavRow = ({
+  icon: Icon,
+  label,
+  count,
+  onPress,
+}: {
+  icon: typeof Heart;
+  label: string;
+  count: number;
+  onPress: () => void;
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    activeOpacity={0.8}
+    className="flex-row items-center gap-3 rounded-2xl bg-gray-50 p-4"
+  >
+    <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+      <Icon size={18} color="#FE8C00" />
+    </View>
+    <Text className="paragraph-semibold flex-1 text-dark-100">{label}</Text>
+    {count > 0 ? (
+      <View className="h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5">
+        <Text className="font-quicksand-bold text-[11px] text-white">
+          {count > 99 ? "99+" : count}
+        </Text>
+      </View>
+    ) : null}
+    <ChevronRight size={18} color="#878787" />
+  </TouchableOpacity>
+);
+
 const Profile = () => {
   const { user, logout, isLoading, updateUserProfile } = useAuthStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const favCount = useFavoritesStore(selectFavoriteCount);
+  const unreadCount = useNotificationsStore(selectUnreadCount);
 
   const handleChangeAvatar = async () => {
     try {
@@ -163,8 +213,24 @@ const Profile = () => {
           <Text className="body-regular text-gray-100">{user.email}</Text>
         </View>
 
+        {/* Quick links */}
+        <View className="mb-4 gap-2.5">
+          <NavRow
+            icon={Heart}
+            label="Favorites"
+            count={favCount}
+            onPress={() => router.push("/favorites")}
+          />
+          <NavRow
+            icon={Bell}
+            label="Notifications"
+            count={unreadCount}
+            onPress={() => router.push("/notifications")}
+          />
+        </View>
+
         {/* Personal information */}
-        <View className="mb-4 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <View className="mb-4 rounded-2xl bg-gray-50 p-5">
           <Text className="paragraph-bold mb-4 text-dark-100">
             Personal information
           </Text>
@@ -178,7 +244,7 @@ const Profile = () => {
         </View>
 
         {/* Addresses */}
-        <View className="mb-6 rounded-2xl border border-gray-200/70 bg-white p-5">
+        <View className="mb-6 rounded-2xl bg-gray-50 p-5">
           <Text className="paragraph-bold mb-4 text-dark-100">Addresses</Text>
           <ProfileField
             label="Home Address"

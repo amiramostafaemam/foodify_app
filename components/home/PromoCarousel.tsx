@@ -13,9 +13,11 @@ import {
   View,
 } from "react-native";
 
-const GAP = 14;
+// Gutter === gap so each card is centred with white on both sides and the next
+// card lands exactly off-screen (matches PopularMealsCarousel).
+const GAP = 20;
 const SIDE = 20;
-const CARD_W = Dimensions.get("window").width - SIDE * 2 - GAP; // small peek of next
+const CARD_W = Dimensions.get("window").width - SIDE * 2;
 const SNAP = CARD_W + GAP;
 
 const PromoCarousel = () => {

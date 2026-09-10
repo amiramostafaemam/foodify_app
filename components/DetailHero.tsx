@@ -1,8 +1,10 @@
 import { Image } from "@/components/CachedImage";
+import FavoriteButton from "@/components/FavoriteButton";
+import type { FavoriteItem } from "@/store/favorites.store";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { ChevronLeft, Heart } from "lucide-react-native";
-import { useState } from "react";
+import { ChevronLeft } from "lucide-react-native";
+import { ReactNode } from "react";
 import {
   Dimensions,
   StyleSheet,
@@ -16,10 +18,13 @@ const { width } = Dimensions.get("window");
 
 interface DetailHeroProps {
   uri?: string;
-  /** "product" = transparent PNG on a soft backdrop, "photo" = full-bleed photo */
+  /** "product" = warm backdrop panel (dish is floated by the screen), "photo" = full-bleed photo */
   mode?: "product" | "photo";
   badge?: string;
   height?: number;
+  favorite?: FavoriteItem;
+  /** pinned to the bottom-left of a photo hero (e.g. a validity pill) */
+  overlay?: ReactNode;
 }
 
 const DetailHero = ({
@@ -27,9 +32,10 @@ const DetailHero = ({
   mode = "product",
   badge,
   height = 320,
+  favorite,
+  overlay,
 }: DetailHeroProps) => {
   const insets = useSafeAreaInsets();
-  const [liked, setLiked] = useState(false);
 
   return (
     <View style={{ height }}>
@@ -43,35 +49,16 @@ const DetailHero = ({
             cachePolicy="memory-disk"
           />
           <LinearGradient
-            colors={["rgba(0,0,0,0.4)", "transparent", "rgba(0,0,0,0.18)"]}
-            locations={[0, 0.45, 1]}
+            colors={["rgba(0,0,0,0.45)", "transparent", "rgba(0,0,0,0.35)"]}
+            locations={[0, 0.4, 1]}
             style={StyleSheet.absoluteFill}
           />
         </>
       ) : (
-        <>
-          <LinearGradient
-            colors={["#FFF1DF", "#FFF9F1", "#FFFFFF"]}
-            style={StyleSheet.absoluteFill}
-          />
-          {/* soft ground shadow */}
-          <View
-            className="absolute self-center rounded-full bg-black/10"
-            style={{ width: width * 0.5, height: 22, bottom: 24 }}
-          />
-          <Image
-            source={uri ? { uri } : undefined}
-            contentFit="contain"
-            transition={250}
-            cachePolicy="memory-disk"
-            style={{
-              width: width * 0.74,
-              height: height - insets.top - 64,
-              alignSelf: "center",
-              marginTop: insets.top + 44,
-            }}
-          />
-        </>
+        <LinearGradient
+          colors={["#FFE7C4", "#FFF3E1", "#FFFFFF"]}
+          style={StyleSheet.absoluteFill}
+        />
       )}
 
       <View
@@ -85,29 +72,25 @@ const DetailHero = ({
         >
           <ChevronLeft size={22} color="#181C2E" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setLiked((v) => !v)}
-          activeOpacity={0.85}
-          className="h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm shadow-black/10"
-        >
-          <Heart
-            size={19}
-            color={liked ? "#F14141" : "#181C2E"}
-            fill={liked ? "#F14141" : "transparent"}
-          />
-        </TouchableOpacity>
+        {favorite ? <FavoriteButton item={favorite} size={18} /> : null}
       </View>
 
-      {badge && (
+      {badge ? (
         <View
           className="absolute left-4 rounded-full bg-primary px-3 py-1.5"
-          style={{ bottom: mode === "photo" ? 20 : 18 }}
+          style={{ bottom: mode === "photo" ? 18 : 16 }}
         >
           <Text className="font-quicksand-bold text-xs text-white">
             {badge}
           </Text>
         </View>
-      )}
+      ) : null}
+
+      {mode === "photo" && overlay ? (
+        <View className="absolute left-4 right-4" style={{ bottom: 16 }}>
+          {overlay}
+        </View>
+      ) : null}
     </View>
   );
 };

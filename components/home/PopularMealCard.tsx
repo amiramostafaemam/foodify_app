@@ -1,10 +1,10 @@
+import FavoriteButton from "@/components/FavoriteButton";
 import FoodImage from "@/components/FoodImage";
 import { useCartStore } from "@/store/cart.store";
 import { MenuItem } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
-import { Heart, Plus, Star } from "lucide-react-native";
-import { useState } from "react";
+import { Plus, Star } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
@@ -14,7 +14,6 @@ interface Props {
 
 const PopularMealCard = ({ item, badge }: Props) => {
   const addItem = useCartStore((s) => s.addItem);
-  const [liked, setLiked] = useState(false);
 
   const open = () =>
     router.push({ pathname: "/details/[id]", params: { id: item.$id } });
@@ -23,25 +22,25 @@ const PopularMealCard = ({ item, badge }: Props) => {
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={open}
-      className="home-card w-64 overflow-hidden"
+      className="home-card w-full overflow-hidden"
     >
       <View className="relative">
         <FoodImage
           uri={item.image_url}
-          className="h-44 w-full bg-primary/5"
+          className="h-52 w-full bg-primary/5"
           contentFit="cover"
         />
 
         {badge ? (
           <View
             className={cn(
-              "absolute left-3 top-3 rounded-full px-2.5 py-1",
+              "absolute left-3.5 top-3.5 rounded-full px-3 py-1",
               badge.tone === "primary" ? "bg-primary" : "bg-accent",
             )}
           >
             <Text
               className={cn(
-                "font-quicksand-bold text-[10px]",
+                "font-quicksand-bold text-[11px]",
                 badge.tone === "primary" ? "text-white" : "text-dark-100",
               )}
             >
@@ -50,41 +49,44 @@ const PopularMealCard = ({ item, badge }: Props) => {
           </View>
         ) : null}
 
-        <TouchableOpacity
-          onPress={() => setLiked((v) => !v)}
-          hitSlop={8}
-          className="absolute right-3 top-3 h-8 w-8 items-center justify-center rounded-full bg-white/95 shadow-sm shadow-black/10"
-        >
-          <Heart
-            size={15}
-            color={liked ? "#F14141" : "#878787"}
-            fill={liked ? "#F14141" : "transparent"}
+        <View className="absolute right-3.5 top-3.5">
+          <FavoriteButton
+            item={{
+              id: item.$id,
+              kind: "menu",
+              name: item.name,
+              image: item.image_url,
+              price: item.price,
+            }}
+            size={16}
           />
-        </TouchableOpacity>
+        </View>
       </View>
 
       <View className="p-4">
         <View className="flex-row items-center justify-between">
           <Text
-            className="paragraph-bold flex-1 pr-2 text-dark-100"
+            className="h3-bold flex-1 pr-2 text-dark-100"
             numberOfLines={1}
           >
             {item.name}
           </Text>
-          <View className="flex-row items-center gap-1">
+          <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5">
             <Star size={12} color="#FFC738" fill="#FFC738" />
-            <Text className="body-medium text-gray-100">
+            <Text className="font-quicksand-bold text-xs text-dark-100">
               {item.rating?.toFixed(1) ?? "4.5"}
             </Text>
           </View>
         </View>
 
         <Text className="body-regular mt-1 text-gray-100" numberOfLines={1}>
-          {item.description || "Freshly prepared, delivered hot."}
+          {item.description || "Freshly prepared, delivered hot to your door."}
         </Text>
 
         <View className="mt-3 flex-row items-center justify-between">
-          <Text className="h3-bold text-dark-100">${item.price}</Text>
+          <Text className="h2-bold text-dark-100">
+            ${item.price.toFixed(2)}
+          </Text>
           <TouchableOpacity
             onPress={() =>
               addItem({
@@ -94,10 +96,11 @@ const PopularMealCard = ({ item, badge }: Props) => {
                 image_url: item.image_url,
               })
             }
-            className="h-10 w-10 items-center justify-center rounded-full bg-primary shadow-sm shadow-primary/30"
+            className="flex-row items-center gap-1.5 rounded-full bg-primary py-2.5 pl-4 pr-5 shadow-sm shadow-primary/30"
             activeOpacity={0.85}
           >
-            <Plus size={20} color="#fff" strokeWidth={2.5} />
+            <Plus size={16} color="#fff" strokeWidth={2.75} />
+            <Text className="font-quicksand-bold text-sm text-white">Add</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -21,6 +21,7 @@ module.exports = {
           200: "#FE8C00",
         },
         gray: {
+          50: "#F5F5F4", // soft surface — replaces hard card borders
           100: "#878787",
           200: "#878787",
         },

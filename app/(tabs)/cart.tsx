@@ -157,8 +157,8 @@ const PaymentOption = ({
     disabled={disabled}
     activeOpacity={0.8}
     className={cn(
-      "mb-3 flex-row items-center rounded-2xl border p-4",
-      selected ? "border-primary bg-primary/5" : "border-gray-200/70 bg-white",
+      "mb-3 flex-row items-center rounded-2xl p-4",
+      selected ? "bg-primary/10" : "bg-gray-50",
       disabled && "opacity-40",
     )}
   >
@@ -372,7 +372,7 @@ const Cart = () => {
             <CustomHeader title={`Your Cart (${totalItems})`} />
           }
           ListFooterComponent={
-            <View className="mt-6 rounded-2xl border border-gray-200/70 bg-white p-5">
+            <View className="mt-6 rounded-2xl bg-gray-50 p-5">
               <Text className="paragraph-bold mb-4 text-dark-100">
                 Order Summary
               </Text>
@@ -391,7 +391,7 @@ const Cart = () => {
                 value={`- $${discount.toFixed(2)}`}
                 valueStyle="!text-success"
               />
-              <View className="my-2 border-t border-gray-200" />
+              <View className="my-2 border-t border-black/5" />
               <SummaryRow
                 label="Total"
                 value={`$${finalAmount.toFixed(2)}`}
@@ -441,7 +441,7 @@ const Cart = () => {
         <TouchableOpacity
           onPress={() => router.push("/edit-profile")}
           activeOpacity={0.8}
-          className="mb-6 flex-row items-center gap-3 rounded-2xl border border-gray-200/70 bg-white p-4"
+          className="mb-6 flex-row items-center gap-3 rounded-2xl bg-gray-50 p-4"
         >
           <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
             <MapPin size={18} color="#FE8C00" />

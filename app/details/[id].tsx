@@ -22,6 +22,7 @@ import {
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   FlatList,
   ScrollView,
   Text,
@@ -32,6 +33,17 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+
+const { width } = Dimensions.get("window");
+
+// The dish "floats" over the seam between the warm hero panel and the white
+// sheet. These are tuned so ~2/3 of it sits on the panel and the rest dips in.
+const PANEL_H = 220;
+const DISH = Math.round(width * 0.56);
+const SHEET_PULL = 26;
+const OVERHANG = 96;
+const DISH_TOP = PANEL_H - SHEET_PULL + OVERHANG - DISH;
+const CONTENT_PT = OVERHANG + 16;
 
 const fetchMenuItem = ({ menuId }: { menuId: string }) =>
   getMenuItemById(menuId);
@@ -52,7 +64,7 @@ const StatCard = ({
   label: string;
   value: string;
 }) => (
-  <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3">
+  <View className="flex-1 items-center rounded-2xl bg-primary/5 py-3.5">
     <Icon size={17} color="#FE8C00" />
     <Text className="mt-1.5 font-quicksand-bold text-sm text-dark-100">
       {value}
@@ -78,46 +90,37 @@ const AddonCard = ({
       onPress={onToggle}
       activeOpacity={0.85}
       className={cn(
-        "w-[104px] rounded-2xl border p-2.5",
-        selected
-          ? "border-primary bg-primary/5"
-          : "border-gray-200/70 bg-white",
+        "w-[116px] rounded-[20px] p-3",
+        selected ? "bg-primary/10" : "bg-gray-50",
       )}
     >
-      <View className="h-14 items-center justify-center">
-        {image ? (
-          <CachedImage
-            source={image}
-            className="h-14 w-14"
-            contentFit="contain"
-          />
-        ) : (
-          <View className="h-12 w-12 rounded-full bg-primary/10" />
-        )}
+      <View className="items-center">
+        <View className="relative h-16 w-16 items-center justify-center">
+          {image ? (
+            <CachedImage
+              source={image}
+              className="h-16 w-16"
+              contentFit="contain"
+            />
+          ) : (
+            <View className="h-12 w-12 rounded-full bg-primary/10" />
+          )}
+          {selected ? (
+            <View className="absolute -right-1.5 -top-1.5 h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-primary">
+              <Check size={11} color="#fff" strokeWidth={3.5} />
+            </View>
+          ) : null}
+        </View>
       </View>
       <Text
-        className="mt-1 font-quicksand-semibold text-[12px] text-dark-100"
+        className="mt-2.5 text-center font-quicksand-semibold text-[13px] text-dark-100"
         numberOfLines={1}
       >
         {option.name}
       </Text>
-      <View className="mt-1 flex-row items-center justify-between">
-        <Text className="font-quicksand-bold text-[12px] text-primary">
-          +${option.price.toFixed(2)}
-        </Text>
-        <View
-          className={cn(
-            "h-6 w-6 items-center justify-center rounded-full",
-            selected ? "bg-primary" : "bg-primary/10",
-          )}
-        >
-          {selected ? (
-            <Check size={13} color="#fff" strokeWidth={3} />
-          ) : (
-            <Plus size={13} color="#FE8C00" strokeWidth={3} />
-          )}
-        </View>
-      </View>
+      <Text className="mt-0.5 text-center font-quicksand-bold text-xs text-primary">
+        +${option.price.toFixed(2)}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -133,7 +136,7 @@ const AddonRow = ({
   isSelected: (id: string) => boolean;
   onToggle: (o: CustomizationOption) => void;
 }) => (
-  <View className="mt-6">
+  <View className="mt-7">
     <Text className="h3-bold mb-3 text-dark-100">{title}</Text>
     <FlatList
       data={data}
@@ -216,11 +219,22 @@ const Details = () => {
           contentContainerStyle={{ paddingBottom: 130 }}
           showsVerticalScrollIndicator={false}
         >
-          <DetailHero uri={item.image_url} />
+          <DetailHero
+            mode="product"
+            height={PANEL_H}
+            favorite={{
+              id: item.$id,
+              kind: "menu",
+              name: item.name,
+              image: item.image_url,
+              price: item.price,
+            }}
+          />
 
-          <View className="-mt-6 rounded-t-[28px] bg-white px-5 pt-5">
-            <View className="mb-4 h-1 w-10 self-center rounded-full bg-gray-200" />
-
+          <View
+            className="rounded-t-[30px] bg-white px-5"
+            style={{ marginTop: -SHEET_PULL, paddingTop: CONTENT_PT }}
+          >
             <View className="flex-row items-start justify-between">
               <View className="flex-1 pr-3">
                 <Text className="h1-bold text-dark-100">{item.name}</Text>
@@ -256,7 +270,7 @@ const Details = () => {
               <StatCard icon={Clock} label="Delivery" value="25 min" />
             </View>
 
-            <Text className="h3-bold mt-6 text-dark-100">About this meal</Text>
+            <Text className="h3-bold mt-7 text-dark-100">About this meal</Text>
             <Text className="paragraph-medium mt-2 leading-[1.7] text-gray-100">
               {item.description ||
                 "Freshly prepared with high-quality ingredients and delivered hot to your door."}
@@ -278,6 +292,32 @@ const Details = () => {
                 onToggle={toggle}
               />
             )}
+          </View>
+
+          {/* Floating dish — last child so it paints above the panel/sheet seam
+              and still scrolls away with the hero. */}
+          <View
+            pointerEvents="none"
+            className="absolute left-0 right-0 items-center"
+            style={{ top: DISH_TOP }}
+          >
+            <View
+              style={{
+                shadowColor: "#8A5A00",
+                shadowOpacity: 0.18,
+                shadowRadius: 24,
+                shadowOffset: { width: 0, height: 16 },
+                elevation: 12,
+              }}
+            >
+              <CachedImage
+                source={item.image_url ? { uri: item.image_url } : undefined}
+                style={{ width: DISH, height: DISH }}
+                contentFit="contain"
+                transition={250}
+                cachePolicy="memory-disk"
+              />
+            </View>
           </View>
         </ScrollView>
 

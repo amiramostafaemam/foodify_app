@@ -2,7 +2,7 @@ import CategoryStrip from "@/components/home/CategoryStrip";
 import ExclusiveOfferBanner from "@/components/home/ExclusiveOfferBanner";
 import HomeHeader from "@/components/home/HomeHeader";
 import HomeSearchBar from "@/components/home/HomeSearchBar";
-import PopularMealCard from "@/components/home/PopularMealCard";
+import PopularMealsCarousel from "@/components/home/PopularMealsCarousel";
 import PromoCarousel from "@/components/home/PromoCarousel";
 import { getCategories, getMenu } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
@@ -11,20 +11,12 @@ import { Category, GetMenuParams, MenuItem } from "@/type";
 import { router } from "expo-router";
 import {
   ActivityIndicator,
-  FlatList,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const badgeFor = (item: MenuItem, index: number) => {
-  if (index === 0) return { label: "Bestseller", tone: "primary" as const };
-  if ((item.rating ?? 0) >= 4.5)
-    return { label: "Popular", tone: "accent" as const };
-  return undefined;
-};
 
 const SectionHeader = ({
   title,
@@ -54,7 +46,7 @@ export default function Home() {
     params: {},
   });
 
-  const popular = (menu ?? []).slice(0, 8);
+  const popular = (menu ?? []).slice(0, 6);
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
@@ -69,9 +61,7 @@ export default function Home() {
           <View className="px-5">
             <HomeSearchBar />
           </View>
-          <View className="px-5">
-            <PromoCarousel />
-          </View>
+          <PromoCarousel />
           <View className="pl-5">
             <CategoryStrip categories={categories ?? []} />
           </View>
@@ -88,16 +78,7 @@ export default function Home() {
                 No meals yet — seed the menu to see them here.
               </Text>
             ) : (
-              <FlatList
-                data={popular}
-                horizontal
-                keyExtractor={(item) => item.$id}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 16, paddingHorizontal: 20 }}
-                renderItem={({ item, index }) => (
-                  <PopularMealCard item={item} badge={badgeFor(item, index)} />
-                )}
-              />
+              <PopularMealsCarousel data={popular} />
             )}
           </View>
 

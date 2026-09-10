@@ -1,10 +1,14 @@
 import { useCartStore } from "@/store/cart.store";
 import {
+  selectFavoriteCount,
+  useFavoritesStore,
+} from "@/store/favorites.store";
+import {
   selectUnreadCount,
   useNotificationsStore,
 } from "@/store/notifications.store";
 import { router } from "expo-router";
-import { Bell, ShoppingBag } from "lucide-react-native";
+import { Bell, Heart, ShoppingBag } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const greeting = () => {
@@ -26,6 +30,7 @@ const Badge = ({ count }: { count: number }) =>
 const HomeHeader = ({ name }: { name?: string }) => {
   const cartCount = useCartStore((s) => s.getTotalItems());
   const unreadCount = useNotificationsStore(selectUnreadCount);
+  const favCount = useFavoritesStore(selectFavoriteCount);
   const first = name?.trim().split(" ")[0];
 
   return (
@@ -37,7 +42,15 @@ const HomeHeader = ({ name }: { name?: string }) => {
         </Text>
       </View>
 
-      <View className="flex-row gap-2">
+      <View className="flex-row gap-1.5">
+        <TouchableOpacity
+          className="icon-btn"
+          activeOpacity={0.8}
+          onPress={() => router.push("/favorites")}
+        >
+          <Heart size={20} color="#181C2E" />
+          <Badge count={favCount} />
+        </TouchableOpacity>
         <TouchableOpacity
           className="icon-btn"
           activeOpacity={0.8}

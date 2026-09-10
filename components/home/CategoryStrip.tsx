@@ -27,8 +27,8 @@ const CategoryStrip = ({ categories }: { categories: Category[] }) => {
             activeOpacity={0.85}
             onPress={() => open(item)}
             className={cn(
-              "rounded-full border px-5 py-2.5",
-              active ? "border-primary bg-primary" : "border-gray-200 bg-white",
+              "rounded-full px-5 py-2.5",
+              active ? "bg-primary" : "bg-gray-50",
             )}
           >
             <Text
