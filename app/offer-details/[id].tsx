@@ -7,6 +7,7 @@ import FloatingDish, {
 import Toast from "@/components/Toast";
 import { images } from "@/constants";
 import { getOfferById, getOfferValidity } from "@/constants/offers.constants";
+import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import { router, useLocalSearchParams } from "expo-router";
 import { Clock, Minus, Plus, ShoppingBag, Star } from "lucide-react-native";
@@ -32,6 +33,7 @@ const OfferDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [isFirstItem, setIsFirstItem] = useState(false);
+  const tr = useT();
 
   const addItem = useCartStore((s) => s.addItem);
   const validity = getOfferValidity();
@@ -46,7 +48,9 @@ const OfferDetails = () => {
           resizeMode="contain"
         />
         <TouchableOpacity onPress={() => router.back()} className="mt-4">
-          <Text className="paragraph-bold text-primary">Go back</Text>
+          <Text className="paragraph-bold text-primary">
+            {tr("common.goBack")}
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );
@@ -116,7 +120,7 @@ const OfferDetails = () => {
               </View>
               <View className="rounded-full bg-primary/10 px-2.5 py-1">
                 <Text className="small-bold text-primary">
-                  Save {offer.discount}%
+                  {tr("offer.saveN", { n: offer.discount })}
                 </Text>
               </View>
             </View>
@@ -128,31 +132,35 @@ const OfferDetails = () => {
               </View>
               <View className="flex-1">
                 <Text className="paragraph-bold text-content">
-                  Ends in {validity.daysLeft}{" "}
-                  {validity.daysLeft === 1 ? "day" : "days"}
+                  {tr("offer.endsIn", {
+                    n: validity.daysLeft,
+                    unit: tr(validity.daysLeft === 1 ? "offer.day" : "offer.days"),
+                  })}
                 </Text>
                 <Text className="body-regular text-muted">
-                  Valid until {validity.date}
+                  {tr("offer.validUntil", { date: validity.date })}
                 </Text>
               </View>
             </View>
 
             <View className="mt-4 flex-row gap-2.5">
-              <StatTile value="Free" label="Delivery" />
+              <StatTile value={tr("common.free")} label={tr("common.delivery")} />
               <StatTile
                 value={offer.deliveryTime.split(" ")[0]}
-                label="Minutes"
+                label={tr("common.minutes")}
               />
-              <StatTile value={`${totalItems}`} label="Items" />
+              <StatTile value={`${totalItems}`} label={tr("common.items")} />
             </View>
 
-            <Text className="h3-bold mt-7 text-content">About this deal</Text>
+            <Text className="h3-bold mt-7 text-content">
+              {tr("offer.aboutDeal")}
+            </Text>
             <Text className="paragraph-medium mt-2 leading-[1.7] text-muted">
               {offer.description}
             </Text>
 
             <Text className="h3-bold mt-7 text-content">
-              What&#39;s included
+              {tr("offer.included")}
             </Text>
             <View className="mt-3 gap-2">
               {offer.items.map((it, i) => (
@@ -213,7 +221,7 @@ const OfferDetails = () => {
             >
               <ShoppingBag size={17} color="#fff" />
               <Text className="font-quicksand-bold text-base text-white">
-                Add to Cart · ${total.toFixed(2)}
+                {tr("details.addToCartTotal", { amount: total.toFixed(2) })}
               </Text>
             </TouchableOpacity>
           </View>

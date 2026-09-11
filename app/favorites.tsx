@@ -2,6 +2,7 @@ import FoodImage from "@/components/FoodImage";
 import { images } from "@/constants";
 import { getOfferById } from "@/constants/offers.constants";
 import { useColors } from "@/hooks/useColors";
+import { useT } from "@/lib/i18n";
 import {
   FavoriteItem,
   useFavoritesStore,
@@ -20,6 +21,7 @@ const FavRow = ({
   onOpen: () => void;
   onRemove: () => void;
 }) => {
+  const tr = useT();
   const src =
     item.kind === "offer"
       ? (getOfferById(item.id)?.image ?? item.image)
@@ -40,7 +42,7 @@ const FavRow = ({
         {item.name}
       </Text>
       <Text className="body-regular mt-0.5 text-muted">
-        {item.kind === "offer" ? "Deal" : "Meal"}
+        {item.kind === "offer" ? tr("fav.deal") : tr("fav.meal")}
       </Text>
       <Text className="paragraph-bold mt-0.5 text-primary">
         ${item.price.toFixed(2)}
@@ -62,6 +64,7 @@ const Favorites = () => {
   const remove = useFavoritesStore((s) => s.remove);
   const clear = useFavoritesStore((s) => s.clear);
   const c = useColors();
+  const tr = useT();
 
   const open = (item: FavoriteItem) =>
     router.push(
@@ -81,12 +84,14 @@ const Favorites = () => {
           >
             <ChevronLeft size={22} color={c.content} />
           </TouchableOpacity>
-          <Text className="h3-bold text-content">Favorites</Text>
+          <Text className="h3-bold text-content">{tr("fav.title")}</Text>
         </View>
 
         {items.length > 0 && (
           <TouchableOpacity onPress={clear} hitSlop={8}>
-            <Text className="paragraph-bold text-primary">Clear all</Text>
+            <Text className="paragraph-bold text-primary">
+              {tr("common.clearAll")}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -116,9 +121,9 @@ const Favorites = () => {
               className="mb-5 h-56 w-56"
               resizeMode="contain"
             />
-            <Text className="h3-bold text-content">No favorites yet</Text>
+            <Text className="h3-bold text-content">{tr("fav.empty")}</Text>
             <Text className="body-regular mt-2 text-center text-muted">
-              Tap the heart on any meal or deal to save it here.
+              {tr("fav.emptyHint")}
             </Text>
           </View>
         }

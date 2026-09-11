@@ -5,6 +5,7 @@ import CustomHeader from "@/components/CustomHeader";
 import ProfileField from "@/components/ProfileField";
 import { useColors } from "@/hooks/useColors";
 import { uploadImage } from "@/lib/appwrite";
+import { useT } from "@/lib/i18n";
 import { pickSquareImage } from "@/lib/media";
 import useAuthStore from "@/store/auth.store";
 import {
@@ -75,6 +76,7 @@ const Profile = () => {
   const favCount = useFavoritesStore(selectFavoriteCount);
   const unreadCount = useNotificationsStore(selectUnreadCount);
   const c = useColors();
+  const tr = useT();
 
   const handleChangeAvatar = async () => {
     try {
@@ -84,10 +86,10 @@ const Profile = () => {
       setUploadingAvatar(true);
       const avatar = await uploadImage(file);
       await updateUserProfile({ avatar });
-      Alert.alert("Photo updated", "Your new profile picture is live.");
+      Alert.alert(tr("profile.photoUpdated"), tr("profile.photoUpdatedMsg"));
     } catch (error) {
       Alert.alert(
-        "Upload failed",
+        tr("profile.uploadFailed"),
         error instanceof Error ? error.message : "Could not update your photo.",
       );
     } finally {
@@ -130,7 +132,7 @@ const Profile = () => {
         showsVerticalScrollIndicator={false}
       >
         <CustomHeader
-          title="Profile"
+          title={tr("profile.title")}
           right={
             <TouchableOpacity
               onPress={() => router.push("/settings")}
@@ -161,13 +163,13 @@ const Profile = () => {
         <View className="mb-4 gap-2.5">
           <NavRow
             icon={Heart}
-            label="Favorites"
+            label={tr("fav.title")}
             count={favCount}
             onPress={() => router.push("/favorites")}
           />
           <NavRow
             icon={Bell}
-            label="Notifications"
+            label={tr("notif.title")}
             count={unreadCount}
             onPress={() => router.push("/notifications")}
           />
@@ -176,34 +178,44 @@ const Profile = () => {
         {/* Personal information */}
         <View className="mb-4 rounded-2xl bg-surface p-5">
           <Text className="paragraph-bold mb-4 text-content">
-            Personal information
+            {tr("profile.personalInfo")}
           </Text>
-          <ProfileField label="Full Name" value={user.name} icon={User} />
-          <ProfileField label="Email" value={user.email} icon={Mail} />
           <ProfileField
-            label="Phone Number"
-            value={user.phone || "Not provided"}
+            label={tr("profile.fullName")}
+            value={user.name}
+            icon={User}
+          />
+          <ProfileField
+            label={tr("profile.email")}
+            value={user.email}
+            icon={Mail}
+          />
+          <ProfileField
+            label={tr("profile.phone")}
+            value={user.phone || tr("profile.notProvided")}
             icon={Phone}
           />
         </View>
 
         {/* Addresses */}
         <View className="mb-6 rounded-2xl bg-surface p-5">
-          <Text className="paragraph-bold mb-4 text-content">Addresses</Text>
+          <Text className="paragraph-bold mb-4 text-content">
+            {tr("profile.addresses")}
+          </Text>
           <ProfileField
-            label="Home Address"
-            value={user.address_home || "Not provided"}
+            label={tr("profile.homeAddress")}
+            value={user.address_home || tr("profile.notProvided")}
             icon={MapPin}
           />
           <ProfileField
-            label="Work Address"
-            value={user.address_work || "Not provided"}
+            label={tr("profile.workAddress")}
+            value={user.address_work || tr("profile.notProvided")}
             icon={MapPin}
           />
         </View>
 
         <CustomButton
-          title="Edit Profile"
+          title={tr("profile.editProfile")}
           onPress={() => router.push("/edit-profile")}
         />
 
@@ -213,7 +225,9 @@ const Profile = () => {
           activeOpacity={0.7}
         >
           <LogOut size={18} color="#F14141" />
-          <Text className="paragraph-bold text-error">Log out</Text>
+          <Text className="paragraph-bold text-error">
+            {tr("profile.logout")}
+          </Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -222,11 +236,11 @@ const Profile = () => {
         onClose={() => setShowLogoutModal(false)}
         tone="error"
         icon={LogOut}
-        title="Log out?"
-        message="You'll need to sign in again to place orders."
-        primary={{ label: "Log out", onPress: handleConfirmLogout }}
+        title={tr("profile.logoutTitle")}
+        message={tr("profile.logoutMsg")}
+        primary={{ label: tr("profile.logout"), onPress: handleConfirmLogout }}
         secondary={{
-          label: "Stay signed in",
+          label: tr("profile.stayIn"),
           onPress: () => setShowLogoutModal(false),
         }}
       />

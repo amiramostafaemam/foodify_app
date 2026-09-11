@@ -3,6 +3,7 @@ import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
 import ErrorModal from "@/components/ErrorModal";
 import { createUser } from "@/lib/appwrite";
+import { t, useT } from "@/lib/i18n";
 import useAuthStore from "@/store/auth.store";
 import { Link, Redirect } from "expo-router";
 import { Lock, Mail, User } from "lucide-react-native";
@@ -18,26 +19,27 @@ const getErrorMessage = (error: unknown): string => {
     message.includes("already exists") ||
     message.includes("a user with the same email already exists")
   ) {
-    return "This email is already registered. Please use a different email or sign in.";
+    return t("auth.errEmailExists");
   }
   if (message.includes("invalid_email") || message.includes("invalid email")) {
-    return "Please enter a valid email address.";
+    return t("auth.errInvalidEmail");
   }
   if (
     message.includes("password_policy") ||
     message.includes("password must be") ||
     message.includes("at least")
   ) {
-    return "Password must be at least 8 characters long.";
+    return t("auth.errPasswordLen");
   }
   if (message.includes("network") || message.includes("failed to fetch")) {
-    return "Network error. Please check your internet connection.";
+    return t("auth.errNetwork");
   }
-  return (error as Error)?.message || "Something went wrong! Please try again.";
+  return (error as Error)?.message || t("auth.errGeneric");
 };
 
 const SignUp = () => {
   const fetchAuthenticatedUser = useAuthStore((s) => s.fetchAuthenticatedUser);
+  const tr = useT();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [done, setDone] = useState(false);
@@ -51,19 +53,19 @@ const SignUp = () => {
     Keyboard.dismiss();
 
     if (!name || !email || !password) {
-      setErrorMessage("Please fill all the fields");
+      setErrorMessage(tr("auth.errFillFields"));
       return;
     }
     if (name.length < 2) {
-      setErrorMessage("Name must be at least 2 characters long");
+      setErrorMessage(tr("auth.errNameLen"));
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrorMessage("Please enter a valid email address");
+      setErrorMessage(tr("auth.errInvalidEmail"));
       return;
     }
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters long");
+      setErrorMessage(tr("auth.errPasswordLen"));
       return;
     }
 
@@ -85,19 +87,19 @@ const SignUp = () => {
 
   return (
     <AuthScaffold
-      title="Create account"
-      subtitle="Join Foodify — your first delivery is on us"
+      title={tr("auth.createAccount")}
+      subtitle={tr("auth.createAccountSub")}
     >
       <View className="gap-4">
         <CustomInput
-          label="Full name"
+          label={tr("auth.fullName")}
           icon={User}
           placeholder="Amira Mostafa"
           value={form.name}
           onChangeText={(name) => setForm((prev) => ({ ...prev, name }))}
         />
         <CustomInput
-          label="Email"
+          label={tr("auth.email")}
           icon={Mail}
           placeholder="you@example.com"
           value={form.email}
@@ -105,9 +107,9 @@ const SignUp = () => {
           keyboardType="email-address"
         />
         <CustomInput
-          label="Password"
+          label={tr("auth.password")}
           icon={Lock}
-          placeholder="At least 8 characters"
+          placeholder={tr("auth.min8")}
           value={form.password}
           onChangeText={(password) =>
             setForm((prev) => ({ ...prev, password }))
@@ -116,7 +118,7 @@ const SignUp = () => {
         />
 
         <CustomButton
-          title="Sign Up"
+          title={tr("auth.signUp")}
           isLoading={isSubmitting}
           onPress={submit}
           style="mt-2"
@@ -125,10 +127,10 @@ const SignUp = () => {
 
       <View className="mt-6 flex-row justify-center gap-1.5">
         <Text className="font-quicksand-medium text-muted">
-          Already have an account?
+          {tr("auth.haveAccount")}
         </Text>
         <Link href="/sign-in" className="font-quicksand-bold text-primary">
-          Sign In
+          {tr("auth.signIn")}
         </Link>
       </View>
 

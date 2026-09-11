@@ -8,6 +8,7 @@ import { TAB_BAR_SPACE } from "@/components/navigation/FloatingTabBar";
 import { images } from "@/constants";
 import { useColors } from "@/hooks/useColors";
 import { createOrder } from "@/lib/appwrite";
+import { t, useT } from "@/lib/i18n";
 import { createPaymentIntent } from "@/lib/payment.service";
 import { useStripe } from "@/lib/stripe";
 import useAuthStore from "@/store/auth.store";
@@ -109,6 +110,7 @@ const Cart = () => {
   const { user } = useAuthStore();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const c = useColors();
+  const tr = useT();
 
   const [step, setStep] = useState<Step>("review");
   const [method, setMethod] = useState<PaymentMethod | null>(null);
@@ -150,9 +152,7 @@ const Cart = () => {
     useNotificationsStore.getState().add({
       type: "order",
       title: "Order confirmed 🎉",
-      body: `We've received your $${finalAmount.toFixed(
-        2,
-      )} order — the kitchen is on it. Track updates right here.`,
+      body: t("cart.orderConfirmedMsg"),
     });
 
     setStep("review");
@@ -258,23 +258,23 @@ const Cart = () => {
         onClose={closeSuccess}
         tone="success"
         icon={CircleCheck}
-        title="Order confirmed!"
-        message="Your food is being prepared and will be delivered shortly."
-        primary={{ label: "Back to Home", onPress: closeSuccess }}
+        title={tr("cart.orderConfirmed")}
+        message={tr("cart.orderConfirmedMsg")}
+        primary={{ label: tr("cart.backToHome"), onPress: closeSuccess }}
       />
       <AppModal
         visible={showCancel}
         onClose={() => setShowCancel(false)}
         tone="error"
         icon={CircleAlert}
-        title="Payment cancelled"
-        message="Your payment was cancelled. Your cart items are still saved."
+        title={tr("cart.paymentCancelled")}
+        message={tr("cart.paymentCancelledMsg")}
         primary={{
-          label: "Try Again",
+          label: tr("common.tryAgain"),
           onPress: () => setShowCancel(false),
         }}
         secondary={{
-          label: "Back to Home",
+          label: tr("cart.backToHome"),
           onPress: () => {
             setShowCancel(false);
             router.replace("/");
@@ -289,7 +289,7 @@ const Cart = () => {
     return (
       <SafeAreaView className="h-full bg-canvas">
         <View className="px-5 pt-5">
-          <CustomHeader title="Your Cart" />
+          <CustomHeader title={tr("cart.title")} />
         </View>
         <View className="flex-1 items-center justify-center px-8">
           <Image
@@ -297,12 +297,12 @@ const Cart = () => {
             className="mb-6 h-72 w-72"
             resizeMode="contain"
           />
-          <Text className="h3-bold text-content">Your cart is empty</Text>
+          <Text className="h3-bold text-content">{tr("cart.empty")}</Text>
           <Text className="paragraph-regular mt-2 text-center text-muted">
-            Add some delicious items to get started!
+            {tr("cart.emptyHint")}
           </Text>
           <CustomButton
-            title="Browse menu"
+            title={tr("cart.browseMenu")}
             onPress={() => router.push("/search")}
             style="mt-6 px-8"
           />
@@ -329,32 +329,34 @@ const Cart = () => {
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
             <View className="mb-1">
-              <CustomHeader title={`Your Cart (${totalItems})`} />
+              <CustomHeader title={tr("cart.titleN", { n: totalItems })} />
             </View>
           }
           ListFooterComponent={
             <View className="mt-6 rounded-2xl bg-surface p-5">
               <Text className="paragraph-bold mb-4 text-content">
-                Order Summary
+                {tr("cart.orderSummary")}
               </Text>
               <SummaryRow
-                label={`Subtotal (${totalItems} items)`}
+                label={tr("cart.subtotalN", { n: totalItems })}
                 value={`$${subtotal.toFixed(2)}`}
               />
               <SummaryRow
-                label="Delivery"
+                label={tr("common.delivery")}
                 value={
-                  deliveryFee === 0 ? "Free" : `$${deliveryFee.toFixed(2)}`
+                  deliveryFee === 0
+                    ? tr("common.free")
+                    : `$${deliveryFee.toFixed(2)}`
                 }
               />
               <SummaryRow
-                label="Discount"
+                label={tr("cart.discount")}
                 value={`- $${discount.toFixed(2)}`}
                 valueStyle="!text-success"
               />
               <View className="my-2 border-t border-line/10" />
               <SummaryRow
-                label="Total"
+                label={tr("cart.total")}
                 value={`$${finalAmount.toFixed(2)}`}
                 labelStyle="base-bold !text-content"
                 valueStyle="base-bold !text-content"
@@ -368,7 +370,7 @@ const Cart = () => {
           style={{ paddingBottom: TAB_BAR_SPACE, ...FOOTER_SHADOW }}
         >
           <CustomButton
-            title={`Proceed to Checkout · $${finalAmount.toFixed(2)}`}
+            title={tr("cart.proceedTo", { amount: finalAmount.toFixed(2) })}
             onPress={() => setStep("payment")}
           />
         </View>
@@ -388,7 +390,7 @@ const Cart = () => {
         >
           <ChevronLeft size={26} color={c.content} />
         </TouchableOpacity>
-        <Text className="h3-bold text-content">Checkout</Text>
+        <Text className="h3-bold text-content">{tr("cart.checkout")}</Text>
       </View>
 
       <ScrollView
@@ -396,7 +398,9 @@ const Cart = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* Deliver to */}
-        <Text className="paragraph-bold mb-2 text-content">Deliver to</Text>
+        <Text className="paragraph-bold mb-2 text-content">
+          {tr("cart.deliverTo")}
+        </Text>
         <TouchableOpacity
           onPress={() => setShowAddressPicker(true)}
           activeOpacity={0.8}
@@ -408,15 +412,15 @@ const Cart = () => {
           <View className="flex-1">
             <Text className="paragraph-semibold text-content">
               {address === user?.address_home
-                ? "Home"
+                ? tr("cart.home")
                 : address === user?.address_work
-                  ? "Work"
+                  ? tr("cart.work")
                   : address
-                    ? "Delivery address"
-                    : "No address yet"}
+                    ? tr("cart.deliveryAddress")
+                    : tr("cart.noAddress")}
             </Text>
             <Text className="body-regular text-muted" numberOfLines={1}>
-              {address || "Tap to choose a delivery address"}
+              {address || tr("cart.chooseAddress")}
             </Text>
           </View>
           <ChevronRight size={18} color={c.muted} />
@@ -424,41 +428,45 @@ const Cart = () => {
 
         {/* Payment method */}
         <Text className="paragraph-bold mb-2 text-content">
-          Payment method
+          {tr("cart.paymentMethod")}
         </Text>
         <PaymentOption
           selected={method === "card"}
           onPress={() => setMethod("card")}
-          title="Credit / Debit Card"
+          title={tr("cart.card")}
           subtitle={
-            stripeAvailable ? "Pay securely with Stripe" : "Visa, Mastercard"
+            stripeAvailable
+              ? "Pay securely with Stripe"
+              : tr("cart.cardSub")
           }
         />
         <PaymentOption
           selected={method === "cash"}
           onPress={() => setMethod("cash")}
-          title="Cash on Delivery"
-          subtitle="Pay when your order arrives"
+          title={tr("cart.cash")}
+          subtitle={tr("cart.cashSub")}
         />
 
         {/* Summary */}
         <View className="mt-4 rounded-2xl bg-primary/5 p-5">
           <SummaryRow
-            label={`Subtotal (${totalItems} items)`}
+            label={tr("cart.subtotalN", { n: totalItems })}
             value={`$${subtotal.toFixed(2)}`}
           />
           <SummaryRow
-            label="Delivery"
-            value={deliveryFee === 0 ? "Free" : `$${deliveryFee.toFixed(2)}`}
+            label={tr("common.delivery")}
+            value={
+              deliveryFee === 0 ? tr("common.free") : `$${deliveryFee.toFixed(2)}`
+            }
           />
           <SummaryRow
-            label="Discount"
+            label={tr("cart.discount")}
             value={`- $${discount.toFixed(2)}`}
             valueStyle="!text-success"
           />
           <View className="my-2 border-t border-primary/15" />
           <SummaryRow
-            label="Total"
+            label={tr("cart.total")}
             value={`$${finalAmount.toFixed(2)}`}
             labelStyle="base-bold !text-content"
             valueStyle="base-bold !text-content"
@@ -473,8 +481,8 @@ const Cart = () => {
         <CustomButton
           title={
             isProcessing
-              ? "Processing…"
-              : `Place Order · $${finalAmount.toFixed(2)}`
+              ? tr("cart.processing")
+              : tr("cart.placeOrder", { amount: finalAmount.toFixed(2) })
           }
           onPress={placeOrder}
           disabled={isProcessing || !method}

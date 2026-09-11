@@ -8,6 +8,7 @@ import FloatingDish, {
 import Toast from "@/components/Toast";
 import { getCustomizationImage } from "@/constants";
 import { getMenuCustomizations, getMenuItemById } from "@/lib/appwrite";
+import { useT } from "@/lib/i18n";
 import useAppwrite from "@/lib/useAppwrite";
 import { useCartStore } from "@/store/cart.store";
 import { CartCustomization, CustomizationOption, MenuItem } from "@/type";
@@ -152,6 +153,7 @@ const Details = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const addItem = useCartStore((s) => s.addItem);
+  const tr = useT();
 
   const [quantity, setQuantity] = useState(1);
   const [selected, setSelected] = useState<CartCustomization[]>([]);
@@ -252,26 +254,31 @@ const Details = () => {
             <View className="mt-4 flex-row gap-2.5">
               <StatCard
                 icon={Flame}
-                label="Calories"
+                label={tr("details.calories")}
                 value={`${item.calories}`}
               />
               <StatCard
                 icon={Dumbbell}
-                label="Protein"
+                label={tr("details.protein")}
                 value={`${item.protein}g`}
               />
-              <StatCard icon={Clock} label="Delivery" value="25 min" />
+              <StatCard
+                icon={Clock}
+                label={tr("common.delivery")}
+                value={tr("details.deliveryTime")}
+              />
             </View>
 
-            <Text className="h3-bold mt-7 text-content">About this meal</Text>
+            <Text className="h3-bold mt-7 text-content">
+              {tr("details.aboutMeal")}
+            </Text>
             <Text className="paragraph-medium mt-2 leading-[1.7] text-muted">
-              {item.description ||
-                "Freshly prepared with high-quality ingredients and delivered hot to your door."}
+              {item.description || tr("details.defaultDesc")}
             </Text>
 
             {toppings.length > 0 && (
               <AddonRow
-                title="Add toppings"
+                title={tr("details.addToppings")}
                 data={toppings}
                 isSelected={isSelected}
                 onToggle={toggle}
@@ -279,7 +286,7 @@ const Details = () => {
             )}
             {sides.length > 0 && (
               <AddonRow
-                title="Add sides"
+                title={tr("details.addSides")}
                 data={sides}
                 isSelected={isSelected}
                 onToggle={toggle}
@@ -328,7 +335,7 @@ const Details = () => {
             >
               <ShoppingBag size={17} color="#fff" />
               <Text className="font-quicksand-bold text-base text-white">
-                Add to Cart · ${total.toFixed(2)}
+                {tr("details.addToCartTotal", { amount: total.toFixed(2) })}
               </Text>
             </TouchableOpacity>
           </View>

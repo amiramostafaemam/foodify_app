@@ -1,5 +1,6 @@
 import { Image } from "@/components/CachedImage";
 import { OFFERS_DATA } from "@/constants/offers.constants";
+import { useT } from "@/lib/i18n";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
 import { useState } from "react";
@@ -14,6 +15,7 @@ const SNAP = CARD_W + GAP;
 
 const PromoCarousel = () => {
   const [index, setIndex] = useState(0);
+  const tr = useT();
 
   return (
     <View>
@@ -45,7 +47,7 @@ const PromoCarousel = () => {
             <View className="flex-1 justify-center py-4 pl-5">
               <View className="mb-1.5 self-start rounded-full bg-white/20 px-2.5 py-1">
                 <Text className="font-quicksand-bold text-[10px] text-white">
-                  SAVE {item.discount}%
+                  {tr("home.saveN", { n: item.discount })}
                 </Text>
               </View>
               <Text
@@ -55,7 +57,9 @@ const PromoCarousel = () => {
                 {item.title}
               </Text>
               <Text className="body-medium mt-0.5 text-white/85">
-                from ${item.discountedPrice.toFixed(2)}
+                {tr("home.fromPrice", {
+                  price: item.discountedPrice.toFixed(2),
+                })}
               </Text>
 
               <View className="mt-3 flex-row items-center gap-1.5 self-start rounded-full bg-white py-1.5 pl-3.5 pr-1.5">
@@ -63,7 +67,7 @@ const PromoCarousel = () => {
                   className="font-quicksand-bold text-xs"
                   style={{ color: item.color }}
                 >
-                  Order Now
+                  {tr("common.orderNow")}
                 </Text>
                 <View
                   className="h-5 w-5 items-center justify-center rounded-full"

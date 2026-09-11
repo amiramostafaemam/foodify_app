@@ -1,4 +1,5 @@
 import { useColors } from "@/hooks/useColors";
+import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import {
   selectFavoriteCount,
@@ -11,13 +12,6 @@ import {
 import { router } from "expo-router";
 import { Bell, Heart, ShoppingBag } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
-
-const greeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good Morning";
-  if (hour < 18) return "Good Afternoon";
-  return "Good Evening";
-};
 
 const Badge = ({ count }: { count: number }) =>
   count > 0 ? (
@@ -33,14 +27,19 @@ const HomeHeader = ({ name }: { name?: string }) => {
   const unreadCount = useNotificationsStore(selectUnreadCount);
   const favCount = useFavoritesStore(selectFavoriteCount);
   const c = useColors();
+  const tr = useT();
   const first = name?.trim().split(" ")[0];
+
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12 ? tr("home.morning") : hour < 18 ? tr("home.afternoon") : tr("home.evening");
 
   return (
     <View className="flex-row items-center justify-between">
       <View className="flex-1 pr-3">
-        <Text className="body-medium text-muted">{greeting()} 👋</Text>
+        <Text className="body-medium text-muted">{greeting} 👋</Text>
         <Text className="h3-bold mt-0.5 text-content" numberOfLines={1}>
-          {first ? `What's up, ${first}?` : "What are you craving?"}
+          {first ? tr("home.whatsUp", { name: first }) : tr("home.craving")}
         </Text>
       </View>
 

@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { Category } from "@/type";
 import cn from "clsx";
 import { router, useLocalSearchParams } from "expo-router";
@@ -5,6 +6,7 @@ import { useState } from "react";
 import { FlatList, Text, TouchableOpacity } from "react-native";
 
 const Filter = ({ categories }: { categories: Category[] }) => {
+  const tr = useT();
   const searchParams = useLocalSearchParams();
   const [active, setActive] = useState(searchParams.category || "");
 
@@ -15,9 +17,10 @@ const Filter = ({ categories }: { categories: Category[] }) => {
     else router.setParams({ category: id });
   };
 
+  const allLabel = tr("search.all");
   const filterData: (Category | { $id: string; name: string })[] = categories
-    ? [{ $id: "all", name: "All" }, ...categories]
-    : [{ $id: "all", name: "All" }];
+    ? [{ $id: "all", name: allLabel }, ...categories]
+    : [{ $id: "all", name: allLabel }];
 
   return (
     <FlatList

@@ -1,4 +1,5 @@
 import { useColors } from "@/hooks/useColors";
+import { useT } from "@/lib/i18n";
 import { CreditCard, Lock } from "lucide-react-native";
 import { useState } from "react";
 import {
@@ -55,6 +56,7 @@ const MockCardSheet = ({
 }: Props) => {
   const insets = useSafeAreaInsets();
   const c = useColors();
+  const tr = useT();
   const [card, setCard] = useState("");
   const [exp, setExp] = useState("");
   const [cvc, setCvc] = useState("");
@@ -100,14 +102,14 @@ const MockCardSheet = ({
 
           <View className="flex-row items-center gap-2">
             <CreditCard size={20} color="#FE8C00" />
-            <Text className="h3-bold text-content">Card payment</Text>
+            <Text className="h3-bold text-content">{tr("card.title")}</Text>
           </View>
           <Text className="mt-1 font-quicksand-medium text-sm text-muted">
-            Enter your card details to pay ${amount.toFixed(2)}
+            {tr("card.subtitle", { amount: amount.toFixed(2) })}
           </Text>
 
           <View className="mt-5 gap-3">
-            <Field label="Card number">
+            <Field label={tr("card.number")}>
               <TextInput
                 value={card}
                 onChangeText={(v) => setCard(formatCard(v))}
@@ -119,7 +121,7 @@ const MockCardSheet = ({
             </Field>
 
             <View className="flex-row gap-3">
-              <Field label="Expiry">
+              <Field label={tr("card.expiry")}>
                 <TextInput
                   value={exp}
                   onChangeText={(v) => setExp(formatExp(v))}
@@ -129,7 +131,7 @@ const MockCardSheet = ({
                   className={inputClass}
                 />
               </Field>
-              <Field label="CVC">
+              <Field label={tr("card.cvc")}>
                 <TextInput
                   value={cvc}
                   onChangeText={(v) =>
@@ -143,11 +145,11 @@ const MockCardSheet = ({
               </Field>
             </View>
 
-            <Field label="Name on card">
+            <Field label={tr("card.nameOnCard")}>
               <TextInput
                 value={holder}
                 onChangeText={setHolder}
-                placeholder="Full name"
+                placeholder={tr("card.fullName")}
                 placeholderTextColor={c.muted}
                 className={inputClass}
               />
@@ -168,14 +170,14 @@ const MockCardSheet = ({
               <>
                 <Lock size={16} color="#fff" />
                 <Text className="font-quicksand-bold text-base text-white">
-                  Pay ${amount.toFixed(2)}
+                  {tr("card.pay", { amount: amount.toFixed(2) })}
                 </Text>
               </>
             )}
           </TouchableOpacity>
 
           <Text className="mt-3 text-center font-quicksand-medium text-xs text-muted">
-            🔒 Demo mode — no real card is charged
+            {tr("card.demo")}
           </Text>
         </TouchableOpacity>
       </TouchableOpacity>

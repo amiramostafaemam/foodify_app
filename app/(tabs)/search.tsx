@@ -4,6 +4,7 @@ import MenuCard from "@/components/MenuCard";
 import SearchBar from "@/components/SearchBar";
 import { images } from "@/constants";
 import { getCategories, getMenu } from "@/lib/appwrite";
+import { useT } from "@/lib/i18n";
 import useAppwrite from "@/lib/useAppwrite";
 import { Category, GetMenuParams, MenuItem } from "@/type";
 import cn from "clsx";
@@ -12,6 +13,7 @@ import { FlatList, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Search = () => {
+  const tr = useT();
   const { category, query } = useLocalSearchParams<{
     query?: string;
     category?: string;
@@ -63,11 +65,11 @@ const Search = () => {
             <View className="flex-between w-full flex-row">
               <View className="flex-start">
                 <Text className="small-bold uppercase text-primary">
-                  Search
+                  {tr("search.title")}
                 </Text>
                 <View className="flex-start mt-0.5 flex-row gap-x-1">
                   <Text className="paragraph-semibold text-content">
-                    Find your favorite food
+                    {tr("search.subtitle")}
                   </Text>
                 </View>
               </View>
@@ -89,10 +91,10 @@ const Search = () => {
                 resizeMode="contain"
               />
               <Text className="h3-bold mb-2 text-center text-content">
-                Nothing matched your search
+                {tr("search.noResults")}
               </Text>
               <Text className="paragraph-medium text-center leading-[24px] text-muted">
-                Try a different search term or check for typos.
+                {tr("search.noResultsHint")}
               </Text>
             </View>
           )

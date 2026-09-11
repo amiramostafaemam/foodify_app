@@ -1,4 +1,5 @@
 import AppModal from "@/components/AppModal";
+import { useT } from "@/lib/i18n";
 import { router } from "expo-router";
 import { CircleCheck } from "lucide-react-native";
 
@@ -9,33 +10,32 @@ interface ToastProps {
 }
 
 /** Add-to-cart confirmation. */
-const Toast = ({ visible, onClose, isFirstItem = false }: ToastProps) => (
-  <AppModal
-    visible={visible}
-    onClose={onClose}
-    tone="success"
-    icon={CircleCheck}
-    title={isFirstItem ? "Great choice!" : "Added to cart"}
-    message={
-      isFirstItem
-        ? "Your first pick is in the cart — keep browsing or check out."
-        : "Your cart is getting tastier. Review it or keep adding."
-    }
-    primary={{
-      label: "Review order",
-      onPress: () => {
-        onClose();
-        router.push("/cart");
-      },
-    }}
-    secondary={{
-      label: "Keep browsing",
-      onPress: () => {
-        onClose();
-        router.back();
-      },
-    }}
-  />
-);
+const Toast = ({ visible, onClose, isFirstItem = false }: ToastProps) => {
+  const tr = useT();
+  return (
+    <AppModal
+      visible={visible}
+      onClose={onClose}
+      tone="success"
+      icon={CircleCheck}
+      title={tr(isFirstItem ? "toast.greatChoice" : "toast.added")}
+      message={tr(isFirstItem ? "toast.greatChoiceMsg" : "toast.addedMsg")}
+      primary={{
+        label: tr("toast.reviewOrder"),
+        onPress: () => {
+          onClose();
+          router.push("/cart");
+        },
+      }}
+      secondary={{
+        label: tr("toast.keepBrowsing"),
+        onPress: () => {
+          onClose();
+          router.back();
+        },
+      }}
+    />
+  );
+};
 
 export default Toast;

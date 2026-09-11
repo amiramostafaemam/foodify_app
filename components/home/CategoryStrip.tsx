@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { Category } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
@@ -6,7 +7,11 @@ import { FlatList, Text, TouchableOpacity } from "react-native";
 type Chip = { $id: string; name: string };
 
 const CategoryStrip = ({ categories }: { categories: Category[] }) => {
-  const data: Chip[] = [{ $id: "all", name: "All" }, ...(categories ?? [])];
+  const tr = useT();
+  const data: Chip[] = [
+    { $id: "all", name: tr("search.all") },
+    ...(categories ?? []),
+  ];
 
   const open = (chip: Chip) =>
     router.push(

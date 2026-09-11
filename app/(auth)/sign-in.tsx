@@ -2,6 +2,7 @@ import AuthScaffold from "@/components/AuthScaffold";
 import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
 import ErrorModal from "@/components/ErrorModal";
+import { t, useT } from "@/lib/i18n";
 import useAuthStore from "@/store/auth.store";
 import { Link, Redirect } from "expo-router";
 import { Lock, Mail } from "lucide-react-native";
@@ -18,26 +19,27 @@ const getErrorMessage = (error: unknown): string => {
     message.includes("invalid email or password") ||
     message.includes("wrong password")
   ) {
-    return "Invalid email or password. Please check your credentials and try again.";
+    return t("auth.errInvalidCreds");
   }
   if (
     message.includes("user_not_found") ||
     message.includes("user not found") ||
     message.includes("no user found")
   ) {
-    return "No account found with this email. Please sign up first.";
+    return t("auth.errNoUser");
   }
   if (message.includes("network") || message.includes("failed to fetch")) {
-    return "Network error. Please check your internet connection.";
+    return t("auth.errNetwork");
   }
   if (message.includes("too_many_requests") || message.includes("rate limit")) {
-    return "Too many attempts. Please try again later.";
+    return t("auth.errRateLimit");
   }
-  return (error as Error)?.message || "Something went wrong! Please try again.";
+  return (error as Error)?.message || t("auth.errGeneric");
 };
 
 const SignIn = () => {
   const login = useAuthStore((s) => s.login);
+  const tr = useT();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [done, setDone] = useState(false);
@@ -50,11 +52,11 @@ const SignIn = () => {
     Keyboard.dismiss();
 
     if (!email || !password) {
-      setErrorMessage("Please enter your email and password");
+      setErrorMessage(tr("auth.errEmailPassword"));
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setErrorMessage("Please enter a valid email address");
+      setErrorMessage(tr("auth.errInvalidEmail"));
       return;
     }
 
@@ -75,12 +77,12 @@ const SignIn = () => {
 
   return (
     <AuthScaffold
-      title="Welcome back"
-      subtitle="Sign in to keep ordering your favourites"
+      title={tr("auth.welcomeBack")}
+      subtitle={tr("auth.welcomeBackSub")}
     >
       <View className="gap-4">
         <CustomInput
-          label="Email"
+          label={tr("auth.email")}
           icon={Mail}
           placeholder="you@example.com"
           value={form.email}
@@ -88,9 +90,9 @@ const SignIn = () => {
           keyboardType="email-address"
         />
         <CustomInput
-          label="Password"
+          label={tr("auth.password")}
           icon={Lock}
-          placeholder="Your password"
+          placeholder={tr("auth.yourPassword")}
           value={form.password}
           onChangeText={(password) =>
             setForm((prev) => ({ ...prev, password }))
@@ -99,7 +101,7 @@ const SignIn = () => {
         />
 
         <CustomButton
-          title="Sign In"
+          title={tr("auth.signIn")}
           isLoading={isSubmitting}
           onPress={submit}
           style="mt-2"
@@ -108,10 +110,10 @@ const SignIn = () => {
 
       <View className="mt-6 flex-row justify-center gap-1.5">
         <Text className="font-quicksand-medium text-muted">
-          Don&apos;t have an account?
+          {tr("auth.noAccount")}
         </Text>
         <Link href="/sign-up" className="font-quicksand-bold text-primary">
-          Sign Up
+          {tr("auth.signUp")}
         </Link>
       </View>
 

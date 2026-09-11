@@ -1,4 +1,5 @@
 import { useColors } from "@/hooks/useColors";
+import { useT } from "@/lib/i18n";
 import cn from "clsx";
 import { Briefcase, Check, MapPin, Plus } from "lucide-react-native";
 import { type ComponentType, useState } from "react";
@@ -72,6 +73,7 @@ const AddressPicker = ({
 }: AddressPickerProps) => {
   const insets = useSafeAreaInsets();
   const c = useColors();
+  const tr = useT();
   const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
 
@@ -99,13 +101,15 @@ const AddressPicker = ({
           style={{ paddingBottom: Math.max(insets.bottom, 16) + 8 }}
         >
           <View className="mb-4 h-1 w-10 self-center rounded-full bg-line/15" />
-          <Text className="h3-bold mb-4 text-content">Delivery address</Text>
+          <Text className="h3-bold mb-4 text-content">
+            {tr("cart.deliveryAddress")}
+          </Text>
 
           <View className="gap-2.5">
             {homeAddress ? (
               <Row
                 icon={MapPin}
-                label="Home"
+                label={tr("cart.home")}
                 value={homeAddress}
                 selected={selected === homeAddress}
                 onPress={() => pick(homeAddress)}
@@ -114,7 +118,7 @@ const AddressPicker = ({
             {workAddress ? (
               <Row
                 icon={Briefcase}
-                label="Work"
+                label={tr("cart.work")}
                 value={workAddress}
                 selected={selected === workAddress}
                 onPress={() => pick(workAddress)}
@@ -127,7 +131,7 @@ const AddressPicker = ({
                   autoFocus
                   value={draft}
                   onChangeText={setDraft}
-                  placeholder="Street, building, apartment…"
+                  placeholder={tr("cart.addressPlaceholder")}
                   placeholderTextColor={c.muted}
                   className="rounded-xl bg-card px-3.5 py-3 font-quicksand-medium text-base text-content"
                 />
@@ -137,7 +141,7 @@ const AddressPicker = ({
                   className="items-center rounded-full bg-primary py-3.5"
                 >
                   <Text className="font-quicksand-bold text-base text-white">
-                    Deliver here
+                    {tr("cart.deliverHere")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -151,7 +155,7 @@ const AddressPicker = ({
                   <Plus size={18} color="#FE8C00" />
                 </View>
                 <Text className="paragraph-semibold text-content">
-                  Add a different address
+                  {tr("cart.addAddress")}
                 </Text>
               </TouchableOpacity>
             )}

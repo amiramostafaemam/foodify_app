@@ -3,6 +3,7 @@ import Avatar from "@/components/Avatar";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import CustomInput from "@/components/CustomInput";
+import { useT } from "@/lib/i18n";
 import useAuthStore from "@/store/auth.store";
 import { router } from "expo-router";
 import { CircleCheck } from "lucide-react-native";
@@ -15,6 +16,7 @@ const EditProfile = () => {
   const { user, updateUserProfile } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const tr = useT();
 
   // The root layout blocks rendering until auth has resolved, so `user` is
   // already populated here — initialise the form straight from it.
@@ -80,29 +82,29 @@ const EditProfile = () => {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
       >
-        <CustomHeader title="Edit Profile" />
+        <CustomHeader title={tr("edit.title")} />
 
         {/* Profile Avatar Preview */}
         <View className="my-8 items-center">
           <Avatar name={form.name} uri={user.avatar} />
           <Text className="body-regular mt-3 text-muted">
-            Change your photo from the Profile screen
+            {tr("edit.changePhotoHint")}
           </Text>
         </View>
 
         {/* Form Fields */}
         <View className="gap-5">
           <CustomInput
-            label="Full Name *"
-            placeholder="Enter your full name"
+            label={`${tr("profile.fullName")} *`}
+            placeholder={tr("edit.enterName")}
             value={form.name}
             onChangeText={(text) => setForm({ ...form, name: text })}
             secureTextEntry={false}
           />
 
           <CustomInput
-            label="Phone Number"
-            placeholder="Enter your phone number"
+            label={tr("profile.phone")}
+            placeholder={tr("edit.enterPhone")}
             value={form.phone}
             onChangeText={(text) => setForm({ ...form, phone: text })}
             keyboardType="phone-pad"
@@ -110,16 +112,16 @@ const EditProfile = () => {
           />
 
           <CustomInput
-            label="Home Address"
-            placeholder="Enter your home address"
+            label={tr("profile.homeAddress")}
+            placeholder={tr("edit.enterHome")}
             value={form.address_home}
             onChangeText={(text) => setForm({ ...form, address_home: text })}
             secureTextEntry={false}
           />
 
           <CustomInput
-            label="Work Address"
-            placeholder="Enter your work address"
+            label={tr("profile.workAddress")}
+            placeholder={tr("edit.enterWork")}
             value={form.address_work}
             onChangeText={(text) => setForm({ ...form, address_work: text })}
             secureTextEntry={false}
@@ -127,7 +129,7 @@ const EditProfile = () => {
 
           <View className="mt-5 gap-3">
             <CustomButton
-              title={isSubmitting ? "Saving..." : "Save Changes"}
+              title={tr(isSubmitting ? "common.saving" : "common.saveChanges")}
               onPress={handleSubmit}
               isLoading={isSubmitting}
             />
@@ -137,7 +139,9 @@ const EditProfile = () => {
               className="flex-center rounded-xl bg-surface py-4"
               disabled={isSubmitting}
             >
-              <Text className="paragraph-semibold text-content">Cancel</Text>
+              <Text className="paragraph-semibold text-content">
+                {tr("common.cancel")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -148,10 +152,10 @@ const EditProfile = () => {
         onClose={handleCloseSuccessModal}
         tone="success"
         icon={CircleCheck}
-        title="Profile updated"
-        message="Your changes have been saved."
+        title={tr("edit.updated")}
+        message={tr("edit.updatedMsg")}
         primary={{
-          label: "Back to Profile",
+          label: tr("edit.backToProfile"),
           onPress: handleCloseSuccessModal,
         }}
       />

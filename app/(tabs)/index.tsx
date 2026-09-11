@@ -4,6 +4,7 @@ import HomeHeader from "@/components/home/HomeHeader";
 import HomeSearchBar from "@/components/home/HomeSearchBar";
 import PopularMealsCarousel from "@/components/home/PopularMealsCarousel";
 import PromoCarousel from "@/components/home/PromoCarousel";
+import { useT } from "@/lib/i18n";
 import { getCategories, getMenu } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import useAuthStore from "@/store/auth.store";
@@ -20,21 +21,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const SectionHeader = ({
   title,
+  action,
   onSeeAll,
 }: {
   title: string;
+  action: string;
   onSeeAll: () => void;
 }) => (
   <View className="mb-4 flex-row items-center justify-between px-5">
     <Text className="h3-bold text-content">{title}</Text>
     <TouchableOpacity onPress={onSeeAll} hitSlop={8}>
-      <Text className="paragraph-bold text-primary">View All →</Text>
+      <Text className="paragraph-bold text-primary">{action} →</Text>
     </TouchableOpacity>
   </View>
 );
 
 export default function Home() {
   const user = useAuthStore((s) => s.user);
+  const tr = useT();
 
   const { data: categories } = useAppwrite<Category[], Record<string, never>>({
     fn: getCategories,
@@ -49,7 +53,7 @@ export default function Home() {
   const popular = (menu ?? []).slice(0, 6);
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-canvas" edges={["top"]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 130 }}
@@ -68,14 +72,15 @@ export default function Home() {
 
           <View>
             <SectionHeader
-              title="Popular Meals"
+              title={tr("home.popularMeals")}
+              action={tr("common.viewAll")}
               onSeeAll={() => router.push("/search")}
             />
             {loading && popular.length === 0 ? (
               <ActivityIndicator color="#FE8C00" className="ml-5" />
             ) : popular.length === 0 ? (
               <Text className="px-5 font-quicksand text-muted">
-                No meals yet — seed the menu to see them here.
+                {tr("home.noMeals")}
               </Text>
             ) : (
               <PopularMealsCarousel data={popular} />

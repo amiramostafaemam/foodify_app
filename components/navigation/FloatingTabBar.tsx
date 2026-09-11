@@ -1,4 +1,5 @@
 import { useColors } from "@/hooks/useColors";
+import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import {
   House,
@@ -21,11 +22,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const PRIMARY = "#FE8C00";
 const INACTIVE = "#9AA0A6";
 
-const TABS: Record<string, { label: string; Icon: LucideIcon }> = {
-  index: { label: "Home", Icon: House },
-  search: { label: "Search", Icon: Search },
-  cart: { label: "Cart", Icon: ShoppingBag },
-  profile: { label: "Profile", Icon: User },
+const TABS: Record<
+  string,
+  { labelKey: "tab.home" | "tab.search" | "tab.cart" | "tab.profile"; Icon: LucideIcon }
+> = {
+  index: { labelKey: "tab.home", Icon: House },
+  search: { labelKey: "tab.search", Icon: Search },
+  cart: { labelKey: "tab.cart", Icon: ShoppingBag },
+  profile: { labelKey: "tab.profile", Icon: User },
 };
 
 const MARGIN = 22;
@@ -67,6 +71,7 @@ const CartBadge = ({ color }: { color: string }) => {
 const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
   const insets = useSafeAreaInsets();
   const c = useColors();
+  const tr = useT();
   const tabs = state.routes.filter((r) => TABS[r.name]);
   const tabW = BAR_W / tabs.length;
 
@@ -110,8 +115,7 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
         }}
       >
         {tabs.map((route, i) => {
-          const { label } = TABS[route.name];
-          const { Icon } = TABS[route.name];
+          const { labelKey, Icon } = TABS[route.name];
           const focused = state.index === i;
 
           const onPress = () => {
@@ -143,7 +147,7 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
                 className="mt-0.5 font-quicksand-semibold text-[10px]"
                 style={{ color: focused ? PRIMARY : INACTIVE }}
               >
-                {label}
+                {tr(labelKey)}
               </Text>
             </Pressable>
           );

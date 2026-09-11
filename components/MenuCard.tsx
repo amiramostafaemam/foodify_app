@@ -1,9 +1,11 @@
 import FoodImage from "@/components/FoodImage";
+import { useT } from "@/lib/i18n";
 import { MenuItem } from "@/type";
 import { router } from "expo-router";
 import { Platform, Text, TouchableOpacity, View } from "react-native";
 
 const MenuCard = ({ item }: { item: MenuItem }) => {
+  const tr = useT();
   const { $id, image_url, name, price } = item;
 
   const openDetails = () =>
@@ -30,8 +32,12 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
       >
         {name}
       </Text>
-      <Text className="body-regular mb-4 text-muted">From ${price}</Text>
-      <Text className="paragraph-bold text-primary">View Details</Text>
+      <Text className="body-regular mb-4 text-muted">
+        {tr("search.fromPrice", { price })}
+      </Text>
+      <Text className="paragraph-bold text-primary">
+        {tr("search.viewDetails")}
+      </Text>
     </TouchableOpacity>
   );
 };

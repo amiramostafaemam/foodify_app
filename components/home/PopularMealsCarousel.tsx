@@ -12,9 +12,10 @@ const CARD_W = width - SIDE * 2;
 const SNAP = CARD_W + GAP;
 
 const badgeFor = (item: MenuItem, index: number) => {
-  if (index === 0) return { label: "Bestseller", tone: "primary" as const };
+  if (index === 0)
+    return { labelKey: "home.bestseller" as const, tone: "primary" as const };
   if ((item.rating ?? 0) >= 4.5)
-    return { label: "Popular", tone: "accent" as const };
+    return { labelKey: "home.popular" as const, tone: "accent" as const };
   return undefined;
 };
 

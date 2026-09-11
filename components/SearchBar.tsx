@@ -1,9 +1,11 @@
+import { useT } from "@/lib/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import { Search, X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 
 const SearchBar = () => {
+  const tr = useT();
   const params = useLocalSearchParams<{ query?: string; focus?: string }>();
   const [value, setValue] = useState(params.query ?? "");
 
@@ -21,7 +23,7 @@ const SearchBar = () => {
       <Search size={20} color="#9AA0A6" />
       <TextInput
         className="flex-1 font-quicksand-medium text-base text-content"
-        placeholder="Search for pizzas, burgers…"
+        placeholder={tr("search.placeholder")}
         value={value}
         onChangeText={setValue}
         returnKeyType="search"

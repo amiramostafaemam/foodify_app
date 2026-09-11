@@ -1,4 +1,5 @@
 import { useColors } from "@/hooks/useColors";
+import { useT } from "@/lib/i18n";
 import { Language, useLanguageStore } from "@/store/language.store";
 import { ThemeMode, useThemeStore } from "@/store/theme.store";
 import cn from "clsx";
@@ -73,19 +74,21 @@ const OptionRow = ({
   );
 };
 
-const THEMES: { mode: ThemeMode; label: string; icon: LucideIcon }[] = [
-  { mode: "light", label: "Light", icon: Sun },
-  { mode: "dark", label: "Dark", icon: Moon },
-  { mode: "system", label: "Match system", icon: Monitor },
-];
+const THEMES: { mode: ThemeMode; key: "settings.light" | "settings.dark" | "settings.system"; icon: LucideIcon }[] =
+  [
+    { mode: "light", key: "settings.light", icon: Sun },
+    { mode: "dark", key: "settings.dark", icon: Moon },
+    { mode: "system", key: "settings.system", icon: Monitor },
+  ];
 
-const LANGS: { lang: Language; label: string; hint?: string }[] = [
+const LANGS: { lang: Language; label: string }[] = [
   { lang: "en", label: "English" },
-  { lang: "ar", label: "العربية", hint: "Full translation coming soon" },
+  { lang: "ar", label: "العربية" },
 ];
 
 const Settings = () => {
   const c = useColors();
+  const tr = useT();
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
   const language = useLanguageStore((s) => s.language);
@@ -101,38 +104,41 @@ const Settings = () => {
         >
           <ChevronLeft size={22} color={c.content} />
         </TouchableOpacity>
-        <Text className="h3-bold text-content">Settings</Text>
+        <Text className="h3-bold text-content">{tr("settings.title")}</Text>
       </View>
 
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
-        <Section title="Appearance">
-          {THEMES.map((t, i) => (
+        <Section title={tr("settings.appearance")}>
+          {THEMES.map((th, i) => (
             <OptionRow
-              key={t.mode}
-              icon={t.icon}
-              label={t.label}
-              selected={mode === t.mode}
-              onPress={() => setMode(t.mode)}
+              key={th.mode}
+              icon={th.icon}
+              label={tr(th.key)}
+              selected={mode === th.mode}
+              onPress={() => setMode(th.mode)}
               last={i === THEMES.length - 1}
             />
           ))}
         </Section>
 
-        <Section title="Language">
+        <Section title={tr("settings.language")}>
           {LANGS.map((l, i) => (
             <OptionRow
               key={l.lang}
               label={l.label}
-              hint={l.hint}
               selected={language === l.lang}
               onPress={() => setLanguage(l.lang)}
               last={i === LANGS.length - 1}
             />
           ))}
         </Section>
+
+        <Text className="mt-3 px-1 font-quicksand-medium text-xs leading-[1.5] text-muted">
+          {tr("settings.restartHint")}
+        </Text>
 
         <Text className="mt-8 text-center font-quicksand-medium text-xs text-muted">
           Foodify · v1.0.0

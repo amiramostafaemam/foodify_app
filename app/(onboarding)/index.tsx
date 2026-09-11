@@ -1,5 +1,6 @@
 // app/(onboarding)/index.tsx
 import { onboardingSlides } from "@/constants/onboarding";
+import { useT } from "@/lib/i18n";
 import { setOnboardingSeen } from "@/lib/onboarding";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
@@ -17,6 +18,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const { width } = Dimensions.get("window");
 
 export default function Onboarding() {
+  const tr = useT();
   const listRef = useRef<FlatList>(null);
   const [index, setIndex] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -40,7 +42,9 @@ export default function Onboarding() {
       <View className="h-12 flex-row items-center justify-end px-6">
         {!isLast && (
           <TouchableOpacity onPress={finish} hitSlop={8} activeOpacity={0.7}>
-            <Text className="font-quicksand-semibold text-muted">Skip</Text>
+            <Text className="font-quicksand-semibold text-muted">
+              {tr("onb.skip")}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -66,10 +70,10 @@ export default function Onboarding() {
               />
             </View>
             <Text className="mt-12 text-center font-quicksand-bold text-[26px] text-content">
-              {item.title}
+              {tr(`onb.${item.id}.title` as Parameters<typeof tr>[0])}
             </Text>
             <Text className="mt-3 text-center font-quicksand-medium text-base leading-[1.6] text-muted">
-              {item.description}
+              {tr(`onb.${item.id}.desc` as Parameters<typeof tr>[0])}
             </Text>
           </View>
         )}
@@ -96,7 +100,7 @@ export default function Onboarding() {
           className="flex-row items-center justify-center gap-2 rounded-full bg-primary py-4"
         >
           <Text className="font-quicksand-bold text-lg text-white">
-            {isLast ? "Get Started" : "Next"}
+            {isLast ? tr("onb.getStarted") : tr("onb.next")}
           </Text>
           <ArrowRight size={18} color="#fff" />
         </TouchableOpacity>

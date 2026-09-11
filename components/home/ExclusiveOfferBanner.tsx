@@ -1,10 +1,12 @@
 import { Image } from "@/components/CachedImage";
 import { OFFERS_DATA } from "@/constants/offers.constants";
+import { useT } from "@/lib/i18n";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const ExclusiveOfferBanner = () => {
+  const tr = useT();
   const best = [...OFFERS_DATA].sort((a, b) => b.discount - a.discount)[0];
   if (!best) return null;
 
@@ -21,18 +23,18 @@ const ExclusiveOfferBanner = () => {
     >
       <View className="flex-1">
         <Text className="font-quicksand-bold text-[11px] uppercase tracking-wide text-primary">
-          Exclusive Offer
+          {tr("home.exclusiveOffer")}
         </Text>
         <Text className="h2-bold mt-1 text-content">
-          Up to {best.discount}% OFF
+          {tr("home.upToOff", { n: best.discount })}
         </Text>
         <Text className="body-regular mt-0.5 text-muted">
-          On selected combo meals
+          {tr("home.onCombos")}
         </Text>
 
         <View className="mt-3 flex-row items-center gap-2 self-start rounded-full bg-primary py-2 pl-4 pr-2">
           <Text className="font-quicksand-bold text-sm text-white">
-            Order Now
+            {tr("common.orderNow")}
           </Text>
           <View className="h-6 w-6 items-center justify-center rounded-full bg-white">
             <ArrowRight size={14} color="#FE8C00" />

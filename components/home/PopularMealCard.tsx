@@ -1,5 +1,6 @@
 import FavoriteButton from "@/components/FavoriteButton";
 import FoodImage from "@/components/FoodImage";
+import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import { MenuItem } from "@/type";
 import cn from "clsx";
@@ -9,11 +10,15 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
   item: MenuItem;
-  badge?: { label: string; tone: "primary" | "accent" };
+  badge?: {
+    labelKey: "home.bestseller" | "home.popular";
+    tone: "primary" | "accent";
+  };
 }
 
 const PopularMealCard = ({ item, badge }: Props) => {
   const addItem = useCartStore((s) => s.addItem);
+  const tr = useT();
 
   const open = () =>
     router.push({ pathname: "/details/[id]", params: { id: item.$id } });
@@ -44,7 +49,7 @@ const PopularMealCard = ({ item, badge }: Props) => {
                 badge.tone === "primary" ? "text-white" : "text-content",
               )}
             >
-              {badge.label}
+              {tr(badge.labelKey)}
             </Text>
           </View>
         ) : null}
@@ -80,7 +85,7 @@ const PopularMealCard = ({ item, badge }: Props) => {
         </View>
 
         <Text className="body-regular mt-1 text-muted" numberOfLines={1}>
-          {item.description || "Freshly prepared, delivered hot to your door."}
+          {item.description || tr("details.defaultDesc")}
         </Text>
 
         <View className="mt-3 flex-row items-center justify-between">
@@ -100,7 +105,9 @@ const PopularMealCard = ({ item, badge }: Props) => {
             activeOpacity={0.85}
           >
             <Plus size={16} color="#fff" strokeWidth={2.75} />
-            <Text className="font-quicksand-bold text-sm text-white">Add</Text>
+            <Text className="font-quicksand-bold text-sm text-white">
+              {tr("common.add")}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

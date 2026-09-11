@@ -1,5 +1,6 @@
 import { images } from "@/constants";
 import { useColors } from "@/hooks/useColors";
+import { useT } from "@/lib/i18n";
 import {
   AppNotification,
   NotificationType,
@@ -105,6 +106,7 @@ const Notifications = () => {
   const markAllRead = useNotificationsStore((s) => s.markAllRead);
   const clearAll = useNotificationsStore((s) => s.clearAll);
   const c = useColors();
+  const tr = useT();
 
   // Opening the screen counts as seeing everything — clear the badge.
   useEffect(() => {
@@ -124,12 +126,14 @@ const Notifications = () => {
           >
             <ChevronLeft size={22} color={c.content} />
           </TouchableOpacity>
-          <Text className="h3-bold text-content">Notifications</Text>
+          <Text className="h3-bold text-content">{tr("notif.title")}</Text>
         </View>
 
         {unread > 0 && (
           <TouchableOpacity onPress={markAllRead} hitSlop={8}>
-            <Text className="paragraph-bold text-primary">Mark all read</Text>
+            <Text className="paragraph-bold text-primary">
+              {tr("common.markAllRead")}
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -155,9 +159,9 @@ const Notifications = () => {
               className="mb-5 h-56 w-56"
               resizeMode="contain"
             />
-            <Text className="h3-bold text-content">You&#39;re all caught up</Text>
+            <Text className="h3-bold text-content">{tr("notif.empty")}</Text>
             <Text className="body-regular mt-2 text-center text-muted">
-              Order updates and fresh deals will show up here.
+              {tr("notif.emptyHint")}
             </Text>
           </View>
         }
@@ -169,7 +173,7 @@ const Notifications = () => {
               hitSlop={8}
             >
               <Text className="paragraph-semibold text-muted">
-                Clear all
+                {tr("common.clearAll")}
               </Text>
             </TouchableOpacity>
           ) : null
