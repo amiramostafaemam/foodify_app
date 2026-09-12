@@ -39,7 +39,7 @@ const AuthScaffold = ({
         </View>
 
         <Image
-          source={images.burgerOne}
+          source={images.pizzaOne}
           style={{
             position: "absolute",
             width: width * 0.66,
