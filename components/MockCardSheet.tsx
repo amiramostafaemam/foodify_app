@@ -107,7 +107,13 @@ const MockCardSheet = ({
           <Text className="h3-bold text-content">{tr("card.title")}</Text>
         </View>
 
-        <View className="flex-1 px-5">
+        {/* Card fields keep a fixed physical layout (number on top, expiry
+            left / CVC right below) regardless of language, like every real
+            payment form — direction: "ltr" makes this immune to the
+            device's native RTL flag, which is unreliable in Expo Go and
+            was scrambling the expiry/CVC positions. Text inside each field
+            still follows `align` for a properly-RTL reading feel. */}
+        <View className="flex-1 px-5" style={{ direction: "ltr" }}>
           <View className="mt-4 flex-row items-center gap-2">
             <CreditCard size={20} color="#FE8C00" />
             <Text className="paragraph-semibold text-content">

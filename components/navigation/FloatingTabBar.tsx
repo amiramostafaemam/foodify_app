@@ -1,6 +1,7 @@
 import { useColors } from "@/hooks/useColors";
 import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
+import { useLanguageStore } from "@/store/language.store";
 import {
   House,
   Search,
@@ -72,35 +73,43 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
   const insets = useSafeAreaInsets();
   const c = useColors();
   const tr = useT();
+  const isArabic = useLanguageStore((s) => s.language === "ar");
   const tabs = state.routes.filter((r) => TABS[r.name]);
+  // Mirror the bar for Arabic — Home ends up on the right, like a real RTL
+  // nav bar — driven by our own reliable language state rather than
+  // I18nManager.isRTL (which needs a full app restart to change and is
+  // unreliable in Expo Go, so it can't be trusted for this).
+  const renderTabs = isArabic ? [...tabs].reverse() : tabs;
   const tabW = BAR_W / tabs.length;
 
+  // Physical slot (0 = leftmost) of the currently focused tab, matching
+  // whichever order renderTabs put it in.
+  const visualIndex = isArabic ? tabs.length - 1 - state.index : state.index;
+
   const bubbleLeft = (i: number) => tabW * i + tabW / 2 - BUBBLE / 2;
-  const translateX = useAnimatedValue(bubbleLeft(state.index));
+  const translateX = useAnimatedValue(bubbleLeft(visualIndex));
 
   useEffect(() => {
     Animated.spring(translateX, {
-      toValue: bubbleLeft(state.index),
+      toValue: bubbleLeft(visualIndex),
       useNativeDriver: true,
       damping: 16,
       stiffness: 170,
       mass: 0.9,
     }).start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.index, tabW]);
+  }, [visualIndex, tabW]);
 
   const ActiveIcon = TABS[tabs[state.index]?.name]?.Icon ?? House;
 
   return (
     <View
       pointerEvents="box-none"
-      // Force this whole subtree to lay out LTR regardless of the app's
-      // language/I18nManager.isRTL. The tab order + the bubble's plain
-      // `left`/translateX math should already be direction-agnostic, but
-      // something in this tree still behaved inconsistently under RTL
-      // (icons and the active bubble landing in the wrong slot on press) —
-      // `direction` is RN's supported way to opt a subtree out of RTL
-      // entirely, which sidesteps whatever the exact mechanism is.
+      // Force this whole subtree's *coordinate system* to stay LTR always
+      // (regardless of language or the flaky I18nManager.isRTL flag) — the
+      // Arabic mirror above is done ourselves by reversing renderTabs and
+      // remapping the bubble's target index, so the underlying `left` /
+      // translateX math must never itself flip or the two would fight.
       style={{
         position: "absolute",
         left: MARGIN,
@@ -122,9 +131,9 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
           elevation: 12,
         }}
       >
-        {tabs.map((route, i) => {
+        {renderTabs.map((route) => {
           const { labelKey, Icon } = TABS[route.name];
-          const focused = state.index === i;
+          const focused = state.index === tabs.indexOf(route);
 
           const onPress = () => {
             const event = navigation.emit({

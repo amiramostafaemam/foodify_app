@@ -219,8 +219,11 @@ export const uploadImage = async (file: UploadFile): Promise<string> => {
   });
 
   const uploaded = JSON.parse(responseText) as { $id: string };
+  // getFileView now fetches the file's raw bytes (returns Promise<ArrayBuffer>)
+  // in this SDK version — getFileViewURL is the one that just builds the
+  // view URL synchronously, which is what we actually want to store.
   return storage
-    .getFileView(appwriteConfig.bucketId, uploaded.$id)
+    .getFileViewURL(appwriteConfig.bucketId, uploaded.$id)
     .toString();
 };
 

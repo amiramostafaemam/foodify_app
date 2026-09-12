@@ -156,7 +156,6 @@ const Details = () => {
   const addItem = useCartStore((s) => s.addItem);
   const tr = useT();
   const loc = useLocalize();
-  const locCustomization = useLocalizeCustomization();
 
   const [quantity, setQuantity] = useState(1);
   const [selected, setSelected] = useState<CartCustomization[]>([]);
@@ -191,8 +190,11 @@ const Details = () => {
       prev.some((c) => c.id === o.id)
         ? prev.filter((c) => c.id !== o.id)
         : [
+            // Store the raw (English) name, not localized — it needs to be
+            // re-translated at display time so it still follows the
+            // language if it changes after this item is in the cart.
             ...prev,
-            { id: o.id, name: locCustomization(o.name), price: o.price, type: o.type },
+            { id: o.id, name: o.name, price: o.price, type: o.type },
           ],
     );
 

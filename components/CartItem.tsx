@@ -1,25 +1,50 @@
 import FoodImage from "@/components/FoodImage";
 import { getOfferById } from "@/constants/offers.constants";
-import { useT } from "@/lib/i18n";
+import { getMenuItemById } from "@/lib/appwrite";
+import { useLocalize, useLocalizeCustomization, useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import { CartItemType } from "@/type";
 import { Minus, Plus, X } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const CartItem = ({ item }: { item: CartItemType }) => {
   const { increaseQty, decreaseQty, removeItem } = useCartStore();
   const tr = useT();
+  const loc = useLocalize();
+  const locCustomization = useLocalizeCustomization();
 
   const unitPrice =
     item.price +
     (item.customizations?.reduce((sum, c) => sum + c.price, 0) ?? 0);
 
+  const isOffer = !!getOfferById(item.id);
+
   // Same live-relocalization as favorites — offer names have a full
-  // translation table, so don't rely on the snapshot taken when it was
-  // added to the cart.
-  const displayName = getOfferById(item.id)
+  // translation table, menu items come from Appwrite (fetch the live doc
+  // for name/name_ar) — either way, don't rely on the frozen snapshot
+  // taken when it was added to the cart.
+  const [menuNames, setMenuNames] = useState<{ name: string; name_ar?: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    if (isOffer) return;
+    let cancelled = false;
+    getMenuItemById(item.id)
+      .then((doc) => {
+        if (!cancelled) setMenuNames({ name: doc.name, name_ar: doc.name_ar });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isOffer, item.id]);
+
+  const displayName = isOffer
     ? tr(`offerData.${item.id}.title` as Parameters<typeof tr>[0])
-    : item.name;
+    : menuNames
+      ? loc(menuNames.name, menuNames.name_ar)
+      : item.name;
 
   return (
     <View className="flex-row gap-3 rounded-2xl bg-surface p-3">
@@ -42,7 +67,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
 
         {item.customizations && item.customizations.length > 0 ? (
           <Text className="mt-0.5 text-xs text-muted" numberOfLines={1}>
-            {item.customizations.map((c) => c.name).join(", ")}
+            {item.customizations.map((c) => locCustomization(c.name)).join(", ")}
           </Text>
         ) : null}
 
