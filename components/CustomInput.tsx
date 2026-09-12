@@ -1,4 +1,5 @@
 import { useColors } from "@/hooks/useColors";
+import { useLanguageStore } from "@/store/language.store";
 import { CustomInputProps } from "@/type";
 import cn from "clsx";
 import { Eye, EyeOff, type LucideIcon } from "lucide-react-native";
@@ -19,6 +20,7 @@ const CustomInput = ({
   const [isFocused, setIsFocused] = useState(false);
   const [hidden, setHidden] = useState(secureTextEntry);
   const c = useColors();
+  const isArabic = useLanguageStore((s) => s.language === "ar");
 
   return (
     <View className={cn("w-full", containerStyle)}>
@@ -50,7 +52,10 @@ const CustomInput = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className="flex-1 py-3.5 font-quicksand-medium text-base text-content"
-          style={inputStyle}
+          style={[
+            { textAlign: isArabic ? "right" : "left" },
+            inputStyle,
+          ]}
         />
 
         {secureTextEntry ? (

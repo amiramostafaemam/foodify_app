@@ -12,7 +12,6 @@ import { useEffect } from "react";
 import {
   Animated,
   Dimensions,
-  I18nManager,
   Pressable,
   Text,
   useAnimatedValue,
@@ -76,14 +75,9 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
   const tabs = state.routes.filter((r) => TABS[r.name]);
   const tabW = BAR_W / tabs.length;
 
-  // The bubble's position is plain absolute math that assumes tab 0 renders
-  // leftmost. Under native RTL (e.g. left over from switching to Arabic),
-  // RN auto-mirrors `flex-row` children, which desyncs them from that math.
-  // Rendering a manually-reversed order cancels the native mirroring out,
-  // so the bar always reads Home→Search→Cart→Profile regardless of
-  // I18nManager.isRTL, and the bubble math below needs no change.
-  const renderTabs = I18nManager.isRTL ? [...tabs].reverse() : tabs;
-
+  // NativeWind's `flex-row` compiles straight to flexDirection: "row" (no
+  // automatic RTL mirroring here), so tabs always render in this array's
+  // order — Home→Search→Cart→Profile regardless of language/I18nManager.
   const bubbleLeft = (i: number) => tabW * i + tabW / 2 - BUBBLE / 2;
   const translateX = useAnimatedValue(bubbleLeft(state.index));
 
@@ -123,9 +117,9 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
           elevation: 12,
         }}
       >
-        {renderTabs.map((route) => {
+        {tabs.map((route, i) => {
           const { labelKey, Icon } = TABS[route.name];
-          const focused = state.index === tabs.indexOf(route);
+          const focused = state.index === i;
 
           const onPress = () => {
             const event = navigation.emit({

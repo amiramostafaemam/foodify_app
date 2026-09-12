@@ -225,6 +225,7 @@ const en = {
   "settings.light": "Light",
   "settings.dark": "Dark",
   "settings.system": "Match system",
+  "settings.account": "Account",
   "settings.language": "Language",
   "settings.restartHint": "Restart the app to fully apply the language direction.",
 
@@ -487,6 +488,7 @@ const ar: Record<Key, string> = {
   "settings.light": "فاتح",
   "settings.dark": "داكن",
   "settings.system": "حسب النظام",
+  "settings.account": "الحساب",
   "settings.language": "اللغة",
   "settings.restartHint": "أعد تشغيل التطبيق لتطبيق اتجاه اللغة بالكامل.",
 

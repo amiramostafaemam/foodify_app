@@ -44,7 +44,7 @@ const Search = () => {
           return (
             <View
               className={cn(
-                "max-w-[48%] flex-1",
+                "max-w-[49%] flex-1",
                 !isFirstRightColItem ? "mt-10" : "mt-0",
               )}
             >
@@ -54,9 +54,9 @@ const Search = () => {
         }}
         keyExtractor={(item) => item.$id}
         numColumns={2}
-        columnWrapperClassName="gap-7"
+        columnWrapperClassName="gap-4"
         contentContainerStyle={{
-          paddingHorizontal: 20,
+          paddingHorizontal: 16,
           paddingBottom: 140,
           gap: 28,
         }}
