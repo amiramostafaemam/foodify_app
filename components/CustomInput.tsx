@@ -35,33 +35,52 @@ const CustomInput = ({
     </TouchableOpacity>
   ) : null;
 
-  if (variant === "underline") {
+  if (variant === "badge") {
     return (
       <View className={cn("w-full", containerStyle)}>
         <View
           className={cn(
-            "flex-row items-center gap-2.5 border-b pb-2.5",
-            isFocused ? "border-primary" : "border-line/20",
+            "flex-row items-center gap-3 rounded-2xl bg-surface pr-4",
+            isFocused && "bg-primary/5",
           )}
+          style={
+            isFocused
+              ? { borderWidth: 1.5, borderColor: "#FE8C00" }
+              : { borderWidth: 1.5, borderColor: "transparent" }
+          }
         >
           {Icon ? (
-            <Icon size={17} color={isFocused ? "#FE8C00" : c.muted} />
+            <View
+              className={cn(
+                "m-1.5 h-11 w-11 items-center justify-center rounded-xl",
+                isFocused ? "bg-primary" : "bg-primary/10",
+              )}
+            >
+              <Icon size={18} color={isFocused ? "#fff" : "#FE8C00"} />
+            </View>
           ) : null}
 
-          <TextInput
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType={keyboardType}
-            placeholder={label || placeholder}
-            placeholderTextColor={c.muted}
-            value={value}
-            onChangeText={onChangeText}
-            secureTextEntry={hidden}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="flex-1 py-1 font-quicksand-medium text-base text-content"
-            style={inputStyle}
-          />
+          <View className="flex-1 py-2.5">
+            {label ? (
+              <Text className="font-quicksand-bold text-[10px] uppercase tracking-wider text-muted">
+                {label}
+              </Text>
+            ) : null}
+            <TextInput
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType={keyboardType}
+              placeholder={placeholder}
+              placeholderTextColor={c.muted}
+              value={value}
+              onChangeText={onChangeText}
+              secureTextEntry={hidden}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              className="mt-0.5 font-quicksand-bold text-[15px] text-content"
+              style={inputStyle}
+            />
+          </View>
 
           {visibilityToggle}
         </View>

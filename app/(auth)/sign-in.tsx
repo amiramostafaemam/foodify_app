@@ -5,7 +5,7 @@ import ErrorModal from "@/components/ErrorModal";
 import ForgotPasswordModal from "@/components/ForgotPasswordModal";
 import { t, useT } from "@/lib/i18n";
 import useAuthStore from "@/store/auth.store";
-import { Link, Redirect } from "expo-router";
+import { Redirect } from "expo-router";
 import { Lock, Mail } from "lucide-react-native";
 import { useState } from "react";
 import { Keyboard, Text, TouchableOpacity, View } from "react-native";
@@ -81,16 +81,18 @@ const SignIn = () => {
     <AuthScaffold active="signin">
       <View className="gap-5">
         <CustomInput
-          variant="underline"
+          variant="badge"
           label={tr("auth.email")}
+          placeholder="you@example.com"
           icon={Mail}
           value={form.email}
           onChangeText={(email) => setForm((prev) => ({ ...prev, email }))}
           keyboardType="email-address"
         />
         <CustomInput
-          variant="underline"
+          variant="badge"
           label={tr("auth.password")}
+          placeholder={tr("auth.yourPassword")}
           icon={Lock}
           value={form.password}
           onChangeText={(password) =>
@@ -115,15 +117,6 @@ const SignIn = () => {
             {tr("auth.forgotPassword")}
           </Text>
         </TouchableOpacity>
-      </View>
-
-      <View className="mt-6 flex-row justify-center gap-1.5">
-        <Text className="font-quicksand-medium text-muted">
-          {tr("auth.noAccount")}
-        </Text>
-        <Link href="/sign-up" className="font-quicksand-bold text-primary">
-          {tr("auth.signUp")}
-        </Link>
       </View>
 
       <ForgotPasswordModal

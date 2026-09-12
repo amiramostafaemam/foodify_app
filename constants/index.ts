@@ -26,6 +26,7 @@ import beans from "@/assets/images/beans.png";
 import bread from "@/assets/images/bread.png";
 import burgerOne from "@/assets/images/burger-one.png";
 import burgerTwo from "@/assets/images/burger-two.png";
+import burgerlogin from "@/assets/images/burgerlogin.jpg";
 import buritto from "@/assets/images/buritto.png";
 import cheese from "@/assets/images/cheese.png";
 import chicken from "@/assets/images/chicken.png";
@@ -65,6 +66,7 @@ export const images = {
   bacon,
   burgerOne,
   burgerTwo,
+  burgerlogin,
   buritto,
   cheese,
   coleslaw,

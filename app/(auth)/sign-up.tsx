@@ -5,10 +5,10 @@ import ErrorModal from "@/components/ErrorModal";
 import { createUser } from "@/lib/appwrite";
 import { t, useT } from "@/lib/i18n";
 import useAuthStore from "@/store/auth.store";
-import { Link, Redirect } from "expo-router";
+import { Redirect } from "expo-router";
 import { Lock, Mail, User } from "lucide-react-native";
 import { useState } from "react";
-import { Keyboard, Text, View } from "react-native";
+import { Keyboard, View } from "react-native";
 
 const getErrorMessage = (error: unknown): string => {
   const message =
@@ -98,23 +98,26 @@ const SignUp = () => {
     <AuthScaffold active="signup">
       <View className="gap-5">
         <CustomInput
-          variant="underline"
+          variant="badge"
           label={tr("auth.fullName")}
+          placeholder="Amira Mostafa"
           icon={User}
           value={form.name}
           onChangeText={(name) => setForm((prev) => ({ ...prev, name }))}
         />
         <CustomInput
-          variant="underline"
+          variant="badge"
           label={tr("auth.email")}
+          placeholder="you@example.com"
           icon={Mail}
           value={form.email}
           onChangeText={(email) => setForm((prev) => ({ ...prev, email }))}
           keyboardType="email-address"
         />
         <CustomInput
-          variant="underline"
+          variant="badge"
           label={tr("auth.password")}
+          placeholder={tr("auth.min8")}
           icon={Lock}
           value={form.password}
           onChangeText={(password) =>
@@ -123,8 +126,9 @@ const SignUp = () => {
           secureTextEntry
         />
         <CustomInput
-          variant="underline"
+          variant="badge"
           label={tr("auth.confirmPassword")}
+          placeholder={tr("auth.confirmPassword")}
           icon={Lock}
           value={form.confirmPassword}
           onChangeText={(confirmPassword) =>
@@ -139,15 +143,6 @@ const SignUp = () => {
           onPress={submit}
           style="mt-1"
         />
-      </View>
-
-      <View className="mt-6 flex-row justify-center gap-1.5">
-        <Text className="font-quicksand-medium text-muted">
-          {tr("auth.haveAccount")}
-        </Text>
-        <Link href="/sign-in" className="font-quicksand-bold text-primary">
-          {tr("auth.signIn")}
-        </Link>
       </View>
 
       <ErrorModal

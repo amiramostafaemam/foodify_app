@@ -3,14 +3,26 @@ import { images } from "@/constants";
 import { useColors } from "@/hooks/useColors";
 import { useT } from "@/lib/i18n";
 import cn from "clsx";
-import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { ReactNode } from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
 
 const { width } = Dimensions.get("window");
-const HERO_H = 280;
+const HERO_H = 300;
+const WAVE_H = 56;
+
+// Two gentle humps across the full width, filled in the sheet's own
+// background so the card visually "ripples" up into the photo instead of
+// meeting it on a straight line.
+const WAVE_PATH = `M0,${WAVE_H * 0.5} C ${width * 0.17},${WAVE_H * 0.05} ${width * 0.33},${WAVE_H * 0.95} ${width * 0.5},${WAVE_H * 0.5} C ${width * 0.67},${WAVE_H * 0.05} ${width * 0.83},${WAVE_H * 0.95} ${width},${WAVE_H * 0.5} L${width},${WAVE_H} L0,${WAVE_H} Z`;
 
 const Tabs = ({ active }: { active: "signin" | "signup" }) => {
   const tr = useT();
@@ -65,12 +77,11 @@ const AuthScaffold = ({
   return (
     <View className="flex-1 bg-canvas">
       <View style={{ height: HERO_H }}>
-        {/* Only the first two stops — the shared `hero` gradient fades all
-            the way to canvas white/dark by its last stop, which would make
-            the notch below invisible against the sheet's own background. */}
-        <LinearGradient
-          colors={[c.hero[0], c.hero[1]]}
+        <Image
+          source={images.burgerlogin}
           style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={200}
         />
 
         <View
@@ -80,30 +91,25 @@ const AuthScaffold = ({
           <View className="h-7 w-7 items-center justify-center rounded-lg bg-primary">
             <Text className="font-quicksand-bold text-sm text-white">F</Text>
           </View>
-          <Text className="font-quicksand-bold text-base text-content">
+          <Text
+            className="font-quicksand-bold text-base text-white"
+            style={{ textShadowColor: "#000", textShadowRadius: 8 }}
+          >
             Foodify
           </Text>
         </View>
 
-        <Image
-          source={images.pizzaOne}
-          style={{
-            position: "absolute",
-            width: width * 0.62,
-            height: width * 0.62,
-            alignSelf: "center",
-            bottom: -width * 0.08,
-          }}
-          contentFit="contain"
-          transition={200}
-        />
+        <Svg
+          width={width}
+          height={WAVE_H}
+          viewBox={`0 0 ${width} ${WAVE_H}`}
+          style={{ position: "absolute", bottom: -1, left: 0 }}
+        >
+          <Path d={WAVE_PATH} fill={c.card} />
+        </Svg>
       </View>
 
-      {/* Asymmetric seam: rounded only on the top-left, so the hero peeks
-          through a curved notch there while staying flush (square) on the
-          right — an intentional break from the plain rounded-top sheet used
-          elsewhere in the app. */}
-      <View className="-mt-14 flex-1 rounded-tl-[56px] bg-card px-6 pt-9">
+      <View className="flex-1 bg-card px-6 pt-6">
         <Tabs active={active} />
         <View className="mt-7">{children}</View>
       </View>
