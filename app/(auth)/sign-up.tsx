@@ -98,7 +98,6 @@ const SignUp = () => {
     <AuthScaffold active="signup">
       <View className="gap-3.5">
         <CustomInput
-          variant="floating"
           label={tr("auth.fullName")}
           placeholder={tr("auth.enterName")}
           icon={User}
@@ -106,7 +105,6 @@ const SignUp = () => {
           onChangeText={(name) => setForm((prev) => ({ ...prev, name }))}
         />
         <CustomInput
-          variant="floating"
           label={tr("auth.email")}
           placeholder={tr("auth.enterEmail")}
           icon={Mail}
@@ -115,7 +113,6 @@ const SignUp = () => {
           keyboardType="email-address"
         />
         <CustomInput
-          variant="floating"
           label={tr("auth.password")}
           placeholder={tr("auth.enterPassword")}
           icon={Lock}
@@ -126,7 +123,6 @@ const SignUp = () => {
           secureTextEntry
         />
         <CustomInput
-          variant="floating"
           label={tr("auth.confirmPassword")}
           placeholder={tr("auth.enterConfirmPassword")}
           icon={Lock}

@@ -81,7 +81,6 @@ const SignIn = () => {
     <AuthScaffold active="signin">
       <View className="gap-3.5">
         <CustomInput
-          variant="floating"
           label={tr("auth.email")}
           placeholder={tr("auth.enterEmail")}
           icon={Mail}
@@ -90,7 +89,6 @@ const SignIn = () => {
           keyboardType="email-address"
         />
         <CustomInput
-          variant="floating"
           label={tr("auth.password")}
           placeholder={tr("auth.enterPassword")}
           icon={Lock}
