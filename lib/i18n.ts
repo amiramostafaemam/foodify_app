@@ -308,11 +308,11 @@ const en = {
   "onb.skip": "Skip",
   "onb.next": "Next",
   "onb.getStarted": "Get Started",
-  "onb.1.title": "Discover great food",
+  "onb.1.title": "Discover Great Food",
   "onb.1.desc": "Find your favorite meals from top restaurants near you",
-  "onb.2.title": "Fast & easy ordering",
+  "onb.2.title": "Fast & Easy Ordering",
   "onb.2.desc": "Order in seconds and track your food in real time",
-  "onb.3.title": "Quick delivery",
+  "onb.3.title": "Quick Delivery",
   "onb.3.desc": "Fresh food delivered to your door",
 };
 

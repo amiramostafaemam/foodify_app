@@ -20,10 +20,16 @@ export const onboardingSlides = [
   },
   {
     id: "3",
+    // This one is a genuine transparent-background cutout (confirmed via
+    // its alpha channel), unlike the first two which are JPEGs with a
+    // real dark background baked in — so there's no fixed colour it has
+    // to match. Giving it the same dark family as the other two keeps
+    // the whole onboarding flow visually consistent instead of switching
+    // to a light page for this slide alone.
     image: require("@/assets/images/onboarding-3.png"),
     title: "Quick delivery",
     description: "Fresh food delivered to your door",
-    bg: "#FBF3E7",
-    dark: false,
+    bg: "#15100A",
+    dark: true,
   },
 ];
