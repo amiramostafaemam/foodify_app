@@ -2,10 +2,6 @@ import { useColors } from "@/hooks/useColors";
 import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import {
-  selectFavoriteCount,
-  useFavoritesStore,
-} from "@/store/favorites.store";
-import {
   selectUnreadCount,
   useNotificationsStore,
 } from "@/store/notifications.store";
@@ -25,7 +21,6 @@ const Badge = ({ count }: { count: number }) =>
 const HomeHeader = ({ name }: { name?: string }) => {
   const cartCount = useCartStore((s) => s.getTotalItems());
   const unreadCount = useNotificationsStore(selectUnreadCount);
-  const favCount = useFavoritesStore(selectFavoriteCount);
   const c = useColors();
   const tr = useT();
   const first = name?.trim().split(" ")[0];
@@ -50,7 +45,6 @@ const HomeHeader = ({ name }: { name?: string }) => {
           onPress={() => router.push("/favorites")}
         >
           <Heart size={19} color={c.content} />
-          <Badge count={favCount} />
         </TouchableOpacity>
         <TouchableOpacity
           className="icon-btn"

@@ -24,7 +24,7 @@ const Tabs = ({ active }: { active: "signin" | "signup" }) => {
       <TouchableOpacity onPress={() => go("signin")} activeOpacity={0.7}>
         <Text
           className={cn(
-            "font-serif text-[26px]",
+            "font-serif text-xl",
             active === "signin" ? "text-content" : "text-muted",
           )}
         >
@@ -38,7 +38,7 @@ const Tabs = ({ active }: { active: "signin" | "signup" }) => {
       <TouchableOpacity onPress={() => go("signup")} activeOpacity={0.7}>
         <Text
           className={cn(
-            "font-serif text-[26px]",
+            "font-serif text-xl",
             active === "signup" ? "text-content" : "text-muted",
           )}
         >
@@ -65,16 +65,24 @@ const AuthScaffold = ({
   return (
     <View className="flex-1 bg-canvas">
       <View style={{ height: HERO_H }}>
-        <LinearGradient colors={c.hero} style={StyleSheet.absoluteFill} />
+        {/* Only the first two stops — the shared `hero` gradient fades all
+            the way to canvas white/dark by its last stop, which would make
+            the notch below invisible against the sheet's own background. */}
+        <LinearGradient
+          colors={[c.hero[0], c.hero[1]]}
+          style={StyleSheet.absoluteFill}
+        />
 
         <View
-          className="flex-row items-center gap-2"
+          className="flex-row items-center gap-1.5"
           style={{ paddingTop: insets.top + 16, paddingLeft: 24 }}
         >
-          <View className="h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Text className="font-quicksand-bold text-base text-white">F</Text>
+          <View className="h-7 w-7 items-center justify-center rounded-lg bg-primary">
+            <Text className="font-quicksand-bold text-sm text-white">F</Text>
           </View>
-          <Text className="font-serif text-xl text-content">Foodify</Text>
+          <Text className="font-quicksand-bold text-base text-content">
+            Foodify
+          </Text>
         </View>
 
         <Image
@@ -95,7 +103,7 @@ const AuthScaffold = ({
           through a curved notch there while staying flush (square) on the
           right — an intentional break from the plain rounded-top sheet used
           elsewhere in the app. */}
-      <View className="-mt-10 flex-1 rounded-tl-[40px] bg-card px-6 pt-8">
+      <View className="-mt-14 flex-1 rounded-tl-[56px] bg-card px-6 pt-9">
         <Tabs active={active} />
         <View className="mt-7">{children}</View>
       </View>
