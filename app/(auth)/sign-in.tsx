@@ -79,20 +79,20 @@ const SignIn = () => {
 
   return (
     <AuthScaffold active="signin">
-      <View className="gap-5">
+      <View className="gap-3.5">
         <CustomInput
-          variant="badge"
+          variant="floating"
           label={tr("auth.email")}
-          placeholder="you@example.com"
+          placeholder={tr("auth.enterEmail")}
           icon={Mail}
           value={form.email}
           onChangeText={(email) => setForm((prev) => ({ ...prev, email }))}
           keyboardType="email-address"
         />
         <CustomInput
-          variant="badge"
+          variant="floating"
           label={tr("auth.password")}
-          placeholder={tr("auth.yourPassword")}
+          placeholder={tr("auth.enterPassword")}
           icon={Lock}
           value={form.password}
           onChangeText={(password) =>
@@ -105,7 +105,7 @@ const SignIn = () => {
           title={tr("auth.signIn")}
           isLoading={isSubmitting}
           onPress={submit}
-          style="mt-1"
+          style="mt-2"
         />
 
         <TouchableOpacity

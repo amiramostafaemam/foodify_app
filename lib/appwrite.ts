@@ -142,6 +142,19 @@ export const requestPasswordRecovery = async (email: string) => {
   }
 };
 
+// Changing the password while already signed in — no email/redirect flow
+// needed, just the current session + the old password for re-verification.
+export const updateUserPassword = async (
+  newPassword: string,
+  oldPassword: string,
+) => {
+  try {
+    await account.updatePassword({ password: newPassword, oldPassword });
+  } catch (e: any) {
+    throw new Error(e.message || "Failed to update password");
+  }
+};
+
 export type UploadFile = {
   uri: string;
   name: string;

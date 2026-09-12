@@ -96,28 +96,28 @@ const SignUp = () => {
 
   return (
     <AuthScaffold active="signup">
-      <View className="gap-5">
+      <View className="gap-3.5">
         <CustomInput
-          variant="badge"
+          variant="floating"
           label={tr("auth.fullName")}
-          placeholder="Amira Mostafa"
+          placeholder={tr("auth.enterName")}
           icon={User}
           value={form.name}
           onChangeText={(name) => setForm((prev) => ({ ...prev, name }))}
         />
         <CustomInput
-          variant="badge"
+          variant="floating"
           label={tr("auth.email")}
-          placeholder="you@example.com"
+          placeholder={tr("auth.enterEmail")}
           icon={Mail}
           value={form.email}
           onChangeText={(email) => setForm((prev) => ({ ...prev, email }))}
           keyboardType="email-address"
         />
         <CustomInput
-          variant="badge"
+          variant="floating"
           label={tr("auth.password")}
-          placeholder={tr("auth.min8")}
+          placeholder={tr("auth.enterPassword")}
           icon={Lock}
           value={form.password}
           onChangeText={(password) =>
@@ -126,9 +126,9 @@ const SignUp = () => {
           secureTextEntry
         />
         <CustomInput
-          variant="badge"
+          variant="floating"
           label={tr("auth.confirmPassword")}
-          placeholder={tr("auth.confirmPassword")}
+          placeholder={tr("auth.enterConfirmPassword")}
           icon={Lock}
           value={form.confirmPassword}
           onChangeText={(confirmPassword) =>
@@ -141,7 +141,7 @@ const SignUp = () => {
           title={tr("auth.signUp")}
           isLoading={isSubmitting}
           onPress={submit}
-          style="mt-1"
+          style="mt-2"
         />
       </View>
 

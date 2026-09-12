@@ -106,7 +106,7 @@ export interface CustomInputProps {
     | "decimal-pad";
   containerStyle?: string;
   inputStyle?: StyleProp<TextStyle>;
-  variant?: "filled" | "badge";
+  variant?: "filled" | "floating";
 }
 
 interface ProfileFieldProps {

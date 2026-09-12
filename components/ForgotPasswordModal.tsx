@@ -119,7 +119,7 @@ const ForgotPasswordModal = ({
               <View className="mt-5 w-full">
                 <CustomInput
                   icon={Mail}
-                  placeholder="you@example.com"
+                  placeholder={tr("auth.enterEmail")}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
