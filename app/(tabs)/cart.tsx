@@ -8,7 +8,7 @@ import { TAB_BAR_SPACE } from "@/components/navigation/FloatingTabBar";
 import { images } from "@/constants";
 import { useColors } from "@/hooks/useColors";
 import { createOrder } from "@/lib/appwrite";
-import { t, useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 import { createPaymentIntent } from "@/lib/payment.service";
 import { useStripe } from "@/lib/stripe";
 import useAuthStore from "@/store/auth.store";
@@ -151,8 +151,8 @@ const Cart = () => {
 
     useNotificationsStore.getState().add({
       type: "order",
-      title: "Order confirmed 🎉",
-      body: t("cart.orderConfirmedMsg"),
+      titleKey: "cart.orderConfirmed",
+      bodyKey: "cart.orderConfirmedMsg",
     });
 
     setStep("review");

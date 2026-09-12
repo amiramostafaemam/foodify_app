@@ -4,7 +4,14 @@ import { useT } from "@/lib/i18n";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
 import { useState } from "react";
-import { Dimensions, FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  I18nManager,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 // Gutter === gap so each card is centred with white on both sides and the next
 // card lands exactly off-screen (matches PopularMealsCarousel).
@@ -12,6 +19,13 @@ const GAP = 20;
 const SIDE = 20;
 const CARD_W = Dimensions.get("window").width - SIDE * 2;
 const SNAP = CARD_W + GAP;
+
+// FlatList's horizontal scroll direction follows I18nManager.isRTL at the
+// native level (unlike NativeWind's flex-row, which doesn't auto-mirror),
+// which made swiping feel backwards in Arabic. Flipping the list and then
+// flipping every item back keeps the carousel scrolling the same physical
+// direction regardless of language — a standard RN RTL-carousel trick.
+const RTL = I18nManager.isRTL;
 
 const PromoCarousel = () => {
   const [index, setIndex] = useState(0);
@@ -27,6 +41,7 @@ const PromoCarousel = () => {
         snapToInterval={SNAP}
         decelerationRate="fast"
         snapToAlignment="start"
+        style={RTL ? { transform: [{ scaleX: -1 }] } : undefined}
         contentContainerStyle={{ paddingHorizontal: SIDE }}
         ItemSeparatorComponent={() => <View style={{ width: GAP }} />}
         onMomentumScrollEnd={(e) =>
@@ -35,7 +50,10 @@ const PromoCarousel = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             activeOpacity={0.92}
-            style={{ width: CARD_W, backgroundColor: item.color }}
+            style={[
+              { width: CARD_W, backgroundColor: item.color },
+              RTL && { transform: [{ scaleX: -1 }] },
+            ]}
             onPress={() =>
               router.push({
                 pathname: "/offer-details/[id]",

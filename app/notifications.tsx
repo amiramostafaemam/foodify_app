@@ -53,6 +53,7 @@ const NotificationRow = ({
   onPress: () => void;
 }) => {
   const { Icon, color, tile } = META[item.type];
+  const tr = useT();
 
   return (
     <TouchableOpacity
@@ -78,7 +79,7 @@ const NotificationRow = ({
             className="paragraph-bold flex-1 pr-2 text-content"
             numberOfLines={1}
           >
-            {item.title}
+            {tr(item.titleKey as Parameters<typeof tr>[0], item.titleVars)}
           </Text>
           <Text className="font-quicksand-medium text-[11px] text-muted">
             {relativeTime(item.createdAt)}
@@ -88,7 +89,7 @@ const NotificationRow = ({
           className="body-regular mt-1 leading-[1.5] text-muted"
           numberOfLines={2}
         >
-          {item.body}
+          {tr(item.bodyKey as Parameters<typeof tr>[0], item.bodyVars)}
         </Text>
       </View>
 

@@ -170,6 +170,15 @@ const en = {
   "notif.title": "Notifications",
   "notif.empty": "You're all caught up",
   "notif.emptyHint": "Order updates and fresh deals will show up here.",
+  "notif.seedWelcomeTitle": "Welcome to Foodify 👋",
+  "notif.seedWelcomeBody":
+    "Your first delivery is on us — order anything over $30 and delivery is free.",
+  "notif.seedOfferTitle": "Summer Combo · 38% off",
+  "notif.seedOfferBody":
+    "Beef burger, fries and an ice-cold drink for $9.99. This week only.",
+  "notif.seedDeliveryTitle": "Faster deliveries near you",
+  "notif.seedDeliveryBody":
+    "We added two new riders in your area — most orders now arrive in under 25 min.",
 
   // favorites
   "fav.title": "Favorites",
@@ -438,6 +447,12 @@ const ar: Record<Key, string> = {
   "notif.title": "الإشعارات",
   "notif.empty": "لا يوجد جديد",
   "notif.emptyHint": "تحديثات الطلبات والعروض الجديدة ستظهر هنا.",
+  "notif.seedWelcomeTitle": "أهلاً بيك في Foodify 👋",
+  "notif.seedWelcomeBody": "أول توصيلة عليكِ — اطلبي بأي مبلغ أكتر من ٣٠$ والتوصيل مجاني.",
+  "notif.seedOfferTitle": "كومبو الصيف · خصم ٣٨٪",
+  "notif.seedOfferBody": "برجر لحم، بطاطس، ومشروب مثلج بـ٩.٩٩$. الأسبوع ده بس.",
+  "notif.seedDeliveryTitle": "توصيل أسرع في منطقتك",
+  "notif.seedDeliveryBody": "ضفنا مندوبين جداد في منطقتك — أغلب الطلبات بقت توصل في أقل من ٢٥ دقيقة.",
 
   "fav.title": "المفضلة",
   "fav.empty": "لا توجد مفضلات بعد",

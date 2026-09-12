@@ -1,6 +1,7 @@
 import { useColors } from "@/hooks/useColors";
 import { useT } from "@/lib/i18n";
-import { CreditCard, Lock } from "lucide-react-native";
+import { useLanguageStore } from "@/store/language.store";
+import { ChevronLeft, CreditCard, Lock } from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -10,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   visible: boolean;
@@ -34,13 +35,18 @@ const formatExp = (v: string) => {
 
 const Field = ({
   label,
+  align,
   children,
 }: {
   label: string;
+  align: "left" | "right";
   children: React.ReactNode;
 }) => (
   <View className="flex-1">
-    <Text className="mb-1.5 pl-1 font-quicksand-medium text-sm text-muted">
+    <Text
+      className="mb-1.5 px-1 font-quicksand-medium text-sm text-muted"
+      style={{ textAlign: align }}
+    >
       {label}
     </Text>
     {children}
@@ -54,9 +60,10 @@ const MockCardSheet = ({
   onClose,
   onSuccess,
 }: Props) => {
-  const insets = useSafeAreaInsets();
   const c = useColors();
   const tr = useT();
+  const isArabic = useLanguageStore((s) => s.language === "ar");
+  const align = isArabic ? "right" : "left";
   const [card, setCard] = useState("");
   const [exp, setExp] = useState("");
   const [cvc, setCvc] = useState("");
@@ -77,61 +84,63 @@ const MockCardSheet = ({
     }, 1600);
   };
 
+  const inputStyle = { textAlign: align } as const;
   const inputClass =
     "rounded-2xl border-2 border-transparent bg-surface px-4 py-3.5 font-quicksand-semibold text-base text-content";
 
   return (
     <Modal
       visible={visible}
-      transparent
       animationType="slide"
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={onClose}
-        className="flex-1 justify-end bg-black/50"
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          className="rounded-t-[28px] bg-elevated px-5 pt-3"
-          style={{ paddingBottom: Math.max(insets.bottom, 16) + 8 }}
-        >
-          <View className="mb-4 h-1 w-10 self-center rounded-full bg-line/15" />
+      <SafeAreaView className="flex-1 bg-canvas">
+        <View className="flex-row items-center gap-2 px-5 pb-2 pt-2">
+          <TouchableOpacity
+            onPress={onClose}
+            hitSlop={10}
+            className="h-10 w-10 items-center justify-center rounded-full bg-surface"
+          >
+            <ChevronLeft size={22} color={c.content} />
+          </TouchableOpacity>
+          <Text className="h3-bold text-content">{tr("card.title")}</Text>
+        </View>
 
-          <View className="flex-row items-center gap-2">
+        <View className="flex-1 px-5">
+          <View className="mt-4 flex-row items-center gap-2">
             <CreditCard size={20} color="#FE8C00" />
-            <Text className="h3-bold text-content">{tr("card.title")}</Text>
+            <Text className="paragraph-semibold text-content">
+              {tr("card.subtitle", { amount: amount.toFixed(2) })}
+            </Text>
           </View>
-          <Text className="mt-1 font-quicksand-medium text-sm text-muted">
-            {tr("card.subtitle", { amount: amount.toFixed(2) })}
-          </Text>
 
-          <View className="mt-5 gap-3">
-            <Field label={tr("card.number")}>
+          <View className="mt-6 gap-3">
+            <Field label={tr("card.number")} align={align}>
               <TextInput
                 value={card}
                 onChangeText={(v) => setCard(formatCard(v))}
                 placeholder="4242 4242 4242 4242"
                 placeholderTextColor={c.muted}
                 keyboardType="number-pad"
+                style={inputStyle}
                 className={inputClass}
               />
             </Field>
 
             <View className="flex-row gap-3">
-              <Field label={tr("card.expiry")}>
+              <Field label={tr("card.expiry")} align={align}>
                 <TextInput
                   value={exp}
                   onChangeText={(v) => setExp(formatExp(v))}
                   placeholder="MM/YY"
                   placeholderTextColor={c.muted}
                   keyboardType="number-pad"
+                  style={inputStyle}
                   className={inputClass}
                 />
               </Field>
-              <Field label={tr("card.cvc")}>
+              <Field label={tr("card.cvc")} align={align}>
                 <TextInput
                   value={cvc}
                   onChangeText={(v) =>
@@ -140,27 +149,31 @@ const MockCardSheet = ({
                   placeholder="123"
                   placeholderTextColor={c.muted}
                   keyboardType="number-pad"
+                  style={inputStyle}
                   className={inputClass}
                 />
               </Field>
             </View>
 
-            <Field label={tr("card.nameOnCard")}>
+            <Field label={tr("card.nameOnCard")} align={align}>
               <TextInput
                 value={holder}
                 onChangeText={setHolder}
                 placeholder={tr("card.fullName")}
                 placeholderTextColor={c.muted}
+                style={inputStyle}
                 className={inputClass}
               />
             </Field>
           </View>
+        </View>
 
+        <View className="px-5 pb-4">
           <TouchableOpacity
             onPress={pay}
             disabled={!valid || processing}
             activeOpacity={0.9}
-            className={`mt-5 flex-row items-center justify-center gap-2 rounded-full py-4 ${
+            className={`flex-row items-center justify-center gap-2 rounded-full py-4 ${
               valid && !processing ? "bg-primary" : "bg-primary/40"
             }`}
           >
@@ -179,8 +192,8 @@ const MockCardSheet = ({
           <Text className="mt-3 text-center font-quicksand-medium text-xs text-muted">
             {tr("card.demo")}
           </Text>
-        </TouchableOpacity>
-      </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     </Modal>
   );
 };
