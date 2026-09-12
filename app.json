@@ -44,7 +44,8 @@
         {
           "photosPermission": "Foodify uses your photos so you can set a profile picture."
         }
-      ]
+      ],
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,

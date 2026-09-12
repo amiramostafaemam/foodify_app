@@ -26,6 +26,14 @@ const FavRow = ({
     item.kind === "offer"
       ? (getOfferById(item.id)?.image ?? item.image)
       : item.image;
+  // Offer names are local content with a full translation table, so
+  // re-derive them live from the current language instead of the frozen
+  // snapshot taken when the offer was favorited (menu items come from
+  // Appwrite and would need a live re-fetch, so those stay a snapshot).
+  const displayName =
+    item.kind === "offer" && getOfferById(item.id)
+      ? tr(`offerData.${item.id}.title` as Parameters<typeof tr>[0])
+      : item.name;
   return (
   <TouchableOpacity
     activeOpacity={0.8}
@@ -39,7 +47,7 @@ const FavRow = ({
     />
     <View className="flex-1">
       <Text className="paragraph-bold text-content" numberOfLines={1}>
-        {item.name}
+        {displayName}
       </Text>
       <Text className="body-regular mt-0.5 text-muted">
         {item.kind === "offer" ? tr("fav.deal") : tr("fav.meal")}

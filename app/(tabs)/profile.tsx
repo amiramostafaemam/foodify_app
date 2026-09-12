@@ -90,7 +90,7 @@ const Profile = () => {
     } catch (error) {
       Alert.alert(
         tr("profile.uploadFailed"),
-        error instanceof Error ? error.message : "Could not update your photo.",
+        error instanceof Error ? error.message : tr("profile.uploadFailedGeneric"),
       );
     } finally {
       setUploadingAvatar(false);

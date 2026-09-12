@@ -23,6 +23,11 @@ const en = {
   "common.delivery": "Delivery",
   "common.min": "min",
   "common.somethingWrong": "Something went wrong",
+  "common.error": "Error",
+  "common.nameRequired": "Name is required",
+  "common.userNotFound": "User not found",
+  "common.failedUpdateProfile": "Failed to update profile",
+  "common.orderFailed": "Order failed",
 
   // tabs
   "tab.home": "Home",
@@ -138,6 +143,9 @@ const en = {
   "cart.cardSub": "Visa, Mastercard",
   "cart.cash": "Cash on Delivery",
   "cart.cashSub": "Pay when your order arrives",
+  "cart.payWithStripeSecure": "Pay securely with Stripe",
+  "cart.signInRequiredTitle": "Sign in required",
+  "cart.signInRequiredMsg": "Please sign in to place an order.",
   "cart.orderConfirmed": "Order confirmed!",
   "cart.orderConfirmedMsg":
     "Your food is being prepared and will be delivered shortly.",
@@ -205,6 +213,7 @@ const en = {
   "profile.photoUpdated": "Photo updated",
   "profile.photoUpdatedMsg": "Your new profile picture is live.",
   "profile.uploadFailed": "Upload failed",
+  "profile.uploadFailedGeneric": "Could not update your photo.",
 
   // edit profile
   "edit.title": "Edit Profile",
@@ -315,6 +324,11 @@ const ar: Record<Key, string> = {
   "common.delivery": "التوصيل",
   "common.min": "دقيقة",
   "common.somethingWrong": "حدث خطأ ما",
+  "common.error": "خطأ",
+  "common.nameRequired": "الاسم مطلوب",
+  "common.userNotFound": "المستخدم غير موجود",
+  "common.failedUpdateProfile": "فشل تحديث الحساب",
+  "common.orderFailed": "فشل الطلب",
 
   "tab.home": "الرئيسية",
   "tab.search": "بحث",
@@ -421,6 +435,9 @@ const ar: Record<Key, string> = {
   "cart.cardSub": "فيزا، ماستركارد",
   "cart.cash": "الدفع عند الاستلام",
   "cart.cashSub": "ادفع عند وصول طلبك",
+  "cart.payWithStripeSecure": "ادفع بأمان عبر Stripe",
+  "cart.signInRequiredTitle": "لازم تسجّلي الدخول",
+  "cart.signInRequiredMsg": "من فضلك سجّلي الدخول عشان تكملي طلبك.",
   "cart.orderConfirmed": "تم تأكيد الطلب!",
   "cart.orderConfirmedMsg": "يتم تحضير طلبك وسيصلك قريباً.",
   "cart.backToHome": "العودة للرئيسية",
@@ -477,6 +494,7 @@ const ar: Record<Key, string> = {
   "profile.photoUpdated": "تم تحديث الصورة",
   "profile.photoUpdatedMsg": "صورة حسابك الجديدة ظاهرة الآن.",
   "profile.uploadFailed": "فشل الرفع",
+  "profile.uploadFailedGeneric": "تعذر تحديث صورتك.",
 
   "edit.title": "تعديل الحساب",
   "edit.changePhotoHint": "غيّر صورتك من صفحة الحساب",

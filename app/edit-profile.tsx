@@ -29,12 +29,12 @@ const EditProfile = () => {
 
   const handleSubmit = async () => {
     if (!form.name.trim()) {
-      Alert.alert("Error", "Name is required");
+      Alert.alert(tr("common.error"), tr("common.nameRequired"));
       return;
     }
 
     if (!user) {
-      Alert.alert("Error", "User not found");
+      Alert.alert(tr("common.error"), tr("common.userNotFound"));
       return;
     }
 
@@ -49,7 +49,10 @@ const EditProfile = () => {
 
       setShowSuccessModal(true);
     } catch (error: any) {
-      Alert.alert("Error", error?.message || "Failed to update profile");
+      Alert.alert(
+        tr("common.error"),
+        error?.message || tr("common.failedUpdateProfile"),
+      );
     } finally {
       setIsSubmitting(false);
     }

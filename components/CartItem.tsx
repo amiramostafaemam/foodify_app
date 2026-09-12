@@ -1,4 +1,6 @@
 import FoodImage from "@/components/FoodImage";
+import { getOfferById } from "@/constants/offers.constants";
+import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import { CartItemType } from "@/type";
 import { Minus, Plus, X } from "lucide-react-native";
@@ -6,10 +8,18 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 const CartItem = ({ item }: { item: CartItemType }) => {
   const { increaseQty, decreaseQty, removeItem } = useCartStore();
+  const tr = useT();
 
   const unitPrice =
     item.price +
     (item.customizations?.reduce((sum, c) => sum + c.price, 0) ?? 0);
+
+  // Same live-relocalization as favorites — offer names have a full
+  // translation table, so don't rely on the snapshot taken when it was
+  // added to the cart.
+  const displayName = getOfferById(item.id)
+    ? tr(`offerData.${item.id}.title` as Parameters<typeof tr>[0])
+    : item.name;
 
   return (
     <View className="flex-row gap-3 rounded-2xl bg-surface p-3">
@@ -23,7 +33,7 @@ const CartItem = ({ item }: { item: CartItemType }) => {
             className="paragraph-bold flex-1 pr-2 text-content"
             numberOfLines={1}
           >
-            {item.name}
+            {displayName}
           </Text>
           <TouchableOpacity onPress={() => removeItem(item.cartItemId)} hitSlop={8}>
             <X size={16} color="#9AA0A6" />

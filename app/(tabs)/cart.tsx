@@ -203,7 +203,7 @@ const Cart = () => {
 
   const placeOrder = async () => {
     if (!user) {
-      Alert.alert("Sign in required", "Please sign in to place an order.");
+      Alert.alert(tr("cart.signInRequiredTitle"), tr("cart.signInRequiredMsg"));
       return;
     }
     if (!method) return;
@@ -223,8 +223,8 @@ const Cart = () => {
       }
     } catch (error) {
       Alert.alert(
-        "Order failed",
-        error instanceof Error ? error.message : "Something went wrong.",
+        tr("common.orderFailed"),
+        error instanceof Error ? error.message : tr("auth.errGeneric"),
       );
     } finally {
       setIsProcessing(false);
@@ -238,8 +238,8 @@ const Cart = () => {
       await saveOrder("demo_card_payment", "succeeded");
     } catch (error) {
       Alert.alert(
-        "Order failed",
-        error instanceof Error ? error.message : "Something went wrong.",
+        tr("common.orderFailed"),
+        error instanceof Error ? error.message : tr("auth.errGeneric"),
       );
     } finally {
       setIsProcessing(false);
@@ -436,7 +436,7 @@ const Cart = () => {
           title={tr("cart.card")}
           subtitle={
             stripeAvailable
-              ? "Pay securely with Stripe"
+              ? tr("cart.payWithStripeSecure")
               : tr("cart.cardSub")
           }
         />
