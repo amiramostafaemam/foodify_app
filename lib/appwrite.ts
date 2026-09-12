@@ -227,6 +227,17 @@ export const uploadImage = async (file: UploadFile): Promise<string> => {
     .toString();
 };
 
+/** Same auto-generated initials avatar used at sign-up — reused to "remove"
+ * a custom photo (Appwrite's avatar attribute requires a valid URL, so it
+ * can't just be cleared to an empty string). */
+export const getInitialsAvatarUrl = (name: string): string => {
+  try {
+    return avatars.getInitialsURL(name).toString();
+  } catch {
+    return "";
+  }
+};
+
 export const getCurrentUser = async (): Promise<User | undefined> => {
   const acc = await account.get();
 

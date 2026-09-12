@@ -62,13 +62,13 @@ const Field = ({
   return (
     <View className="flex-1">
       <Text
-        className="mb-1.5 px-1 font-quicksand-medium text-sm text-muted"
+        className="mb-2 px-1 font-quicksand-medium text-sm text-muted"
         style={{ textAlign: align }}
       >
         {label}
       </Text>
-      <View className="flex-row items-center gap-2 rounded-2xl border-2 border-transparent bg-surface px-4 py-3.5">
-        <Icon size={16} color={c.muted} />
+      <View className="flex-row items-center gap-3 rounded-2xl border-2 border-transparent bg-surface px-4 py-4">
+        <Icon size={18} color={c.muted} />
         {children}
       </View>
     </View>
@@ -186,7 +186,7 @@ const MockCardSheet = ({
             </View>
           </LinearGradient>
 
-          <View className="mt-6 gap-3">
+          <View className="mt-8 gap-5">
             <Field label={tr("card.number")} align={align} icon={CreditCard}>
               <TextInput
                 value={card}
@@ -199,7 +199,7 @@ const MockCardSheet = ({
               />
             </Field>
 
-            <View className="flex-row gap-3">
+            <View className="flex-row gap-4">
               <Field label={tr("card.expiry")} align={align} icon={CreditCard}>
                 <TextInput
                   value={exp}

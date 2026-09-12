@@ -4,7 +4,7 @@ import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import ProfileField from "@/components/ProfileField";
 import { useColors } from "@/hooks/useColors";
-import { uploadImage } from "@/lib/appwrite";
+import { getInitialsAvatarUrl, uploadImage } from "@/lib/appwrite";
 import { useT } from "@/lib/i18n";
 import { pickSquareImage } from "@/lib/media";
 import useAuthStore from "@/store/auth.store";
@@ -19,6 +19,7 @@ import {
 import { router } from "expo-router";
 import {
   Bell,
+  Camera,
   ChevronRight,
   CircleAlert,
   CircleCheck,
@@ -68,6 +69,7 @@ const NavRow = ({
 const Profile = () => {
   const { user, logout, isLoading, updateUserProfile } = useAuthStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showPhotoOptions, setShowPhotoOptions] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [showPhotoSuccess, setShowPhotoSuccess] = useState(false);
   const [photoError, setPhotoError] = useState("");
@@ -77,12 +79,30 @@ const Profile = () => {
   const tr = useT();
 
   const handleChangeAvatar = async () => {
+    setShowPhotoOptions(false);
     try {
       const file = await pickSquareImage();
       if (!file) return;
 
       setUploadingAvatar(true);
       const avatar = await uploadImage(file);
+      await updateUserProfile({ avatar });
+      setShowPhotoSuccess(true);
+    } catch (error) {
+      setPhotoError(
+        error instanceof Error ? error.message : tr("profile.uploadFailedGeneric"),
+      );
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    setShowPhotoOptions(false);
+    if (!user) return;
+    try {
+      setUploadingAvatar(true);
+      const avatar = getInitialsAvatarUrl(user.name);
       await updateUserProfile({ avatar });
       setShowPhotoSuccess(true);
     } catch (error) {
@@ -148,7 +168,7 @@ const Profile = () => {
             uri={user.avatar}
             editable
             uploading={uploadingAvatar}
-            onEditPress={handleChangeAvatar}
+            onEditPress={() => setShowPhotoOptions(true)}
           />
           <Text className="mt-4 font-quicksand-bold text-2xl text-content">
             {user.name}
@@ -240,6 +260,17 @@ const Profile = () => {
           label: tr("profile.stayIn"),
           onPress: () => setShowLogoutModal(false),
         }}
+      />
+
+      <AppModal
+        visible={showPhotoOptions}
+        onClose={() => setShowPhotoOptions(false)}
+        tone="primary"
+        icon={Camera}
+        title={tr("profile.updatePhotoTitle")}
+        message={tr("profile.updatePhotoMsg")}
+        primary={{ label: tr("profile.changePhoto"), onPress: handleChangeAvatar }}
+        secondary={{ label: tr("profile.removePhoto"), onPress: handleRemoveAvatar }}
       />
 
       <AppModal

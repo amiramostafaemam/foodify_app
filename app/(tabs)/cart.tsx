@@ -23,6 +23,7 @@ import {
   CircleAlert,
   CircleCheck,
   MapPin,
+  Wallet,
 } from "lucide-react-native";
 import { useState } from "react";
 import {
@@ -117,6 +118,7 @@ const Cart = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
+  const [showSelectPayment, setShowSelectPayment] = useState(false);
   const [showAddressPicker, setShowAddressPicker] = useState(false);
   const [showMockCard, setShowMockCard] = useState(false);
   const [address, setAddress] = useState(user?.address_home || "");
@@ -207,7 +209,7 @@ const Cart = () => {
       return;
     }
     if (!method) {
-      Alert.alert(tr("cart.selectPaymentTitle"), tr("cart.selectPaymentMsg"));
+      setShowSelectPayment(true);
       return;
     }
 
@@ -282,6 +284,18 @@ const Cart = () => {
             setShowCancel(false);
             router.replace("/");
           },
+        }}
+      />
+      <AppModal
+        visible={showSelectPayment}
+        onClose={() => setShowSelectPayment(false)}
+        tone="primary"
+        icon={Wallet}
+        title={tr("cart.selectPaymentTitle")}
+        message={tr("cart.selectPaymentMsg")}
+        primary={{
+          label: tr("auth.resetDone"),
+          onPress: () => setShowSelectPayment(false),
         }}
       />
     </>

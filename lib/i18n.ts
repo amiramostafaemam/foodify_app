@@ -221,6 +221,10 @@ const en = {
     "Your new profile photo has been saved and is showing on your account now.",
   "profile.uploadFailed": "Upload failed",
   "profile.uploadFailedGeneric": "Could not update your photo.",
+  "profile.updatePhotoTitle": "Update your photo",
+  "profile.updatePhotoMsg": "Choose a new photo or remove your current one.",
+  "profile.changePhoto": "Choose New Photo",
+  "profile.removePhoto": "Remove Photo",
 
   // edit profile
   "edit.title": "Edit Profile",
@@ -507,6 +511,10 @@ const ar: Record<Key, string> = {
   "profile.photoUpdatedMsg": "صورتك الجديدة اتحفظت وبقت ظاهرة في حسابك دلوقتي.",
   "profile.uploadFailed": "فشل الرفع",
   "profile.uploadFailedGeneric": "تعذر تحديث صورتك.",
+  "profile.updatePhotoTitle": "تحديث صورتك",
+  "profile.updatePhotoMsg": "اختاري صورة جديدة أو احذفي الصورة الحالية.",
+  "profile.changePhoto": "اختيار صورة جديدة",
+  "profile.removePhoto": "حذف الصورة",
 
   "edit.title": "تعديل الحساب",
   "edit.changePhotoHint": "غيّر صورتك من صفحة الحساب",
