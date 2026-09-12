@@ -2,13 +2,15 @@ import FoodImage from "@/components/FoodImage";
 import { images } from "@/constants";
 import { getOfferById } from "@/constants/offers.constants";
 import { useColors } from "@/hooks/useColors";
-import { useT } from "@/lib/i18n";
+import { getMenuItemById } from "@/lib/appwrite";
+import { useLocalize, useT } from "@/lib/i18n";
 import {
   FavoriteItem,
   useFavoritesStore,
 } from "@/store/favorites.store";
 import { router } from "expo-router";
 import { ChevronLeft, Heart } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -22,18 +24,43 @@ const FavRow = ({
   onRemove: () => void;
 }) => {
   const tr = useT();
+  const loc = useLocalize();
   const src =
     item.kind === "offer"
       ? (getOfferById(item.id)?.image ?? item.image)
       : item.image;
+
   // Offer names are local content with a full translation table, so
-  // re-derive them live from the current language instead of the frozen
-  // snapshot taken when the offer was favorited (menu items come from
-  // Appwrite and would need a live re-fetch, so those stay a snapshot).
+  // re-derive them live from the current language. Menu items come from
+  // Appwrite, so we fetch the live doc (which has name/name_ar) instead of
+  // trusting the frozen snapshot taken when it was favorited — otherwise a
+  // meal favorited while the app was in one language stays in that
+  // language forever, same bug as the offer names had.
+  const [menuNames, setMenuNames] = useState<{ name: string; name_ar?: string } | null>(
+    null,
+  );
+  useEffect(() => {
+    if (item.kind !== "menu") return;
+    let cancelled = false;
+    getMenuItemById(item.id)
+      .then((doc) => {
+        if (!cancelled) setMenuNames({ name: doc.name, name_ar: doc.name_ar });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [item.kind, item.id]);
+
   const displayName =
-    item.kind === "offer" && getOfferById(item.id)
-      ? tr(`offerData.${item.id}.title` as Parameters<typeof tr>[0])
-      : item.name;
+    item.kind === "offer"
+      ? getOfferById(item.id)
+        ? tr(`offerData.${item.id}.title` as Parameters<typeof tr>[0])
+        : item.name
+      : menuNames
+        ? loc(menuNames.name, menuNames.name_ar)
+        : item.name;
+
   return (
   <TouchableOpacity
     activeOpacity={0.8}

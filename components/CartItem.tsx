@@ -23,8 +23,8 @@ const CartItem = ({ item }: { item: CartItemType }) => {
 
   return (
     <View className="flex-row gap-3 rounded-2xl bg-surface p-3">
-      <View className="h-20 w-20 items-center justify-center rounded-xl bg-card">
-        <FoodImage uri={item.image_url} className="h-16 w-16" />
+      <View className="h-20 w-20 items-center justify-center">
+        <FoodImage uri={item.image_url} className="h-20 w-20" />
       </View>
 
       <View className="flex-1">

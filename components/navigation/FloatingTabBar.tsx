@@ -75,9 +75,6 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
   const tabs = state.routes.filter((r) => TABS[r.name]);
   const tabW = BAR_W / tabs.length;
 
-  // NativeWind's `flex-row` compiles straight to flexDirection: "row" (no
-  // automatic RTL mirroring here), so tabs always render in this array's
-  // order — Home→Search→Cart→Profile regardless of language/I18nManager.
   const bubbleLeft = (i: number) => tabW * i + tabW / 2 - BUBBLE / 2;
   const translateX = useAnimatedValue(bubbleLeft(state.index));
 
@@ -97,12 +94,20 @@ const FloatingTabBar = ({ state, navigation }: TabBarProps) => {
   return (
     <View
       pointerEvents="box-none"
+      // Force this whole subtree to lay out LTR regardless of the app's
+      // language/I18nManager.isRTL. The tab order + the bubble's plain
+      // `left`/translateX math should already be direction-agnostic, but
+      // something in this tree still behaved inconsistently under RTL
+      // (icons and the active bubble landing in the wrong slot on press) —
+      // `direction` is RN's supported way to opt a subtree out of RTL
+      // entirely, which sidesteps whatever the exact mechanism is.
       style={{
         position: "absolute",
         left: MARGIN,
         right: MARGIN,
         bottom: Math.max(insets.bottom, 10),
         height: BAR_H + BUBBLE_RISE,
+        direction: "ltr",
       }}
     >
       {/* Bar */}
