@@ -96,7 +96,7 @@ const AuthScaffold = ({
           <View className="flex-row self-start items-center rounded-full bg-white px-3 py-1.5 shadow-sm shadow-black/10">
             <Image
               source={images.logo}
-              style={{ width: 92, height: 92 / LOGO_RATIO }}
+              style={{ width: 132, height: 132 / LOGO_RATIO }}
               contentFit="contain"
             />
           </View>
