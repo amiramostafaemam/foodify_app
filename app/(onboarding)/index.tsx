@@ -61,15 +61,19 @@ export default function Onboarding() {
           setIndex(Math.round(e.nativeEvent.contentOffset.x / width))
         }
         renderItem={({ item }) => (
-          <View style={{ width }} className="flex-1 items-center px-8 pt-4">
-            <View className="h-[300px] w-[300px] items-center justify-center rounded-[44px] bg-primary/5">
+          <View style={{ width }} className="flex-1 items-center px-8 pt-6">
+            {/* Food floats free on the background (soft glow behind it for
+                depth) instead of sitting in a boxed-in container — closer
+                to the airy, photo-forward reference than a contained icon. */}
+            <View className="h-[300px] w-[300px] items-center justify-center">
+              <View className="absolute h-[230px] w-[230px] rounded-full bg-primary/10" />
               <Image
                 source={item.image}
-                className="h-[210px] w-[210px]"
+                className="h-[270px] w-[270px]"
                 resizeMode="contain"
               />
             </View>
-            <Text className="mt-12 text-center font-quicksand-bold text-[26px] text-content">
+            <Text className="mt-10 text-center font-quicksand-bold text-[26px] text-content">
               {tr(`onb.${item.id}.title` as Parameters<typeof tr>[0])}
             </Text>
             <Text className="mt-3 text-center font-quicksand-medium text-base leading-[1.6] text-muted">

@@ -19,6 +19,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
@@ -134,58 +135,78 @@ const MockCardSheet = ({
             payment form — direction: "ltr" makes this immune to the
             device's native RTL flag, which is unreliable in Expo Go and
             was scrambling the expiry/CVC positions. Text inside each field
-            still follows `align` for a properly-RTL reading feel. */}
-        <View className="flex-1 px-5" style={{ direction: "ltr" }}>
+            still follows `align` for a properly-RTL reading feel. Now that
+            every field is full width, the stack is taller than the screen
+            once the keyboard is up, so this scrolls and stays clear of it. */}
+        <KeyboardAwareScrollView
+          bottomOffset={24}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 24 }}
+          style={{ direction: "ltr" }}
+        >
           <Text className="mt-3 paragraph-medium text-muted">
             {tr("card.subtitle", { amount: amount.toFixed(2) })}
           </Text>
 
-          {/* Live card preview */}
-          <LinearGradient
-            colors={["#FE8C00", "#B85B00"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ borderRadius: 22, padding: 20, aspectRatio: 1.75, marginTop: 18 }}
-          >
-            <View className="flex-row items-start justify-between">
-              <View className="h-8 w-11 rounded-md bg-white/25" />
-              <View className="rounded-full bg-white/15 px-2.5 py-1">
-                <Text className="font-quicksand-bold text-[10px] tracking-wider text-white/90">
-                  DEMO
-                </Text>
-              </View>
-            </View>
-
-            <Text
-              className="mt-6 font-quicksand-bold text-xl text-white"
-              style={{ letterSpacing: 2 }}
+          {/* Live card preview — a bit bigger than the fields below and
+              centered with its own margin, like a physical card sitting on
+              the form rather than stretching edge-to-edge with it. */}
+          <View className="items-center">
+            <LinearGradient
+              colors={["#FE8C00", "#B85B00"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                width: "94%",
+                borderRadius: 24,
+                padding: 22,
+                aspectRatio: 1.55,
+                marginTop: 18,
+              }}
             >
-              {maskedCardDisplay(card)}
-            </Text>
-
-            <View className="mt-5 flex-row items-end justify-between">
-              <View className="flex-1 pr-3">
-                <Text className="font-quicksand-semibold text-[9px] tracking-wider text-white/70">
-                  {tr("card.cardHolder")}
-                </Text>
-                <Text
-                  className="mt-0.5 font-quicksand-bold text-sm text-white"
-                  numberOfLines={1}
-                >
-                  {holder.trim() ? holder.toUpperCase() : tr("card.yourName")}
-                </Text>
+              <View className="flex-row items-start justify-between">
+                <View className="h-9 w-12 rounded-md bg-white/25" />
+                <View className="rounded-full bg-white/15 px-2.5 py-1">
+                  <Text className="font-quicksand-bold text-[10px] tracking-wider text-white/90">
+                    DEMO
+                  </Text>
+                </View>
               </View>
-              <View>
-                <Text className="font-quicksand-semibold text-[9px] tracking-wider text-white/70">
-                  {tr("card.expires")}
-                </Text>
-                <Text className="mt-0.5 font-quicksand-bold text-sm text-white">
-                  {exp || "MM/YY"}
-                </Text>
-              </View>
-            </View>
-          </LinearGradient>
 
+              <Text
+                className="mt-7 font-quicksand-bold text-2xl text-white"
+                style={{ letterSpacing: 2 }}
+              >
+                {maskedCardDisplay(card)}
+              </Text>
+
+              <View className="mt-6 flex-row items-end justify-between">
+                <View className="flex-1 pr-3">
+                  <Text className="font-quicksand-semibold text-[9px] tracking-wider text-white/70">
+                    {tr("card.cardHolder")}
+                  </Text>
+                  <Text
+                    className="mt-0.5 font-quicksand-bold text-base text-white"
+                    numberOfLines={1}
+                  >
+                    {holder.trim() ? holder.toUpperCase() : tr("card.yourName")}
+                  </Text>
+                </View>
+                <View>
+                  <Text className="font-quicksand-semibold text-[9px] tracking-wider text-white/70">
+                    {tr("card.expires")}
+                  </Text>
+                  <Text className="mt-0.5 font-quicksand-bold text-base text-white">
+                    {exp || "MM/YY"}
+                  </Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </View>
+
+          {/* Every field on its own row — the paired Expiry/CVC layout was
+              cramping both boxes; full width reads much more like a
+              professional form. */}
           <View className="mt-8 gap-5">
             <Field label={tr("card.number")} align={align} icon={CreditCard}>
               <TextInput
@@ -199,33 +220,30 @@ const MockCardSheet = ({
               />
             </Field>
 
-            <View className="flex-row gap-4">
-              <Field label={tr("card.expiry")} align={align} icon={CreditCard}>
-                <TextInput
-                  value={exp}
-                  onChangeText={(v) => setExp(formatExp(v))}
-                  placeholder="MM/YY"
-                  placeholderTextColor={c.muted}
-                  keyboardType="number-pad"
-                  style={inputStyle}
-                  className={inputClass}
-                />
-              </Field>
-              <Field label={tr("card.cvc")} align={align} icon={Hash}>
-                <TextInput
-                  value={cvc}
-                  onChangeText={(v) =>
-                    setCvc(v.replace(/\D/g, "").slice(0, 4))
-                  }
-                  placeholder="123"
-                  placeholderTextColor={c.muted}
-                  keyboardType="number-pad"
-                  secureTextEntry
-                  style={inputStyle}
-                  className={inputClass}
-                />
-              </Field>
-            </View>
+            <Field label={tr("card.expiry")} align={align} icon={CreditCard}>
+              <TextInput
+                value={exp}
+                onChangeText={(v) => setExp(formatExp(v))}
+                placeholder="MM/YY"
+                placeholderTextColor={c.muted}
+                keyboardType="number-pad"
+                style={inputStyle}
+                className={inputClass}
+              />
+            </Field>
+
+            <Field label={tr("card.cvc")} align={align} icon={Hash}>
+              <TextInput
+                value={cvc}
+                onChangeText={(v) => setCvc(v.replace(/\D/g, "").slice(0, 4))}
+                placeholder="123"
+                placeholderTextColor={c.muted}
+                keyboardType="number-pad"
+                secureTextEntry
+                style={inputStyle}
+                className={inputClass}
+              />
+            </Field>
 
             <Field label={tr("card.nameOnCard")} align={align} icon={User}>
               <TextInput
@@ -238,7 +256,7 @@ const MockCardSheet = ({
               />
             </Field>
           </View>
-        </View>
+        </KeyboardAwareScrollView>
 
         <View className="px-5 pb-4">
           <TouchableOpacity

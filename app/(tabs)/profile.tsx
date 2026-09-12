@@ -71,7 +71,9 @@ const Profile = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showPhotoOptions, setShowPhotoOptions] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [showPhotoSuccess, setShowPhotoSuccess] = useState(false);
+  const [photoSuccessAction, setPhotoSuccessAction] = useState<
+    "update" | "remove" | null
+  >(null);
   const [photoError, setPhotoError] = useState("");
   const favCount = useFavoritesStore(selectFavoriteCount);
   const unreadCount = useNotificationsStore(selectUnreadCount);
@@ -87,7 +89,7 @@ const Profile = () => {
       setUploadingAvatar(true);
       const avatar = await uploadImage(file);
       await updateUserProfile({ avatar });
-      setShowPhotoSuccess(true);
+      setPhotoSuccessAction("update");
     } catch (error) {
       setPhotoError(
         error instanceof Error ? error.message : tr("profile.uploadFailedGeneric"),
@@ -104,7 +106,7 @@ const Profile = () => {
       setUploadingAvatar(true);
       const avatar = getInitialsAvatarUrl(user.name);
       await updateUserProfile({ avatar });
-      setShowPhotoSuccess(true);
+      setPhotoSuccessAction("remove");
     } catch (error) {
       setPhotoError(
         error instanceof Error ? error.message : tr("profile.uploadFailedGeneric"),
@@ -274,15 +276,23 @@ const Profile = () => {
       />
 
       <AppModal
-        visible={showPhotoSuccess}
-        onClose={() => setShowPhotoSuccess(false)}
+        visible={photoSuccessAction !== null}
+        onClose={() => setPhotoSuccessAction(null)}
         tone="success"
         icon={CircleCheck}
-        title={tr("profile.photoUpdated")}
-        message={tr("profile.photoUpdatedMsg")}
+        title={tr(
+          photoSuccessAction === "remove"
+            ? "profile.photoRemoved"
+            : "profile.photoUpdated",
+        )}
+        message={tr(
+          photoSuccessAction === "remove"
+            ? "profile.photoRemovedMsg"
+            : "profile.photoUpdatedMsg",
+        )}
         primary={{
           label: tr("auth.resetDone"),
-          onPress: () => setShowPhotoSuccess(false),
+          onPress: () => setPhotoSuccessAction(null),
         }}
       />
 

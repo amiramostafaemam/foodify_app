@@ -225,6 +225,9 @@ const en = {
   "profile.updatePhotoMsg": "Choose a new photo or remove your current one.",
   "profile.changePhoto": "Choose New Photo",
   "profile.removePhoto": "Remove Photo",
+  "profile.photoRemoved": "Photo removed",
+  "profile.photoRemovedMsg":
+    "Your profile picture has been reset to your initials.",
 
   // edit profile
   "edit.title": "Edit Profile",
@@ -515,6 +518,8 @@ const ar: Record<Key, string> = {
   "profile.updatePhotoMsg": "اختاري صورة جديدة أو احذفي الصورة الحالية.",
   "profile.changePhoto": "اختيار صورة جديدة",
   "profile.removePhoto": "حذف الصورة",
+  "profile.photoRemoved": "اتحذفت الصورة",
+  "profile.photoRemovedMsg": "صورة حسابك رجعت لحروف اسمك تاني.",
 
   "edit.title": "تعديل الحساب",
   "edit.changePhotoHint": "غيّر صورتك من صفحة الحساب",
