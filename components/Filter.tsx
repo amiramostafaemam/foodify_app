@@ -1,4 +1,4 @@
-import { useT } from "@/lib/i18n";
+import { useLocalize, useT } from "@/lib/i18n";
 import { Category } from "@/type";
 import cn from "clsx";
 import { router, useLocalSearchParams } from "expo-router";
@@ -7,6 +7,7 @@ import { FlatList, Text, TouchableOpacity } from "react-native";
 
 const Filter = ({ categories }: { categories: Category[] }) => {
   const tr = useT();
+  const loc = useLocalize();
   const searchParams = useLocalSearchParams();
   const [active, setActive] = useState(searchParams.category || "");
 
@@ -44,7 +45,7 @@ const Filter = ({ categories }: { categories: Category[] }) => {
               active === item.$id ? "text-white" : "text-muted",
             )}
           >
-            {item.name}
+            {loc(item.name, (item as Category).name_ar)}
           </Text>
         </TouchableOpacity>
       )}

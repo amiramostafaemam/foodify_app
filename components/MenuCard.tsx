@@ -1,12 +1,14 @@
 import FoodImage from "@/components/FoodImage";
-import { useT } from "@/lib/i18n";
+import { useLocalize, useT } from "@/lib/i18n";
 import { MenuItem } from "@/type";
 import { router } from "expo-router";
 import { Platform, Text, TouchableOpacity, View } from "react-native";
 
 const MenuCard = ({ item }: { item: MenuItem }) => {
   const tr = useT();
-  const { $id, image_url, name, price } = item;
+  const loc = useLocalize();
+  const { $id, image_url, name, name_ar, price } = item;
+  const displayName = loc(name, name_ar);
 
   const openDetails = () =>
     router.push({ pathname: "/details/[id]", params: { id: $id } });
@@ -30,7 +32,7 @@ const MenuCard = ({ item }: { item: MenuItem }) => {
         className="base-bold mb-2 text-center text-content"
         numberOfLines={1}
       >
-        {name}
+        {displayName}
       </Text>
       <Text className="body-regular mb-4 text-muted">
         {tr("search.fromPrice", { price })}

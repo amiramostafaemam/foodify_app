@@ -8,7 +8,7 @@ import FloatingDish, {
 import Toast from "@/components/Toast";
 import { getCustomizationImage } from "@/constants";
 import { getMenuCustomizations, getMenuItemById } from "@/lib/appwrite";
-import { useT } from "@/lib/i18n";
+import { useLocalize, useLocalizeCustomization, useT } from "@/lib/i18n";
 import useAppwrite from "@/lib/useAppwrite";
 import { useCartStore } from "@/store/cart.store";
 import { CartCustomization, CustomizationOption, MenuItem } from "@/type";
@@ -44,9 +44,9 @@ const fetchMenuItem = ({ menuId }: { menuId: string }) =>
 const fetchCustomizations = ({ menuId }: { menuId: string }) =>
   getMenuCustomizations(menuId);
 
-const categoryName = (item: MenuItem) =>
+const categoryName = (item: MenuItem, loc: (en: string, ar?: string | null) => string) =>
   typeof item.categories === "object" && item.categories
-    ? item.categories.name
+    ? loc(item.categories.name, item.categories.name_ar)
     : "";
 
 const StatCard = ({
@@ -79,6 +79,7 @@ const AddonCard = ({
   onToggle: () => void;
 }) => {
   const image = getCustomizationImage(option.name);
+  const locName = useLocalizeCustomization();
   return (
     <TouchableOpacity
       onPress={onToggle}
@@ -110,7 +111,7 @@ const AddonCard = ({
         className="mt-2.5 text-center font-quicksand-semibold text-[13px] text-content"
         numberOfLines={1}
       >
-        {option.name}
+        {locName(option.name)}
       </Text>
       <Text className="mt-0.5 text-center font-quicksand-bold text-xs text-primary">
         +${option.price.toFixed(2)}
@@ -154,6 +155,8 @@ const Details = () => {
   const insets = useSafeAreaInsets();
   const addItem = useCartStore((s) => s.addItem);
   const tr = useT();
+  const loc = useLocalize();
+  const locCustomization = useLocalizeCustomization();
 
   const [quantity, setQuantity] = useState(1);
   const [selected, setSelected] = useState<CartCustomization[]>([]);
@@ -179,13 +182,18 @@ const Details = () => {
 
   const toppings = customizations?.filter((c) => c.type === "topping") ?? [];
   const sides = customizations?.filter((c) => c.type === "side") ?? [];
+  const name = loc(item.name, item.name_ar);
+  const description = loc(item.description, item.description_ar);
 
   const isSelected = (cid: string) => selected.some((c) => c.id === cid);
   const toggle = (o: CustomizationOption) =>
     setSelected((prev) =>
       prev.some((c) => c.id === o.id)
         ? prev.filter((c) => c.id !== o.id)
-        : [...prev, { id: o.id, name: o.name, price: o.price, type: o.type }],
+        : [
+            ...prev,
+            { id: o.id, name: locCustomization(o.name), price: o.price, type: o.type },
+          ],
     );
 
   const extras = selected.reduce((sum, c) => sum + c.price, 0);
@@ -196,7 +204,7 @@ const Details = () => {
     addItem(
       {
         id: item.$id,
-        name: item.name,
+        name,
         price: item.price,
         image_url: item.image_url,
         customizations: selected,
@@ -220,7 +228,7 @@ const Details = () => {
             favorite={{
               id: item.$id,
               kind: "menu",
-              name: item.name,
+              name,
               image: item.image_url,
               price: item.price,
             }}
@@ -232,10 +240,10 @@ const Details = () => {
           >
             <View className="flex-row items-start justify-between">
               <View className="flex-1 pr-3">
-                <Text className="h1-bold text-content">{item.name}</Text>
-                {categoryName(item) ? (
+                <Text className="h1-bold text-content">{name}</Text>
+                {categoryName(item, loc) ? (
                   <Text className="body-medium mt-0.5 text-muted">
-                    {categoryName(item)}
+                    {categoryName(item, loc)}
                   </Text>
                 ) : null}
               </View>
@@ -273,7 +281,7 @@ const Details = () => {
               {tr("details.aboutMeal")}
             </Text>
             <Text className="paragraph-medium mt-2 leading-[1.7] text-muted">
-              {item.description || tr("details.defaultDesc")}
+              {description || tr("details.defaultDesc")}
             </Text>
 
             {toppings.length > 0 && (

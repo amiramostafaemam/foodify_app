@@ -1,6 +1,6 @@
 import FavoriteButton from "@/components/FavoriteButton";
 import FoodImage from "@/components/FoodImage";
-import { useT } from "@/lib/i18n";
+import { useLocalize, useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import { MenuItem } from "@/type";
 import cn from "clsx";
@@ -19,6 +19,9 @@ interface Props {
 const PopularMealCard = ({ item, badge }: Props) => {
   const addItem = useCartStore((s) => s.addItem);
   const tr = useT();
+  const loc = useLocalize();
+  const name = loc(item.name, item.name_ar);
+  const description = loc(item.description, item.description_ar);
 
   const open = () =>
     router.push({ pathname: "/details/[id]", params: { id: item.$id } });
@@ -59,7 +62,7 @@ const PopularMealCard = ({ item, badge }: Props) => {
             item={{
               id: item.$id,
               kind: "menu",
-              name: item.name,
+              name,
               image: item.image_url,
               price: item.price,
             }}
@@ -74,7 +77,7 @@ const PopularMealCard = ({ item, badge }: Props) => {
             className="h3-bold flex-1 pr-2 text-content"
             numberOfLines={1}
           >
-            {item.name}
+            {name}
           </Text>
           <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5">
             <Star size={12} color="#FFC738" fill="#FFC738" />
@@ -85,7 +88,7 @@ const PopularMealCard = ({ item, badge }: Props) => {
         </View>
 
         <Text className="body-regular mt-1 text-muted" numberOfLines={1}>
-          {item.description || tr("details.defaultDesc")}
+          {description || tr("details.defaultDesc")}
         </Text>
 
         <View className="mt-3 flex-row items-center justify-between">
@@ -96,7 +99,7 @@ const PopularMealCard = ({ item, badge }: Props) => {
             onPress={() =>
               addItem({
                 id: item.$id,
-                name: item.name,
+                name,
                 price: item.price,
                 image_url: item.image_url,
               })

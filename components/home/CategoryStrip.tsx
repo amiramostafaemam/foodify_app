@@ -1,13 +1,14 @@
-import { useT } from "@/lib/i18n";
+import { useLocalize, useT } from "@/lib/i18n";
 import { Category } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
 import { FlatList, Text, TouchableOpacity } from "react-native";
 
-type Chip = { $id: string; name: string };
+type Chip = { $id: string; name: string; name_ar?: string };
 
 const CategoryStrip = ({ categories }: { categories: Category[] }) => {
   const tr = useT();
+  const loc = useLocalize();
   const data: Chip[] = [
     { $id: "all", name: tr("search.all") },
     ...(categories ?? []),
@@ -42,7 +43,7 @@ const CategoryStrip = ({ categories }: { categories: Category[] }) => {
                 active ? "text-white" : "text-muted",
               )}
             >
-              {item.name}
+              {loc(item.name, item.name_ar)}
             </Text>
           </TouchableOpacity>
         );

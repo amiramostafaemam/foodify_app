@@ -510,3 +510,61 @@ export const useT = () => {
   const lang = useLanguageStore((s) => s.language);
   return (key: Key, vars?: Vars) => apply(dicts[lang][key] ?? en[key] ?? key, vars);
 };
+
+/**
+ * Picks the Arabic value of a piece of Appwrite content (menu item / category
+ * name or description) when Arabic is active and a translation exists,
+ * falling back to the original (English) value otherwise. Non-reactive —
+ * for event handlers / plain functions.
+ */
+export const localize = (value: string, arValue?: string | null) => {
+  const lang = useLanguageStore.getState().language;
+  return lang === "ar" && arValue?.trim() ? arValue : value;
+};
+
+/** Reactive hook version of `localize` — use inside components. */
+export const useLocalize = () => {
+  const lang = useLanguageStore((s) => s.language);
+  return (value: string, arValue?: string | null) =>
+    lang === "ar" && arValue?.trim() ? arValue : value;
+};
+
+/**
+ * Maps a raw English customization/topping name (as stored on the
+ * menu_customizations join snapshot) to Arabic. Kept as a static table
+ * because that join collection only stores a denormalized English copy.
+ */
+const CUSTOMIZATION_NAME_AR: Record<string, string> = {
+  Cheese: "جبنة",
+  "Jalapeños": "هالبينو",
+  Onions: "بصل",
+  Olives: "زيتون",
+  Mushrooms: "مشروم",
+  Tomatoes: "طماطم",
+  Bacon: "بيكون",
+  Avocado: "أفوكادو",
+  Coke: "كوكاكولا",
+  Fries: "بطاطس",
+  "Garlic Bread": "خبز بالثوم",
+  "Chicken Nuggets": "ناجتس دجاج",
+  "Iced Tea": "شاي مثلج",
+  Salad: "سلطة",
+  "Potato Wedges": "بطاطس ويدجز",
+  "Mozzarella Sticks": "أصابع موزاريلا",
+  "Sweet Corn": "ذرة حلوة",
+  "Choco Lava Cake": "تشوكو لافا كيك",
+  Rice: "أرز",
+  Beans: "فاصوليا",
+  Pepperoni: "ببروني",
+  "Onion Rings": "حلقات بصل",
+  Pickles: "مخلل",
+  "Grilled Onions": "بصل مشوي",
+  Coleslaw: "كول سلو",
+};
+
+export const localizeCustomization = (name: string) => localize(name, CUSTOMIZATION_NAME_AR[name]);
+
+export const useLocalizeCustomization = () => {
+  const tr = useLocalize();
+  return (name: string) => tr(name, CUSTOMIZATION_NAME_AR[name]);
+};

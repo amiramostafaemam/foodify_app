@@ -3,9 +3,11 @@ import { Models } from "react-native-appwrite";
 
 export interface MenuItem extends Models.Document {
   name: string;
+  name_ar?: string;
   price: number;
   image_url: string;
   description: string;
+  description_ar?: string;
   calories: number;
   protein: number;
   rating: number;
@@ -15,7 +17,9 @@ export interface MenuItem extends Models.Document {
 
 export interface Category extends Models.Document {
   name: string;
+  name_ar?: string;
   description: string;
+  description_ar?: string;
 }
 
 export interface User extends Models.Document {
