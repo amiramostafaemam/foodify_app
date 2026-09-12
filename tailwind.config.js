@@ -47,6 +47,7 @@ module.exports = {
         "quicksand-semibold": ["Quicksand-SemiBold", "sans-serif"],
         "quicksand-light": ["Quicksand-Light", "sans-serif"],
         "quicksand-medium": ["Quicksand-Medium", "sans-serif"],
+        serif: ["DMSerifDisplay-Regular", "serif"],
       },
     },
   },

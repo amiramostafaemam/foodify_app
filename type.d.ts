@@ -106,6 +106,7 @@ export interface CustomInputProps {
     | "decimal-pad";
   containerStyle?: string;
   inputStyle?: StyleProp<TextStyle>;
+  variant?: "filled" | "underline";
 }
 
 interface ProfileFieldProps {

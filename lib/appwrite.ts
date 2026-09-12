@@ -126,6 +126,22 @@ export const signOut = async () => {
   await account.deleteSession("current");
 };
 
+// Hosted confirmation page the recovery email links to; it posts the new
+// password straight to Appwrite's public /account/recovery endpoint using
+// the emailed userId + secret (no session or API key required). Its
+// hostname must be added under Appwrite Console → your project →
+// Overview → Platforms as a Web platform, or createRecovery rejects it.
+const PASSWORD_RESET_URL =
+  "https://claude.ai/code/artifact/f5c31e99-245e-4d90-aec3-fb81f49a366d";
+
+export const requestPasswordRecovery = async (email: string) => {
+  try {
+    await account.createRecovery({ email, url: PASSWORD_RESET_URL });
+  } catch (e: any) {
+    throw new Error(e.message || "Failed to send the reset email");
+  }
+};
+
 export type UploadFile = {
   uri: string;
   name: string;

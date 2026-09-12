@@ -43,16 +43,21 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [done, setDone] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const submit = async () => {
     const name = form.name.trim();
     const email = form.email.toLowerCase().trim();
-    const { password } = form;
+    const { password, confirmPassword } = form;
 
     Keyboard.dismiss();
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       setErrorMessage(tr("auth.errFillFields"));
       return;
     }
@@ -66,6 +71,10 @@ const SignUp = () => {
     }
     if (password.length < 8) {
       setErrorMessage(tr("auth.errPasswordLen"));
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMessage(tr("auth.errPasswordMismatch"));
       return;
     }
 
@@ -86,33 +95,40 @@ const SignUp = () => {
   }
 
   return (
-    <AuthScaffold
-      title={tr("auth.createAccount")}
-      subtitle={tr("auth.createAccountSub")}
-    >
-      <View className="gap-4">
+    <AuthScaffold active="signup">
+      <View className="gap-5">
         <CustomInput
+          variant="underline"
           label={tr("auth.fullName")}
           icon={User}
-          placeholder="Amira Mostafa"
           value={form.name}
           onChangeText={(name) => setForm((prev) => ({ ...prev, name }))}
         />
         <CustomInput
+          variant="underline"
           label={tr("auth.email")}
           icon={Mail}
-          placeholder="you@example.com"
           value={form.email}
           onChangeText={(email) => setForm((prev) => ({ ...prev, email }))}
           keyboardType="email-address"
         />
         <CustomInput
+          variant="underline"
           label={tr("auth.password")}
           icon={Lock}
-          placeholder={tr("auth.min8")}
           value={form.password}
           onChangeText={(password) =>
             setForm((prev) => ({ ...prev, password }))
+          }
+          secureTextEntry
+        />
+        <CustomInput
+          variant="underline"
+          label={tr("auth.confirmPassword")}
+          icon={Lock}
+          value={form.confirmPassword}
+          onChangeText={(confirmPassword) =>
+            setForm((prev) => ({ ...prev, confirmPassword }))
           }
           secureTextEntry
         />
@@ -121,7 +137,7 @@ const SignUp = () => {
           title={tr("auth.signUp")}
           isLoading={isSubmitting}
           onPress={submit}
-          style="mt-2"
+          style="mt-1"
         />
       </View>
 

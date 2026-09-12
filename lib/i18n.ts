@@ -242,8 +242,19 @@ const en = {
   "auth.errInvalidEmail": "Please enter a valid email address",
   "auth.errNameLen": "Name must be at least 2 characters long",
   "auth.errPasswordLen": "Password must be at least 8 characters long",
+  "auth.errPasswordMismatch": "Passwords don't match",
+  "auth.confirmPassword": "Confirm password",
   "auth.errEmailExists":
     "This email is already registered. Please use a different email or sign in.",
+  "auth.forgotPassword": "Forgot Password?",
+  "auth.resetTitle": "Reset your password",
+  "auth.resetSub":
+    "Enter your email and we'll send you a link to reset your password.",
+  "auth.resetSend": "Send reset link",
+  "auth.resetSending": "Sending…",
+  "auth.resetSentTitle": "Check your email",
+  "auth.resetSentMsg": "We've sent a password reset link to {email}.",
+  "auth.resetDone": "Done",
 
   // onboarding
   "onb.skip": "Skip",
@@ -477,7 +488,17 @@ const ar: Record<Key, string> = {
   "auth.errInvalidEmail": "من فضلك أدخل بريداً إلكترونياً صحيحاً",
   "auth.errNameLen": "الاسم يجب أن يكون حرفين على الأقل",
   "auth.errPasswordLen": "كلمة المرور يجب أن تكون ٨ أحرف على الأقل",
+  "auth.errPasswordMismatch": "كلمتا المرور غير متطابقتين",
+  "auth.confirmPassword": "تأكيد كلمة المرور",
   "auth.errEmailExists": "هذا البريد مسجّل بالفعل. استخدم بريداً آخر أو سجّل الدخول.",
+  "auth.forgotPassword": "نسيت كلمة المرور؟",
+  "auth.resetTitle": "استرجاع كلمة المرور",
+  "auth.resetSub": "أدخل بريدك الإلكتروني وهنبعتلك رابط لإعادة تعيين كلمة المرور.",
+  "auth.resetSend": "إرسال رابط الاسترجاع",
+  "auth.resetSending": "جارٍ الإرسال…",
+  "auth.resetSentTitle": "افحص بريدك الإلكتروني",
+  "auth.resetSentMsg": "بعتنالك رابط استرجاع كلمة المرور على {email}.",
+  "auth.resetDone": "تم",
 
   "onb.skip": "تخطي",
   "onb.next": "التالي",
