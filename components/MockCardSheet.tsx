@@ -1,7 +1,15 @@
 import { useColors } from "@/hooks/useColors";
 import { useT } from "@/lib/i18n";
 import { useLanguageStore } from "@/store/language.store";
-import { ChevronLeft, CreditCard, Lock } from "lucide-react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  ChevronLeft,
+  CreditCard,
+  Hash,
+  Lock,
+  User,
+  type LucideIcon,
+} from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -33,25 +41,39 @@ const formatExp = (v: string) => {
   return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
 };
 
+/** Fills the unfilled digits with bullets, grouped like a real card face. */
+const maskedCardDisplay = (digits: string) => {
+  const clean = digits.replace(/\D/g, "").padEnd(16, "•");
+  return (clean.match(/.{1,4}/g) ?? []).join("  ");
+};
+
 const Field = ({
   label,
   align,
+  icon: Icon,
   children,
 }: {
   label: string;
   align: "left" | "right";
+  icon: LucideIcon;
   children: React.ReactNode;
-}) => (
-  <View className="flex-1">
-    <Text
-      className="mb-1.5 px-1 font-quicksand-medium text-sm text-muted"
-      style={{ textAlign: align }}
-    >
-      {label}
-    </Text>
-    {children}
-  </View>
-);
+}) => {
+  const c = useColors();
+  return (
+    <View className="flex-1">
+      <Text
+        className="mb-1.5 px-1 font-quicksand-medium text-sm text-muted"
+        style={{ textAlign: align }}
+      >
+        {label}
+      </Text>
+      <View className="flex-row items-center gap-2 rounded-2xl border-2 border-transparent bg-surface px-4 py-3.5">
+        <Icon size={16} color={c.muted} />
+        {children}
+      </View>
+    </View>
+  );
+};
 
 const MockCardSheet = ({
   visible,
@@ -86,7 +108,7 @@ const MockCardSheet = ({
 
   const inputStyle = { textAlign: align } as const;
   const inputClass =
-    "rounded-2xl border-2 border-transparent bg-surface px-4 py-3.5 font-quicksand-semibold text-base text-content";
+    "flex-1 py-0 font-quicksand-semibold text-base text-content";
 
   return (
     <Modal
@@ -114,15 +136,58 @@ const MockCardSheet = ({
             was scrambling the expiry/CVC positions. Text inside each field
             still follows `align` for a properly-RTL reading feel. */}
         <View className="flex-1 px-5" style={{ direction: "ltr" }}>
-          <View className="mt-4 flex-row items-center gap-2">
-            <CreditCard size={20} color="#FE8C00" />
-            <Text className="paragraph-semibold text-content">
-              {tr("card.subtitle", { amount: amount.toFixed(2) })}
+          <Text className="mt-3 paragraph-medium text-muted">
+            {tr("card.subtitle", { amount: amount.toFixed(2) })}
+          </Text>
+
+          {/* Live card preview */}
+          <LinearGradient
+            colors={["#FE8C00", "#B85B00"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ borderRadius: 22, padding: 20, aspectRatio: 1.75, marginTop: 18 }}
+          >
+            <View className="flex-row items-start justify-between">
+              <View className="h-8 w-11 rounded-md bg-white/25" />
+              <View className="rounded-full bg-white/15 px-2.5 py-1">
+                <Text className="font-quicksand-bold text-[10px] tracking-wider text-white/90">
+                  DEMO
+                </Text>
+              </View>
+            </View>
+
+            <Text
+              className="mt-6 font-quicksand-bold text-xl text-white"
+              style={{ letterSpacing: 2 }}
+            >
+              {maskedCardDisplay(card)}
             </Text>
-          </View>
+
+            <View className="mt-5 flex-row items-end justify-between">
+              <View className="flex-1 pr-3">
+                <Text className="font-quicksand-semibold text-[9px] tracking-wider text-white/70">
+                  {tr("card.cardHolder")}
+                </Text>
+                <Text
+                  className="mt-0.5 font-quicksand-bold text-sm text-white"
+                  numberOfLines={1}
+                >
+                  {holder.trim() ? holder.toUpperCase() : tr("card.yourName")}
+                </Text>
+              </View>
+              <View>
+                <Text className="font-quicksand-semibold text-[9px] tracking-wider text-white/70">
+                  {tr("card.expires")}
+                </Text>
+                <Text className="mt-0.5 font-quicksand-bold text-sm text-white">
+                  {exp || "MM/YY"}
+                </Text>
+              </View>
+            </View>
+          </LinearGradient>
 
           <View className="mt-6 gap-3">
-            <Field label={tr("card.number")} align={align}>
+            <Field label={tr("card.number")} align={align} icon={CreditCard}>
               <TextInput
                 value={card}
                 onChangeText={(v) => setCard(formatCard(v))}
@@ -135,7 +200,7 @@ const MockCardSheet = ({
             </Field>
 
             <View className="flex-row gap-3">
-              <Field label={tr("card.expiry")} align={align}>
+              <Field label={tr("card.expiry")} align={align} icon={CreditCard}>
                 <TextInput
                   value={exp}
                   onChangeText={(v) => setExp(formatExp(v))}
@@ -146,7 +211,7 @@ const MockCardSheet = ({
                   className={inputClass}
                 />
               </Field>
-              <Field label={tr("card.cvc")} align={align}>
+              <Field label={tr("card.cvc")} align={align} icon={Hash}>
                 <TextInput
                   value={cvc}
                   onChangeText={(v) =>
@@ -155,13 +220,14 @@ const MockCardSheet = ({
                   placeholder="123"
                   placeholderTextColor={c.muted}
                   keyboardType="number-pad"
+                  secureTextEntry
                   style={inputStyle}
                   className={inputClass}
                 />
               </Field>
             </View>
 
-            <Field label={tr("card.nameOnCard")} align={align}>
+            <Field label={tr("card.nameOnCard")} align={align} icon={User}>
               <TextInput
                 value={holder}
                 onChangeText={setHolder}

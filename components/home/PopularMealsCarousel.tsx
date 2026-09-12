@@ -1,4 +1,5 @@
 import PopularMealCard from "@/components/home/PopularMealCard";
+import { useLanguageStore } from "@/store/language.store";
 import { MenuItem } from "@/type";
 import { useState } from "react";
 import { Dimensions, FlatList, I18nManager, View } from "react-native";
@@ -26,6 +27,12 @@ const badgeFor = (item: MenuItem, index: number) => {
 
 const PopularMealsCarousel = ({ data }: { data: MenuItem[] }) => {
   const [index, setIndex] = useState(0);
+  // Dots reflect the current app language (reliable, instant) rather than
+  // I18nManager.isRTL, which needs an app restart to change and can be
+  // stuck out of sync with the language actually selected.
+  const isArabic = useLanguageStore((s) => s.language === "ar");
+  const dotOrder = isArabic ? [...data].reverse() : data;
+  const activeDot = isArabic ? data.length - 1 - index : index;
 
   return (
     <View>
@@ -53,12 +60,15 @@ const PopularMealsCarousel = ({ data }: { data: MenuItem[] }) => {
       />
 
       {data.length > 1 ? (
-        <View className="mt-4 flex-row justify-center gap-1.5">
-          {data.map((m, i) => (
+        <View
+          className="mt-4 flex-row justify-center gap-1.5"
+          style={{ direction: "ltr" }}
+        >
+          {dotOrder.map((m) => (
             <View
               key={m.$id}
               className={
-                i === index
+                data.indexOf(m) === activeDot
                   ? "h-1.5 w-5 rounded-full bg-primary"
                   : "h-1.5 w-1.5 rounded-full bg-line/20"
               }

@@ -206,7 +206,10 @@ const Cart = () => {
       Alert.alert(tr("cart.signInRequiredTitle"), tr("cart.signInRequiredMsg"));
       return;
     }
-    if (!method) return;
+    if (!method) {
+      Alert.alert(tr("cart.selectPaymentTitle"), tr("cart.selectPaymentMsg"));
+      return;
+    }
 
     // Card via the demo sheet unless a real Stripe build is enabled.
     if (method === "card" && !stripeAvailable) {
@@ -485,7 +488,7 @@ const Cart = () => {
               : tr("cart.placeOrder", { amount: finalAmount.toFixed(2) })
           }
           onPress={placeOrder}
-          disabled={isProcessing || !method}
+          disabled={isProcessing}
           leftIcon={
             isProcessing ? (
               <ActivityIndicator color="white" className="mr-2" />

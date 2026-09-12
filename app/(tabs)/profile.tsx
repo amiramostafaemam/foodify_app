@@ -20,6 +20,8 @@ import { router } from "expo-router";
 import {
   Bell,
   ChevronRight,
+  CircleAlert,
+  CircleCheck,
   Heart,
   LogOut,
   Mail,
@@ -29,13 +31,7 @@ import {
   User,
 } from "lucide-react-native";
 import { useState } from "react";
-import {
-  Alert,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const NavRow = ({
@@ -73,6 +69,8 @@ const Profile = () => {
   const { user, logout, isLoading, updateUserProfile } = useAuthStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [showPhotoSuccess, setShowPhotoSuccess] = useState(false);
+  const [photoError, setPhotoError] = useState("");
   const favCount = useFavoritesStore(selectFavoriteCount);
   const unreadCount = useNotificationsStore(selectUnreadCount);
   const c = useColors();
@@ -86,10 +84,9 @@ const Profile = () => {
       setUploadingAvatar(true);
       const avatar = await uploadImage(file);
       await updateUserProfile({ avatar });
-      Alert.alert(tr("profile.photoUpdated"), tr("profile.photoUpdatedMsg"));
+      setShowPhotoSuccess(true);
     } catch (error) {
-      Alert.alert(
-        tr("profile.uploadFailed"),
+      setPhotoError(
         error instanceof Error ? error.message : tr("profile.uploadFailedGeneric"),
       );
     } finally {
@@ -243,6 +240,29 @@ const Profile = () => {
           label: tr("profile.stayIn"),
           onPress: () => setShowLogoutModal(false),
         }}
+      />
+
+      <AppModal
+        visible={showPhotoSuccess}
+        onClose={() => setShowPhotoSuccess(false)}
+        tone="success"
+        icon={CircleCheck}
+        title={tr("profile.photoUpdated")}
+        message={tr("profile.photoUpdatedMsg")}
+        primary={{
+          label: tr("auth.resetDone"),
+          onPress: () => setShowPhotoSuccess(false),
+        }}
+      />
+
+      <AppModal
+        visible={!!photoError}
+        onClose={() => setPhotoError("")}
+        tone="error"
+        icon={CircleAlert}
+        title={tr("profile.uploadFailed")}
+        message={photoError}
+        primary={{ label: tr("common.tryAgain"), onPress: () => setPhotoError("") }}
       />
     </SafeAreaView>
   );

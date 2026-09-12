@@ -1,6 +1,7 @@
 import { Image } from "@/components/CachedImage";
 import { OFFERS_DATA } from "@/constants/offers.constants";
 import { useT } from "@/lib/i18n";
+import { useLanguageStore } from "@/store/language.store";
 import { router } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
 import { useState } from "react";
@@ -30,6 +31,12 @@ const RTL = I18nManager.isRTL;
 const PromoCarousel = () => {
   const [index, setIndex] = useState(0);
   const tr = useT();
+  // Dots reflect the current app language (reliable, instant) rather than
+  // I18nManager.isRTL, which needs an app restart to change and can be
+  // stuck out of sync with the language actually selected.
+  const isArabic = useLanguageStore((s) => s.language === "ar");
+  const dotOrder = isArabic ? [...OFFERS_DATA].reverse() : OFFERS_DATA;
+  const activeDot = isArabic ? OFFERS_DATA.length - 1 - index : index;
 
   return (
     <View>
@@ -109,12 +116,12 @@ const PromoCarousel = () => {
         )}
       />
 
-      <View className="mt-3 flex-row justify-center gap-1.5">
-        {OFFERS_DATA.map((o, i) => (
+      <View className="mt-3 flex-row justify-center gap-1.5" style={{ direction: "ltr" }}>
+        {dotOrder.map((o) => (
           <View
             key={o.id}
             className={
-              i === index
+              OFFERS_DATA.indexOf(o) === activeDot
                 ? "h-1.5 w-5 rounded-full bg-primary"
                 : "h-1.5 w-1.5 rounded-full bg-line/20"
             }

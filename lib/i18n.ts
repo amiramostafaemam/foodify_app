@@ -146,6 +146,9 @@ const en = {
   "cart.payWithStripeSecure": "Pay securely with Stripe",
   "cart.signInRequiredTitle": "Sign in required",
   "cart.signInRequiredMsg": "Please sign in to place an order.",
+  "cart.selectPaymentTitle": "Choose a payment method",
+  "cart.selectPaymentMsg":
+    "Pick Credit/Debit Card or Cash on Delivery before placing your order.",
   "cart.orderConfirmed": "Order confirmed!",
   "cart.orderConfirmedMsg":
     "Your food is being prepared and will be delivered shortly.",
@@ -164,6 +167,9 @@ const en = {
   "card.fullName": "Full name",
   "card.pay": "Pay ${amount}",
   "card.demo": "🔒 Demo mode — no real card is charged",
+  "card.cardHolder": "CARD HOLDER",
+  "card.expires": "EXPIRES",
+  "card.yourName": "YOUR NAME",
 
   // toast
   "toast.greatChoice": "Great choice!",
@@ -210,8 +216,9 @@ const en = {
   "profile.addresses": "Addresses",
   "profile.homeAddress": "Home Address",
   "profile.workAddress": "Work Address",
-  "profile.photoUpdated": "Photo updated",
-  "profile.photoUpdatedMsg": "Your new profile picture is live.",
+  "profile.photoUpdated": "Looking good!",
+  "profile.photoUpdatedMsg":
+    "Your new profile photo has been saved and is showing on your account now.",
   "profile.uploadFailed": "Upload failed",
   "profile.uploadFailedGeneric": "Could not update your photo.",
 
@@ -438,6 +445,8 @@ const ar: Record<Key, string> = {
   "cart.payWithStripeSecure": "ادفع بأمان عبر Stripe",
   "cart.signInRequiredTitle": "لازم تسجّلي الدخول",
   "cart.signInRequiredMsg": "من فضلك سجّلي الدخول عشان تكملي طلبك.",
+  "cart.selectPaymentTitle": "اختاري طريقة الدفع",
+  "cart.selectPaymentMsg": "اختاري بطاقة ائتمان/خصم أو الدفع عند الاستلام قبل تأكيد الطلب.",
   "cart.orderConfirmed": "تم تأكيد الطلب!",
   "cart.orderConfirmedMsg": "يتم تحضير طلبك وسيصلك قريباً.",
   "cart.backToHome": "العودة للرئيسية",
@@ -453,6 +462,9 @@ const ar: Record<Key, string> = {
   "card.fullName": "الاسم الكامل",
   "card.pay": "ادفع ${amount}",
   "card.demo": "🔒 وضع تجريبي — لا يتم خصم أي مبلغ",
+  "card.cardHolder": "صاحب البطاقة",
+  "card.expires": "تنتهي في",
+  "card.yourName": "اسمك",
 
   "toast.greatChoice": "اختيار موفق!",
   "toast.greatChoiceMsg": "أول اختيار لك في السلة — تابع التصفح أو أكمل الطلب.",
@@ -491,8 +503,8 @@ const ar: Record<Key, string> = {
   "profile.addresses": "العناوين",
   "profile.homeAddress": "عنوان المنزل",
   "profile.workAddress": "عنوان العمل",
-  "profile.photoUpdated": "تم تحديث الصورة",
-  "profile.photoUpdatedMsg": "صورة حسابك الجديدة ظاهرة الآن.",
+  "profile.photoUpdated": "شكلك حلو كده!",
+  "profile.photoUpdatedMsg": "صورتك الجديدة اتحفظت وبقت ظاهرة في حسابك دلوقتي.",
   "profile.uploadFailed": "فشل الرفع",
   "profile.uploadFailedGeneric": "تعذر تحديث صورتك.",
 
