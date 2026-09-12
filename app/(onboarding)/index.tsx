@@ -3,6 +3,7 @@ import { onboardingSlides } from "@/constants/onboarding";
 import { useT } from "@/lib/i18n";
 import { setOnboardingSeen } from "@/lib/onboarding";
 import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { ArrowRight } from "lucide-react-native";
 import { useRef, useState } from "react";
 import {
@@ -17,8 +18,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width, height } = Dimensions.get("window");
-const PHOTO_H = height * 0.44;
+const { width } = Dimensions.get("window");
 
 export default function Onboarding() {
   const tr = useT();
@@ -58,6 +58,15 @@ export default function Onboarding() {
 
   return (
     <View className="flex-1">
+      {/* The app's global status bar style follows the user's app theme
+          (set in the root layout), which has nothing to do with onboarding —
+          this screen has its own light/dark background per slide instead.
+          Overriding it locally here keeps the status bar icons readable
+          against whichever slide is showing (e.g. dark icons on the cream
+          delivery slide) and expo-status-bar automatically hands control
+          back to the root layout's StatusBar once this screen unmounts. */}
+      <StatusBar style={slide.dark ? "light" : "dark"} animated />
+
       <Animated.View
         style={[StyleSheet.absoluteFill, { backgroundColor: bgColor }]}
       />
@@ -93,29 +102,40 @@ export default function Onboarding() {
             setIndex(Math.round(e.nativeEvent.contentOffset.x / width))
           }
           renderItem={({ item }) => (
-            <View style={{ width }} className="flex-1 items-center pt-2">
-              {/* Full width, nothing cropped — "contain" shows the whole
-                  photo, and because the screen behind it now matches the
-                  photo's own background colour, there's no visible seam:
-                  it just reads as floating on the page. */}
-              <Image
-                source={item.image}
-                style={{ width, height: PHOTO_H }}
-                resizeMode="contain"
-              />
+            <View style={{ width }} className="flex-1 items-center">
+              {/* Photo owns two-thirds of the slide, text the last third —
+                  full width and "contain" so nothing is ever cropped, and
+                  because the screen behind it now matches the photo's own
+                  background colour, there's no visible seam: it just reads
+                  as floating on the page. */}
+              <View
+                style={{ flex: 2 }}
+                className="w-full items-center justify-center"
+              >
+                <Image
+                  source={item.image}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="contain"
+                />
+              </View>
 
-              <Text
-                className="mt-8 px-8 text-center font-quicksand-bold text-[26px]"
-                style={{ color: fg }}
+              <View
+                style={{ flex: 1 }}
+                className="w-full items-center justify-center px-8"
               >
-                {tr(`onb.${item.id}.title` as Parameters<typeof tr>[0])}
-              </Text>
-              <Text
-                className="mt-3 px-10 text-center font-quicksand-medium text-base leading-[1.6]"
-                style={{ color: fgMuted }}
-              >
-                {tr(`onb.${item.id}.desc` as Parameters<typeof tr>[0])}
-              </Text>
+                <Text
+                  className="text-center font-quicksand-bold text-[26px]"
+                  style={{ color: fg }}
+                >
+                  {tr(`onb.${item.id}.title` as Parameters<typeof tr>[0])}
+                </Text>
+                <Text
+                  className="mt-3 px-2 text-center font-quicksand-medium text-base leading-[1.6]"
+                  style={{ color: fgMuted }}
+                >
+                  {tr(`onb.${item.id}.desc` as Parameters<typeof tr>[0])}
+                </Text>
+              </View>
             </View>
           )}
         />
