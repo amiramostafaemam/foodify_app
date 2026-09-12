@@ -40,7 +40,7 @@ import fries from "@/assets/images/fries.png";
 import grilledOnion from "@/assets/images/grilledonions.png";
 import jalapeno from "@/assets/images/jalapeno.png";
 import loginGraphic from "@/assets/images/login-graphic.png";
-import Logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 import mozarellaSticks from "@/assets/images/mozarella-sticks.png";
 import mushrooms from "@/assets/images/mushrooms.png";
 import olives from "@/assets/images/olives.png";
@@ -75,7 +75,7 @@ export const images = {
   fries,
   loginGraphic,
   signupGraphic,
-  Logo,
+  logo,
   mozarellaSticks,
   mushrooms,
   onionRings,

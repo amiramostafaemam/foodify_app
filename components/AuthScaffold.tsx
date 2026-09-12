@@ -18,6 +18,9 @@ import Svg, { Path } from "react-native-svg";
 const { width } = Dimensions.get("window");
 const HERO_H = 300;
 const WAVE_H = 56;
+// assets/images/logo.png is a 708x181 horizontal lockup — this keeps its
+// aspect ratio intact whatever width it's rendered at.
+const LOGO_RATIO = 708 / 181;
 
 // Two gentle humps across the full width, filled in the sheet's own
 // background so the card visually "ripples" up into the photo instead of
@@ -84,19 +87,19 @@ const AuthScaffold = ({
           transition={200}
         />
 
-        <View
-          className="flex-row items-center gap-1.5"
-          style={{ paddingTop: insets.top + 16, paddingLeft: 24 }}
-        >
-          <View className="h-7 w-7 items-center justify-center rounded-lg bg-primary">
-            <Text className="font-quicksand-bold text-sm text-white">F</Text>
+        <View style={{ paddingTop: insets.top + 16, paddingLeft: 24 }}>
+          {/* A white chip (same convention as the floating circular
+              buttons elsewhere — bg-white + shadow-black/10) keeps the
+              logo readable no matter what's behind it in the photo,
+              instead of relying on a text shadow like the old placeholder
+              badge did. */}
+          <View className="flex-row self-start items-center rounded-full bg-white px-3 py-1.5 shadow-sm shadow-black/10">
+            <Image
+              source={images.logo}
+              style={{ width: 92, height: 92 / LOGO_RATIO }}
+              contentFit="contain"
+            />
           </View>
-          <Text
-            className="font-quicksand-bold text-base text-white"
-            style={{ textShadowColor: "#000", textShadowRadius: 8 }}
-          >
-            Foodify
-          </Text>
         </View>
 
         <Svg
