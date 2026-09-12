@@ -54,7 +54,7 @@ const PromoCarousel = () => {
                 className="font-quicksand-bold text-2xl text-white"
                 numberOfLines={1}
               >
-                {item.title}
+                {tr(`offerData.${item.id}.title` as Parameters<typeof tr>[0])}
               </Text>
               <Text className="body-medium mt-0.5 text-white/85">
                 {tr("home.fromPrice", {

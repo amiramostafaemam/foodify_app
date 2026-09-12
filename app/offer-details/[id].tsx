@@ -6,7 +6,11 @@ import FloatingDish, {
 } from "@/components/FloatingDish";
 import Toast from "@/components/Toast";
 import { images } from "@/constants";
-import { getOfferById, getOfferValidity } from "@/constants/offers.constants";
+import {
+  OFFER_ITEM_KEYS,
+  getOfferById,
+  getOfferValidity,
+} from "@/constants/offers.constants";
 import { useT } from "@/lib/i18n";
 import { useCartStore } from "@/store/cart.store";
 import { router, useLocalSearchParams } from "expo-router";
@@ -58,13 +62,17 @@ const OfferDetails = () => {
 
   const total = offer.discountedPrice * quantity;
   const totalItems = offer.items.reduce((n, i) => n + i.quantity, 0);
+  const title = tr(`offerData.${offer.id}.title` as Parameters<typeof tr>[0]);
+  const description = tr(
+    `offerData.${offer.id}.desc` as Parameters<typeof tr>[0],
+  );
 
   const handleAddToCart = () => {
     const isCartEmpty = useCartStore.getState().items.length === 0;
     addItem(
       {
         id: offer.id,
-        name: offer.title,
+        name: title,
         price: offer.discountedPrice,
         image_url: offer.image,
       },
@@ -87,7 +95,7 @@ const OfferDetails = () => {
             favorite={{
               id: offer.id,
               kind: "offer",
-              name: offer.title,
+              name: title,
               image: offer.image,
               price: offer.discountedPrice,
             }}
@@ -99,7 +107,7 @@ const OfferDetails = () => {
           >
             <View className="flex-row items-start justify-between">
               <Text className="h1-bold flex-1 pr-3 text-content">
-                {offer.title}
+                {title}
               </Text>
               <View className="items-end">
                 <Text className="body-regular text-muted line-through">
@@ -156,7 +164,7 @@ const OfferDetails = () => {
               {tr("offer.aboutDeal")}
             </Text>
             <Text className="paragraph-medium mt-2 leading-[1.7] text-muted">
-              {offer.description}
+              {description}
             </Text>
 
             <Text className="h3-bold mt-7 text-content">
@@ -169,7 +177,10 @@ const OfferDetails = () => {
                   className="flex-row items-center justify-between rounded-2xl bg-surface px-4 py-3.5"
                 >
                   <Text className="paragraph-semibold text-content">
-                    {it.name}
+                    {tr(
+                      (OFFER_ITEM_KEYS[it.name] ??
+                        it.name) as Parameters<typeof tr>[0],
+                    )}
                   </Text>
                   <View className="rounded-full bg-card px-2.5 py-1">
                     <Text className="small-bold text-primary">

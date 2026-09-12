@@ -78,6 +78,38 @@ const en = {
   "offer.validUntil": "Valid until {date}",
   "offer.saveN": "Save {n}%",
 
+  // offer deal content (constants/offers.constants.ts)
+  "offerData.summer-combo.title": "Summer Combo",
+  "offerData.summer-combo.desc":
+    "Beat the heat with our refreshing Summer Combo! Enjoy a juicy beef burger, crispy fries, and an ice-cold drink — the perfect meal for sunny days.",
+  "offerData.burger-bash.title": "Burger Bash",
+  "offerData.burger-bash.desc":
+    "Double the burger, double the fun! Get two premium juicy burgers loaded with cheese, bacon, and fresh veggies. Perfect for sharing or for the burger lover in you!",
+  "offerData.pizza-party.title": "Pizza Party",
+  "offerData.pizza-party.desc":
+    "Party time starts here! A large pizza loaded with your favorite toppings, served with garlic bread and a refreshing drink. Perfect for family nights or hanging out with friends!",
+  "offerData.burrito-delight.title": "Burrito Delight",
+  "offerData.burrito-delight.desc":
+    "Spice up your day with our authentic Mexican burrito! Packed with seasoned beef, rice, beans, cheese, and fresh salsa. Comes with crispy tortilla chips and guacamole!",
+
+  // offer included-items (constants/offers.constants.ts, via OFFER_ITEM_KEYS)
+  "offerItem.beefBurger": "Beef Burger",
+  "offerItem.largeFries": "Large Fries",
+  "offerItem.softDrink500": "Soft Drink (500ml)",
+  "offerItem.premiumBeefBurger": "Premium Beef Burger",
+  "offerItem.cheeseSlices": "Cheese Slices",
+  "offerItem.baconStrips": "Bacon Strips",
+  "offerItem.softDrink": "Soft Drink",
+  "offerItem.largePizza12": 'Large Pizza (12")',
+  "offerItem.garlicBread": "Garlic Bread",
+  "offerItem.mozzarellaSticks": "Mozzarella Sticks",
+  "offerItem.softDrink1L": "Soft Drink (1L)",
+  "offerItem.beefBurrito": "Beef Burrito",
+  "offerItem.mexicanRice": "Mexican Rice",
+  "offerItem.refriedBeans": "Refried Beans",
+  "offerItem.tortillaChips": "Tortilla Chips",
+  "offerItem.guacamole": "Guacamole",
+
   // cart
   "cart.title": "Your Cart",
   "cart.titleN": "Your Cart ({n})",
@@ -295,6 +327,36 @@ const ar: Record<Key, string> = {
   "offer.days": "أيام",
   "offer.validUntil": "ساري حتى {date}",
   "offer.saveN": "وفّر {n}%",
+
+  "offerData.summer-combo.title": "كومبو الصيف",
+  "offerData.summer-combo.desc":
+    "قاوم الحر مع كومبو الصيف المنعش! برجر لحم طري، بطاطس مقرمشة، ومشروب مثلج — الوجبة المثالية للأيام الحارة.",
+  "offerData.burger-bash.title": "مهرجان البرجر",
+  "offerData.burger-bash.desc":
+    "ضاعف البرجر، ضاعف المتعة! برجرين مميزين محشوّين بالجبنة والبيكون والخضار الطازجة. مثالي للمشاركة أو لعشاق البرجر.",
+  "offerData.pizza-party.title": "حفلة البيتزا",
+  "offerData.pizza-party.desc":
+    "وقت الحفلة بدأ! بيتزا كبيرة محملة بإضافاتك المفضلة، مع خبز الثوم ومشروب منعش. مثالية لسهرات العيلة أو مع الأصحاب!",
+  "offerData.burrito-delight.title": "بوريتو ديلايت",
+  "offerData.burrito-delight.desc":
+    "ضيف نكهة مكسيكية أصلية ليومك مع البوريتو! محشو بلحم متبل، أرز، فاصوليا، جبنة، وصلصة طازجة. يُقدَّم مع تشيبس التورتيلا والجواكامولي!",
+
+  "offerItem.beefBurger": "برجر لحم",
+  "offerItem.largeFries": "بطاطس كبيرة",
+  "offerItem.softDrink500": "مشروب غازي (٥٠٠ مل)",
+  "offerItem.premiumBeefBurger": "برجر لحم مميز",
+  "offerItem.cheeseSlices": "شرائح جبنة",
+  "offerItem.baconStrips": "شرائح بيكون",
+  "offerItem.softDrink": "مشروب غازي",
+  "offerItem.largePizza12": "بيتزا كبيرة (١٢ بوصة)",
+  "offerItem.garlicBread": "خبز بالثوم",
+  "offerItem.mozzarellaSticks": "أصابع موزاريلا",
+  "offerItem.softDrink1L": "مشروب غازي (١ لتر)",
+  "offerItem.beefBurrito": "بوريتو لحم",
+  "offerItem.mexicanRice": "أرز مكسيكي",
+  "offerItem.refriedBeans": "فاصوليا مهروسة",
+  "offerItem.tortillaChips": "تشيبس تورتيلا",
+  "offerItem.guacamole": "جواكامولي",
 
   "cart.title": "سلتك",
   "cart.titleN": "سلتك ({n})",

@@ -126,6 +126,26 @@ export const OFFERS_DATA: Offer[] = [
   },
 ];
 
+/** Maps an OfferItem's raw English name to its lib/i18n.ts translation key. */
+export const OFFER_ITEM_KEYS: Record<string, string> = {
+  "Beef Burger": "offerItem.beefBurger",
+  "Large Fries": "offerItem.largeFries",
+  "Soft Drink (500ml)": "offerItem.softDrink500",
+  "Premium Beef Burger": "offerItem.premiumBeefBurger",
+  "Cheese Slices": "offerItem.cheeseSlices",
+  "Bacon Strips": "offerItem.baconStrips",
+  "Soft Drink": "offerItem.softDrink",
+  'Large Pizza (12")': "offerItem.largePizza12",
+  "Garlic Bread": "offerItem.garlicBread",
+  "Mozzarella Sticks": "offerItem.mozzarellaSticks",
+  "Soft Drink (1L)": "offerItem.softDrink1L",
+  "Beef Burrito": "offerItem.beefBurrito",
+  "Mexican Rice": "offerItem.mexicanRice",
+  "Refried Beans": "offerItem.refriedBeans",
+  "Tortilla Chips": "offerItem.tortillaChips",
+  Guacamole: "offerItem.guacamole",
+};
+
 export const getOfferById = (id: string): Offer | undefined =>
   OFFERS_DATA.find((offer) => offer.id === id);
 
