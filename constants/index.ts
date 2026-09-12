@@ -27,7 +27,7 @@ import bread from "@/assets/images/bread.png";
 import burgerOne from "@/assets/images/burger-one.png";
 import burgerTwo from "@/assets/images/burger-two.png";
 import burgerlogin from "@/assets/images/burgerlogin.jpg";
-import buritto from "@/assets/images/buritto.png";
+import buritto from "@/assets/images/burrito.png";
 import cheese from "@/assets/images/cheese.png";
 import chicken from "@/assets/images/chicken.png";
 import chocolava from "@/assets/images/chocolava.png";
