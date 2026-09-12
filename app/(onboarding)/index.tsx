@@ -16,6 +16,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
+// Fills the row's own px-8 padding (32 each side) — as big as it can be
+// without touching the screen edges.
+const PHOTO_W = width - 64;
 
 export default function Onboarding() {
   const tr = useT();
@@ -61,19 +64,35 @@ export default function Onboarding() {
           setIndex(Math.round(e.nativeEvent.contentOffset.x / width))
         }
         renderItem={({ item }) => (
-          <View style={{ width }} className="flex-1 items-center px-8 pt-6">
-            {/* Food floats free on the background (soft glow behind it for
-                depth) instead of sitting in a boxed-in container — closer
-                to the airy, photo-forward reference than a contained icon. */}
-            <View className="h-[300px] w-[300px] items-center justify-center">
-              <View className="absolute h-[230px] w-[230px] rounded-full bg-primary/10" />
-              <Image
-                source={item.image}
-                className="h-[270px] w-[270px]"
-                resizeMode="contain"
-              />
+          <View style={{ width }} className="flex-1 items-center px-8 pt-4">
+            {/* A proper photo card (each shot has its own real background,
+                so "cover" inside a rounded rect reads far better than
+                trying to float them like a transparent cutout) with a soft
+                shadow for lift. */}
+            <View
+              style={{
+                width: PHOTO_W,
+                aspectRatio: 1.05,
+                borderRadius: 32,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 14 },
+                shadowOpacity: 0.16,
+                shadowRadius: 24,
+                elevation: 10,
+              }}
+            >
+              <View
+                style={{ flex: 1, borderRadius: 32, overflow: "hidden" }}
+              >
+                <Image
+                  source={item.image}
+                  style={{ width: "100%", height: "100%" }}
+                  resizeMode="cover"
+                />
+              </View>
             </View>
-            <Text className="mt-10 text-center font-quicksand-bold text-[26px] text-content">
+
+            <Text className="mt-14 text-center font-quicksand-bold text-[26px] text-content">
               {tr(`onb.${item.id}.title` as Parameters<typeof tr>[0])}
             </Text>
             <Text className="mt-3 text-center font-quicksand-medium text-base leading-[1.6] text-muted">

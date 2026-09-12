@@ -108,6 +108,14 @@ const MockCardSheet = ({
   };
 
   const inputStyle = { textAlign: align } as const;
+  // Card number/expiry/CVC are universal digit formats, not language-
+  // dependent text — forcing them to always render left-to-right avoids
+  // the classic RTL text-field glitch where the cursor and the
+  // auto-inserted "/" jump around as you type into a right-aligned field.
+  const numericInputStyle = {
+    textAlign: "left",
+    writingDirection: "ltr",
+  } as const;
   const inputClass =
     "flex-1 py-0 font-quicksand-semibold text-base text-content";
 
@@ -215,7 +223,7 @@ const MockCardSheet = ({
                 placeholder="4242 4242 4242 4242"
                 placeholderTextColor={c.muted}
                 keyboardType="number-pad"
-                style={inputStyle}
+                style={numericInputStyle}
                 className={inputClass}
               />
             </Field>
@@ -227,7 +235,7 @@ const MockCardSheet = ({
                 placeholder="MM/YY"
                 placeholderTextColor={c.muted}
                 keyboardType="number-pad"
-                style={inputStyle}
+                style={numericInputStyle}
                 className={inputClass}
               />
             </Field>
@@ -240,7 +248,7 @@ const MockCardSheet = ({
                 placeholderTextColor={c.muted}
                 keyboardType="number-pad"
                 secureTextEntry
-                style={inputStyle}
+                style={numericInputStyle}
                 className={inputClass}
               />
             </Field>
