@@ -7,6 +7,19 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      ownerId: null,
+
+      // A cart cached on this device only ever belongs to one account at a
+      // time. If a different user now holds the session, this is stale
+      // data left over from someone else who used this device — clear it
+      // instead of handing it to the new account. The *same* user logging
+      // back in keeps their cart untouched.
+      setOwner: (userId) => {
+        const { ownerId } = get();
+        if (ownerId !== userId) {
+          set({ ownerId: userId, items: [] });
+        }
+      },
 
       addItem: (item, quantity = 1) => {
         const cartItemId = `${item.id}-${Date.now()}-${Math.round(
@@ -72,7 +85,7 @@ export const useCartStore = create<CartStore>()(
     {
       name: "foodify-cart",
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (state) => ({ items: state.items }),
+      partialize: (state) => ({ items: state.items, ownerId: state.ownerId }),
     },
   ),
 );

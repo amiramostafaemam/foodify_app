@@ -51,6 +51,11 @@ export interface CartItemType {
 
 export interface CartStore {
   items: CartItemType[];
+  // Which Appwrite user this cached cart belongs to — lets a returning
+  // user keep their cart across logout/login, while a different account
+  // signing in on the same device gets a clean one instead of inheriting
+  // whatever was left behind. See setOwner.
+  ownerId: string | null;
   addItem: (
     item: Omit<CartItemType, "quantity" | "cartItemId">,
     quantity?: number,
@@ -61,6 +66,9 @@ export interface CartStore {
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
+  /** Call after every successful login/signup with the authenticated
+   * user's id. Clears the cart when it belonged to someone else. */
+  setOwner: (userId: string | null) => void;
 }
 
 interface TabBarIconProps {

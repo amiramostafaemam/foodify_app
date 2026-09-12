@@ -1,3 +1,4 @@
+import AppModal from "@/components/AppModal";
 import AuthScaffold from "@/components/AuthScaffold";
 import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
@@ -6,7 +7,7 @@ import { createUser } from "@/lib/appwrite";
 import { t, useT } from "@/lib/i18n";
 import useAuthStore from "@/store/auth.store";
 import { Redirect } from "expo-router";
-import { Lock, Mail, User } from "lucide-react-native";
+import { CircleCheck, Lock, Mail, User } from "lucide-react-native";
 import { useState } from "react";
 import { Keyboard, View } from "react-native";
 
@@ -42,6 +43,7 @@ const SignUp = () => {
   const tr = useT();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
   const [done, setDone] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -82,7 +84,10 @@ const SignUp = () => {
     try {
       await createUser({ name, email, password });
       await fetchAuthenticatedUser();
-      setDone(true);
+      // Land on a clear "you're in" confirmation instead of jumping
+      // straight into the app — otherwise there's no feedback that
+      // signing up actually worked before the tabs suddenly appear.
+      setShowSuccess(true);
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     } finally {
@@ -145,6 +150,16 @@ const SignUp = () => {
         visible={!!errorMessage}
         message={errorMessage}
         onClose={() => setErrorMessage("")}
+      />
+
+      <AppModal
+        visible={showSuccess}
+        onClose={() => setDone(true)}
+        tone="success"
+        icon={CircleCheck}
+        title={tr("auth.accountCreatedTitle")}
+        message={tr("auth.accountCreatedMsg")}
+        primary={{ label: tr("auth.continueToApp"), onPress: () => setDone(true) }}
       />
     </AuthScaffold>
   );
