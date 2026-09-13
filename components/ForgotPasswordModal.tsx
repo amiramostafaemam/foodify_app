@@ -1,5 +1,5 @@
 import CustomInput from "@/components/CustomInput";
-import { requestPasswordRecovery } from "@/lib/appwrite";
+import { checkEmailExists, requestPasswordRecovery } from "@/lib/appwrite";
 import { t, useT } from "@/lib/i18n";
 import { Mail, MailCheck } from "lucide-react-native";
 import { useState } from "react";
@@ -65,6 +65,12 @@ const ForgotPasswordModal = ({
     setStatus("sending");
     setError("");
     try {
+      const exists = await checkEmailExists(trimmed);
+      if (!exists) {
+        setStatus("error");
+        setError(tr("auth.errEmailNotFound"));
+        return;
+      }
       await requestPasswordRecovery(trimmed);
       setStatus("sent");
     } catch (e) {

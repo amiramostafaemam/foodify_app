@@ -135,6 +135,38 @@ export const signOut = async () => {
 const PASSWORD_RESET_URL =
   "https://claude.ai/code/artifact/f5c31e99-245e-4d90-aec3-fb81f49a366d";
 
+const CHECK_EMAIL_FUNCTION_ID =
+  process.env.EXPO_PUBLIC_APPWRITE_FUNCTION_CHECK_EMAIL_ID;
+
+/**
+ * Whether an account with this email exists — answered by a small Appwrite
+ * Function (appwrite/functions/check-email) rather than the client SDK,
+ * since listing/searching users needs a privileged key that can never live
+ * in the app bundle. If the function isn't deployed yet (no ID configured)
+ * or the call itself fails, this fails *open* (returns true) so a real
+ * password reset is never blocked by an unrelated outage — it only ever
+ * gets used to short-circuit the case where the email is definitely not
+ * registered.
+ */
+export const checkEmailExists = async (email: string): Promise<boolean> => {
+  if (!CHECK_EMAIL_FUNCTION_ID) return true;
+
+  try {
+    const execution = await functions.createExecution(
+      CHECK_EMAIL_FUNCTION_ID,
+      JSON.stringify({ email }),
+      false,
+    );
+    if (execution.status !== "completed" || !execution.responseBody) {
+      return true;
+    }
+    const result = JSON.parse(execution.responseBody);
+    return result.exists !== false;
+  } catch {
+    return true;
+  }
+};
+
 export const requestPasswordRecovery = async (email: string) => {
   try {
     await account.createRecovery({ email, url: PASSWORD_RESET_URL });

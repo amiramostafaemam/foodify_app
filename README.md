@@ -114,7 +114,18 @@ Function (Node) that:
 
 Put its Function ID in `EXPO_PUBLIC_APPWRITE_FUNCTION_PAYMENT_ID`.
 
-### 6. Run
+### 6. Check-email function (Appwrite Functions)
+
+Forgot-password needs to know whether an email is actually registered
+before sending a reset link — that check needs a privileged key, which
+can't live in the app, so it's a second small function. Source, and full
+deploy steps, are in `appwrite/functions/check-email/`.
+
+Put its Function ID in `EXPO_PUBLIC_APPWRITE_FUNCTION_CHECK_EMAIL_ID`.
+Optional: without it configured, the check is skipped (password recovery
+still works, just without the "is this email registered" pre-check).
+
+### 7. Run
 
 ```bash
 npm run start:go          # Expo Go — everything works except real card payments
