@@ -2,34 +2,32 @@
 export const onboardingSlides = [
   {
     id: "1",
+    // All three photos are now genuine transparent cutouts (no baked-in
+    // background), so the page behind each one is a free choice rather
+    // than something forced by the source image. Warm, light creams —
+    // close in family but each nudged toward its own photo's palette —
+    // let the food itself stay the star instead of competing with a
+    // dark backdrop.
     image: require("@/assets/images/onboarding-1.png"),
     title: "Discover great food",
     description: "Find your favorite meals from top restaurants near you",
-    // Matches each photo's own background so it reads as floating on the
-    // page instead of sitting in a boxed-in card with a visible seam.
-    bg: "#170A08",
-    dark: true,
+    bg: "#FCEFE0",
+    dark: false,
   },
   {
     id: "2",
     image: require("@/assets/images/onboarding-2.png"),
     title: "Fast & easy ordering",
     description: "Order in seconds and track your food in real time",
-    bg: "#1B130C",
-    dark: true,
+    bg: "#FDEEDD",
+    dark: false,
   },
   {
     id: "3",
-    // This one is a genuine transparent-background cutout (confirmed via
-    // its alpha channel), unlike the first two which are JPEGs with a
-    // real dark background baked in — so there's no fixed colour it has
-    // to match. Giving it the same dark family as the other two keeps
-    // the whole onboarding flow visually consistent instead of switching
-    // to a light page for this slide alone.
     image: require("@/assets/images/onboarding-3.png"),
     title: "Quick delivery",
     description: "Fresh food delivered to your door",
-    bg: "#15100A",
-    dark: true,
+    bg: "#FBF3E7",
+    dark: false,
   },
 ];

@@ -27,6 +27,7 @@ import {
   LogOut,
   Mail,
   MapPin,
+  Package,
   Phone,
   Settings,
   User,
@@ -180,6 +181,12 @@ const Profile = () => {
 
         {/* Quick links */}
         <View className="mb-4 gap-2.5">
+          <NavRow
+            icon={Package}
+            label={tr("profile.myOrders")}
+            count={0}
+            onPress={() => router.push("/orders")}
+          />
           <NavRow
             icon={Heart}
             label={tr("fav.title")}

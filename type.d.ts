@@ -201,5 +201,7 @@ export interface OrderData {
   customerPhone?: string;
 }
 
+export interface Order extends Models.Document, OrderData {}
+
 // Offer / OfferItem types live in constants/offers.constants.ts (co-located
 // with the demo data).

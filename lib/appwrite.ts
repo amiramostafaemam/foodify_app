@@ -6,6 +6,7 @@ import {
   GetMenuParams,
   MenuCustomization,
   MenuItem,
+  Order,
   SignInParams,
   UpdateUserParams,
   User,
@@ -442,7 +443,7 @@ export const createOrder = async (orderData: {
   }
 };
 
-export const getUserOrders = async (userId: string) => {
+export const getUserOrders = async (userId: string): Promise<Order[]> => {
   try {
     const orders = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -453,7 +454,7 @@ export const getUserOrders = async (userId: string) => {
         Query.limit(100),
       ],
     );
-    return orders.documents;
+    return orders.documents as unknown as Order[];
   } catch (error: any) {
     throw new Error(error.message || "Failed to fetch orders");
   }

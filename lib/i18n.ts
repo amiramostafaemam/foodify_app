@@ -201,8 +201,22 @@ const en = {
   "fav.meal": "Meal",
   "fav.deal": "Deal",
 
+  // orders
+  "orders.title": "My Orders",
+  "orders.empty": "No orders yet",
+  "orders.emptyHint": "Your past orders will show up here once you place one.",
+  "orders.total": "Total",
+  "orders.deliverTo": "Deliver to",
+  "orders.status.pending": "Pending",
+  "orders.status.confirmed": "Confirmed",
+  "orders.status.preparing": "Preparing",
+  "orders.status.on_the_way": "On the way",
+  "orders.status.delivered": "Delivered",
+  "orders.status.cancelled": "Cancelled",
+
   // profile
   "profile.title": "Profile",
+  "profile.myOrders": "My Orders",
   "profile.editProfile": "Edit Profile",
   "profile.logout": "Log out",
   "profile.logoutTitle": "Log out?",
@@ -504,7 +518,21 @@ const ar: Record<Key, string> = {
   "fav.meal": "وجبة",
   "fav.deal": "عرض",
 
+  // orders
+  "orders.title": "طلباتي",
+  "orders.empty": "لا توجد طلبات بعد",
+  "orders.emptyHint": "طلباتك السابقة ستظهر هنا بعد تقديم أول طلب.",
+  "orders.total": "الإجمالي",
+  "orders.deliverTo": "التوصيل إلى",
+  "orders.status.pending": "قيد الانتظار",
+  "orders.status.confirmed": "تم التأكيد",
+  "orders.status.preparing": "قيد التحضير",
+  "orders.status.on_the_way": "في الطريق",
+  "orders.status.delivered": "تم التوصيل",
+  "orders.status.cancelled": "ملغي",
+
   "profile.title": "حسابي",
+  "profile.myOrders": "طلباتي",
   "profile.editProfile": "تعديل الحساب",
   "profile.logout": "تسجيل الخروج",
   "profile.logoutTitle": "تسجيل الخروج؟",
