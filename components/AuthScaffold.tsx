@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 
 const { width } = Dimensions.get("window");
@@ -74,7 +73,6 @@ const AuthScaffold = ({
   active: "signin" | "signup";
   children: ReactNode;
 }) => {
-  const insets = useSafeAreaInsets();
   const c = useColors();
 
   return (
@@ -87,21 +85,6 @@ const AuthScaffold = ({
           transition={200}
         />
 
-        <View style={{ paddingTop: insets.top + 16, paddingLeft: 24 }}>
-          {/* A white chip (same convention as the floating circular
-              buttons elsewhere — bg-white + shadow-black/10) keeps the
-              logo readable no matter what's behind it in the photo,
-              instead of relying on a text shadow like the old placeholder
-              badge did. */}
-          <View className="flex-row self-start items-center rounded-full bg-white px-3 py-1.5 shadow-sm shadow-black/10">
-            <Image
-              source={images.logo}
-              style={{ width: 132, height: 132 / LOGO_RATIO }}
-              contentFit="contain"
-            />
-          </View>
-        </View>
-
         <Svg
           width={width}
           height={WAVE_H}
@@ -113,7 +96,17 @@ const AuthScaffold = ({
       </View>
 
       <View className="flex-1 bg-card px-6 pt-6">
-        <Tabs active={active} />
+        {/* A small centered mark instead of overlaying it on the photo —
+            keeps it clear of the hero image and gives the card its own
+            quiet moment of branding above the tabs. */}
+        <Image
+          source={images.logo}
+          style={{ width: 96, height: 96 / LOGO_RATIO, alignSelf: "center" }}
+          contentFit="contain"
+        />
+        <View className="mt-5">
+          <Tabs active={active} />
+        </View>
         <View className="mt-7">{children}</View>
       </View>
     </View>
