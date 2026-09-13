@@ -20,6 +20,7 @@ import fries from "@/assets/images/fries.png";
 import grilledOnion from "@/assets/images/grilledonions.png";
 import jalapeno from "@/assets/images/jalapeno.png";
 import logo from "@/assets/images/logo.png";
+import logoDark from "@/assets/images/logo-dark.png";
 import mozarellaSticks from "@/assets/images/mozarella-sticks.png";
 import mushrooms from "@/assets/images/mushrooms.png";
 import olives from "@/assets/images/olives.png";
@@ -49,6 +50,7 @@ export const images = {
   emptyState,
   fries,
   logo,
+  logoDark,
   mozarellaSticks,
   mushrooms,
   onionRings,

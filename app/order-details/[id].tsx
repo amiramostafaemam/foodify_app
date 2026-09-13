@@ -3,15 +3,16 @@ import SummaryRow from "@/components/SummaryRow";
 import { ORDER_STATUS_META } from "@/components/OrderStatusBadge";
 import { images } from "@/constants";
 import { useColors } from "@/hooks/useColors";
+import { useLiveItemName } from "@/hooks/useLiveItemName";
 import { getOrderById } from "@/lib/appwrite";
-import { useT } from "@/lib/i18n";
+import { useLocalizeCustomization, useT } from "@/lib/i18n";
 import {
   deriveOrderStatus,
   formatOrderDate,
   ORDER_STEPS,
   parseOrderItems,
 } from "@/lib/orders";
-import { Order } from "@/type";
+import { CartItemType, Order } from "@/type";
 import cn from "clsx";
 import { router, useLocalSearchParams } from "expo-router";
 import { ChevronLeft, MapPin } from "lucide-react-native";
@@ -38,6 +39,37 @@ const Section = ({
     {children}
   </View>
 );
+
+/** Re-derives the item's name/toppings live from the current language
+ * instead of the frozen English snapshot stored on the order — a receipt
+ * should still read as one consistent language, not whatever mix of
+ * English/Arabic happened to be active the moment each item was ordered. */
+const OrderItemRow = ({ item }: { item: CartItemType }) => {
+  const displayName = useLiveItemName(item.id, item.name);
+  const locCustomization = useLocalizeCustomization();
+
+  return (
+    <View className="flex-row items-center gap-3">
+      <FoodImage uri={item.image_url} className="h-16 w-16 rounded-xl bg-primary/5" />
+      <View className="flex-1">
+        <Text className="paragraph-semibold text-content" numberOfLines={1}>
+          {displayName}
+        </Text>
+        {item.customizations && item.customizations.length > 0 && (
+          <Text className="body-regular mt-0.5 text-muted" numberOfLines={1}>
+            {item.customizations.map((cst) => locCustomization(cst.name)).join(", ")}
+          </Text>
+        )}
+        <Text className="paragraph-medium mt-0.5 text-muted">
+          {item.quantity} × ${item.price.toFixed(2)}
+        </Text>
+      </View>
+      <Text className="paragraph-bold text-content">
+        ${(item.price * item.quantity).toFixed(2)}
+      </Text>
+    </View>
+  );
+};
 
 /** Confirmed → Preparing → On the way → Delivered, with the current and
  * already-passed stages filled in. Cancelled orders skip this entirely —
@@ -157,7 +189,7 @@ const OrderDetails = () => {
         <View className="flex-1">
           <Text className="h3-bold text-content">{tr("orders.title")}</Text>
           <Text className="body-regular text-muted">
-            #{order.$id.slice(-8).toUpperCase()} · {formatOrderDate(order.$createdAt)}
+            {formatOrderDate(order.$createdAt)}
           </Text>
         </View>
       </View>
@@ -191,25 +223,7 @@ const OrderDetails = () => {
         <Section title={tr("common.items")}>
           <View className="gap-4">
             {items.map((item, i) => (
-              <View key={item.cartItemId || i} className="flex-row items-center gap-3">
-                <FoodImage uri={item.image_url} className="h-16 w-16 rounded-xl bg-primary/5" />
-                <View className="flex-1">
-                  <Text className="paragraph-semibold text-content" numberOfLines={1}>
-                    {item.name}
-                  </Text>
-                  {item.customizations && item.customizations.length > 0 && (
-                    <Text className="body-regular mt-0.5 text-muted" numberOfLines={1}>
-                      {item.customizations.map((cst) => cst.name).join(", ")}
-                    </Text>
-                  )}
-                  <Text className="paragraph-medium mt-0.5 text-muted">
-                    {item.quantity} × ${item.price.toFixed(2)}
-                  </Text>
-                </View>
-                <Text className="paragraph-bold text-content">
-                  ${(item.price * item.quantity).toFixed(2)}
-                </Text>
-              </View>
+              <OrderItemRow key={item.cartItemId || i} item={item} />
             ))}
           </View>
         </Section>

@@ -2,6 +2,7 @@ import { Image } from "@/components/CachedImage";
 import { images } from "@/constants";
 import { useColors } from "@/hooks/useColors";
 import { useT } from "@/lib/i18n";
+import { selectScheme, useThemeStore } from "@/store/theme.store";
 import cn from "clsx";
 import { router } from "expo-router";
 import { ReactNode } from "react";
@@ -74,6 +75,7 @@ const AuthScaffold = ({
   children: ReactNode;
 }) => {
   const c = useColors();
+  const scheme = useThemeStore(selectScheme);
 
   return (
     <View className="flex-1 bg-canvas">
@@ -98,9 +100,11 @@ const AuthScaffold = ({
       <View className="flex-1 bg-card px-6 pt-6">
         {/* A small centered mark instead of overlaying it on the photo —
             keeps it clear of the hero image and gives the card its own
-            quiet moment of branding above the tabs. */}
+            quiet moment of branding above the tabs. The navy "Food" in the
+            regular logo would nearly vanish on a dark card, so dark mode
+            swaps in a variant with that portion recoloured light. */}
         <Image
-          source={images.logo}
+          source={scheme === "dark" ? images.logoDark : images.logo}
           style={{ width: 96, height: 96 / LOGO_RATIO, alignSelf: "center" }}
           contentFit="contain"
         />
