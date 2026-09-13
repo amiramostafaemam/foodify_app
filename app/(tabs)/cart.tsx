@@ -5,6 +5,7 @@ import MockCardSheet from "@/components/MockCardSheet";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
 import { TAB_BAR_SPACE } from "@/components/navigation/FloatingTabBar";
+import SummaryRow from "@/components/SummaryRow";
 import { images } from "@/constants";
 import { useColors } from "@/hooks/useColors";
 import { createOrder } from "@/lib/appwrite";
@@ -14,7 +15,7 @@ import { useStripe } from "@/lib/stripe";
 import useAuthStore from "@/store/auth.store";
 import { useCartStore } from "@/store/cart.store";
 import { useNotificationsStore } from "@/store/notifications.store";
-import { PaymentInfoStripeProps, PaymentMethod } from "@/type";
+import { PaymentMethod } from "@/type";
 import cn from "clsx";
 import { router } from "expo-router";
 import {
@@ -49,22 +50,6 @@ const FOOTER_SHADOW = {
   shadowRadius: 10,
   elevation: 12,
 } as const;
-
-const SummaryRow = ({
-  label,
-  value,
-  labelStyle,
-  valueStyle,
-}: PaymentInfoStripeProps) => (
-  <View className="flex-between my-1 flex-row">
-    <Text className={cn("paragraph-medium text-muted", labelStyle)}>
-      {label}
-    </Text>
-    <Text className={cn("paragraph-bold text-content", valueStyle)}>
-      {value}
-    </Text>
-  </View>
-);
 
 const PaymentOption = ({
   selected,

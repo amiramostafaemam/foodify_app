@@ -443,6 +443,19 @@ export const createOrder = async (orderData: {
   }
 };
 
+export const getOrderById = async (orderId: string): Promise<Order> => {
+  try {
+    const order = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.ordersCollectionId,
+      orderId,
+    );
+    return order as unknown as Order;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch order");
+  }
+};
+
 export const getUserOrders = async (userId: string): Promise<Order[]> => {
   try {
     const orders = await databases.listDocuments(
