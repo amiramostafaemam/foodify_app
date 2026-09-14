@@ -7,6 +7,8 @@ import {
   MenuCustomization,
   MenuItem,
   Order,
+  Review,
+  ReviewData,
   SignInParams,
   UpdateUserParams,
   User,
@@ -55,6 +57,7 @@ export const appwriteConfig = {
   menuCollectionId: "menu",
   menuCustomizationsCollectionId: "menu_customizations",
   ordersCollectionId: "orders",
+  reviewsCollectionId: "reviews",
 };
 
 export const client = new Client();
@@ -519,5 +522,94 @@ export const getUserOrders = async (userId: string): Promise<Order[]> => {
     return orders.documents as unknown as Order[];
   } catch (error: any) {
     throw new Error(error.message || "Failed to fetch orders");
+  }
+};
+
+export const getMenuItemReviews = async (
+  menuItemId: string,
+): Promise<Review[]> => {
+  try {
+    const reviews = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.reviewsCollectionId,
+      [
+        Query.equal("menuItemId", menuItemId),
+        Query.orderDesc("$createdAt"),
+        Query.limit(100),
+      ],
+    );
+    return reviews.documents as unknown as Review[];
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to fetch reviews");
+  }
+};
+
+/** Whether the signed-in user already reviewed this item — lets the UI
+ * offer "edit your review" instead of a second, duplicate one. */
+export const getMyReviewForItem = async (
+  menuItemId: string,
+  userId: string,
+): Promise<Review | null> => {
+  try {
+    const result = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.reviewsCollectionId,
+      [
+        Query.equal("menuItemId", menuItemId),
+        Query.equal("userId", userId),
+        Query.limit(1),
+      ],
+    );
+    return (result.documents[0] as unknown as Review) ?? null;
+  } catch {
+    return null;
+  }
+};
+
+/** Creates a new review, or updates the caller's existing one for the same
+ * item — either way there's at most one review per user per item. New
+ * documents grant the author update/delete rights on their own review
+ * (the collection has Document Security on, everyone else only gets the
+ * collection-level read("any")). */
+export const submitReview = async (
+  data: ReviewData,
+  existingReviewId?: string,
+): Promise<Review> => {
+  try {
+    if (existingReviewId) {
+      const updated = await databases.updateDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.reviewsCollectionId,
+        existingReviewId,
+        { rating: data.rating, comment: data.comment },
+      );
+      return updated as unknown as Review;
+    }
+
+    const created = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.reviewsCollectionId,
+      ID.unique(),
+      data,
+      [
+        Permission.update(Role.user(data.userId)),
+        Permission.delete(Role.user(data.userId)),
+      ],
+    );
+    return created as unknown as Review;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to submit review");
+  }
+};
+
+export const deleteReview = async (reviewId: string) => {
+  try {
+    await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.reviewsCollectionId,
+      reviewId,
+    );
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to delete review");
   }
 };

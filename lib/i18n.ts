@@ -74,6 +74,24 @@ const en = {
     "Freshly prepared with high-quality ingredients and delivered hot to your door.",
   "details.addToCartTotal": "Add to Cart · ${amount}",
 
+  // reviews
+  "details.reviews": "Reviews",
+  "details.reviewsN": "Reviews ({n})",
+  "details.noReviews": "No reviews yet",
+  "details.noReviewsHint": "Be the first to share what you thought.",
+  "details.writeReview": "Write a review",
+  "details.editReview": "Edit your review",
+  "details.yourRating": "Your rating",
+  "details.reviewPlaceholder": "Tell others what you thought (optional)",
+  "details.submitReview": "Submit review",
+  "details.updateReview": "Update review",
+  "details.deleteReview": "Delete review",
+  "details.deleteReviewTitle": "Delete this review?",
+  "details.deleteReviewMsg": "This can't be undone.",
+  "details.ratingRequired": "Please pick a star rating.",
+  "details.signInToReviewTitle": "Sign in required",
+  "details.signInToReviewMsg": "Sign in to write a review for this item.",
+
   // offer details
   "offer.aboutDeal": "About this deal",
   "offer.included": "What's included",
@@ -411,6 +429,23 @@ const ar: Record<Key, string> = {
   "details.defaultDesc":
     "مُحضَّرة طازجة بمكونات عالية الجودة، وتُوصَل إليك ساخنة.",
   "details.addToCartTotal": "أضف إلى السلة · ${amount}",
+
+  "details.reviews": "التقييمات",
+  "details.reviewsN": "التقييمات ({n})",
+  "details.noReviews": "لا توجد تقييمات بعد",
+  "details.noReviewsHint": "كن أول من يشارك رأيه في هذا الطبق.",
+  "details.writeReview": "أضف تقييماً",
+  "details.editReview": "تعديل تقييمك",
+  "details.yourRating": "تقييمك",
+  "details.reviewPlaceholder": "شاركنا رأيك (اختياري)",
+  "details.submitReview": "إرسال التقييم",
+  "details.updateReview": "تحديث التقييم",
+  "details.deleteReview": "حذف التقييم",
+  "details.deleteReviewTitle": "هل تريد حذف هذا التقييم؟",
+  "details.deleteReviewMsg": "لا يمكن التراجع عن هذا الإجراء.",
+  "details.ratingRequired": "يرجى اختيار عدد النجوم.",
+  "details.signInToReviewTitle": "يجب تسجيل الدخول",
+  "details.signInToReviewMsg": "سجّل الدخول لإضافة تقييم لهذا الطبق.",
 
   "offer.aboutDeal": "عن هذا العرض",
   "offer.included": "ماذا يتضمن العرض",

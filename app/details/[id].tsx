@@ -1,3 +1,4 @@
+import AppModal from "@/components/AppModal";
 import { Image as CachedImage } from "@/components/CachedImage";
 import DetailHero from "@/components/DetailHero";
 import FloatingDish, {
@@ -5,24 +6,42 @@ import FloatingDish, {
   PANEL_H,
   SHEET_PULL,
 } from "@/components/FloatingDish";
+import ReviewModal from "@/components/ReviewModal";
+import StarRating from "@/components/StarRating";
 import Toast from "@/components/Toast";
 import { getCustomizationImage } from "@/constants";
-import { getMenuCustomizations, getMenuItemById } from "@/lib/appwrite";
+import {
+  deleteReview,
+  getMenuCustomizations,
+  getMenuItemById,
+  getMenuItemReviews,
+  getMyReviewForItem,
+  submitReview,
+} from "@/lib/appwrite";
 import { useLocalize, useLocalizeCustomization, useT } from "@/lib/i18n";
 import useAppwrite from "@/lib/useAppwrite";
+import useAuthStore from "@/store/auth.store";
 import { useCartStore } from "@/store/cart.store";
-import { CartCustomization, CustomizationOption, MenuItem } from "@/type";
+import {
+  CartCustomization,
+  CustomizationOption,
+  MenuItem,
+  Review,
+} from "@/type";
 import cn from "clsx";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   Check,
   Clock,
   Dumbbell,
   Flame,
+  LogIn,
   Minus,
+  Pencil,
   Plus,
   ShoppingBag,
   Star,
+  Trash2,
   type LucideIcon,
 } from "lucide-react-native";
 import { useState } from "react";
@@ -43,6 +62,10 @@ const fetchMenuItem = ({ menuId }: { menuId: string }) =>
   getMenuItemById(menuId);
 const fetchCustomizations = ({ menuId }: { menuId: string }) =>
   getMenuCustomizations(menuId);
+const fetchReviews = ({ menuId }: { menuId: string }) =>
+  getMenuItemReviews(menuId);
+const fetchMyReview = ({ menuId, userId }: { menuId: string; userId: string }) =>
+  getMyReviewForItem(menuId, userId);
 
 const categoryName = (item: MenuItem, loc: (en: string, ar?: string | null) => string) =>
   typeof item.categories === "object" && item.categories
@@ -150,9 +173,55 @@ const AddonRow = ({
   </View>
 );
 
+const ReviewRow = ({
+  review,
+  isMine,
+  onEdit,
+  onDelete,
+}: {
+  review: Review;
+  isMine: boolean;
+  onEdit: () => void;
+  onDelete: () => void;
+}) => {
+  return (
+    <View className="rounded-2xl bg-surface p-4">
+      <View className="flex-row items-start justify-between">
+        <View className="flex-1 pr-3">
+          <Text className="paragraph-semibold text-content">
+            {review.userName}
+          </Text>
+          <View className="mt-1 flex-row items-center gap-2">
+            <StarRating rating={review.rating} size={13} />
+            <Text className="body-regular text-muted">
+              {new Date(review.$createdAt).toLocaleDateString()}
+            </Text>
+          </View>
+        </View>
+        {isMine ? (
+          <View className="flex-row gap-3">
+            <TouchableOpacity onPress={onEdit} hitSlop={8}>
+              <Pencil size={16} color="#9AA0A6" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onDelete} hitSlop={8}>
+              <Trash2 size={16} color="#F14141" />
+            </TouchableOpacity>
+          </View>
+        ) : null}
+      </View>
+      {review.comment ? (
+        <Text className="paragraph-medium mt-2.5 leading-[1.6] text-content">
+          {review.comment}
+        </Text>
+      ) : null}
+    </View>
+  );
+};
+
 const Details = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const user = useAuthStore((s) => s.user);
   const addItem = useCartStore((s) => s.addItem);
   const tr = useT();
   const loc = useLocalize();
@@ -161,6 +230,10 @@ const Details = () => {
   const [selected, setSelected] = useState<CartCustomization[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [isFirstItem, setIsFirstItem] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
 
   const { data: item, loading } = useAppwrite<MenuItem, { menuId: string }>({
     fn: fetchMenuItem,
@@ -170,6 +243,18 @@ const Details = () => {
     CustomizationOption[],
     { menuId: string }
   >({ fn: fetchCustomizations, params: { menuId: id! } });
+  const { data: reviews, refetch: refetchReviews } = useAppwrite<
+    Review[],
+    { menuId: string }
+  >({ fn: fetchReviews, params: { menuId: id! } });
+  const { data: myReview, refetch: refetchMyReview } = useAppwrite<
+    Review | null,
+    { menuId: string; userId: string }
+  >({
+    fn: fetchMyReview,
+    params: { menuId: id!, userId: user?.$id ?? "" },
+    skip: !user,
+  });
 
   if (loading || !item) {
     return (
@@ -183,6 +268,47 @@ const Details = () => {
   const sides = customizations?.filter((c) => c.type === "side") ?? [];
   const name = loc(item.name, item.name_ar);
   const description = loc(item.description, item.description_ar);
+  const reviewCount = reviews?.length ?? 0;
+  const avgRating =
+    reviewCount > 0
+      ? reviews!.reduce((sum, r) => sum + r.rating, 0) / reviewCount
+      : (item.rating ?? 4.5);
+
+  const openReviewModal = () => {
+    if (!user) {
+      setShowSignInPrompt(true);
+      return;
+    }
+    setShowReviewModal(true);
+  };
+
+  const handleSubmitReview = async (rating: number, comment: string) => {
+    if (!user) return;
+    setSubmittingReview(true);
+    try {
+      await submitReview(
+        {
+          menuItemId: item.$id,
+          userId: user.$id,
+          userName: user.name,
+          rating,
+          comment,
+        },
+        myReview?.$id,
+      );
+      setShowReviewModal(false);
+      await Promise.all([refetchReviews(), refetchMyReview()]);
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async () => {
+    if (!myReview) return;
+    setShowDeleteConfirm(false);
+    await deleteReview(myReview.$id);
+    await Promise.all([refetchReviews(), refetchMyReview()]);
+  };
 
   const isSelected = (cid: string) => selected.some((c) => c.id === cid);
   const toggle = (o: CustomizationOption) =>
@@ -252,7 +378,7 @@ const Details = () => {
               <View className="flex-row items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1">
                 <Star size={13} color="#FFC738" fill="#FFC738" />
                 <Text className="font-quicksand-bold text-xs text-content">
-                  {item.rating?.toFixed(1) ?? "4.5"}
+                  {avgRating.toFixed(1)}
                 </Text>
               </View>
             </View>
@@ -302,6 +428,46 @@ const Details = () => {
                 onToggle={toggle}
               />
             )}
+
+            <View className="mt-7">
+              <View className="flex-row items-center justify-between">
+                <Text className="h3-bold text-content">
+                  {reviewCount > 0
+                    ? tr("details.reviewsN", { n: reviewCount })
+                    : tr("details.reviews")}
+                </Text>
+                {!myReview ? (
+                  <TouchableOpacity onPress={openReviewModal} hitSlop={8}>
+                    <Text className="paragraph-bold text-primary">
+                      {tr("details.writeReview")}
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+
+              {reviewCount === 0 ? (
+                <View className="mt-3 items-center rounded-2xl bg-surface px-5 py-8">
+                  <Text className="paragraph-semibold text-content">
+                    {tr("details.noReviews")}
+                  </Text>
+                  <Text className="body-regular mt-1 text-center text-muted">
+                    {tr("details.noReviewsHint")}
+                  </Text>
+                </View>
+              ) : (
+                <View className="mt-3 gap-2.5">
+                  {reviews!.map((r) => (
+                    <ReviewRow
+                      key={r.$id}
+                      review={r}
+                      isMine={r.$id === myReview?.$id}
+                      onEdit={() => setShowReviewModal(true)}
+                      onDelete={() => setShowDeleteConfirm(true)}
+                    />
+                  ))}
+                </View>
+              )}
+            </View>
           </View>
 
           <FloatingDish uri={item.image_url} />
@@ -356,6 +522,50 @@ const Details = () => {
         visible={showToast}
         onClose={() => setShowToast(false)}
         isFirstItem={isFirstItem}
+      />
+
+      <ReviewModal
+        visible={showReviewModal}
+        isEditing={!!myReview}
+        initialRating={myReview?.rating}
+        initialComment={myReview?.comment}
+        submitting={submittingReview}
+        onClose={() => setShowReviewModal(false)}
+        onSubmit={handleSubmitReview}
+      />
+
+      <AppModal
+        visible={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        tone="error"
+        icon={Trash2}
+        title={tr("details.deleteReviewTitle")}
+        message={tr("details.deleteReviewMsg")}
+        primary={{ label: tr("details.deleteReview"), onPress: handleDeleteReview }}
+        secondary={{
+          label: tr("common.cancel"),
+          onPress: () => setShowDeleteConfirm(false),
+        }}
+      />
+
+      <AppModal
+        visible={showSignInPrompt}
+        onClose={() => setShowSignInPrompt(false)}
+        tone="primary"
+        icon={LogIn}
+        title={tr("details.signInToReviewTitle")}
+        message={tr("details.signInToReviewMsg")}
+        primary={{
+          label: tr("auth.signIn"),
+          onPress: () => {
+            setShowSignInPrompt(false);
+            router.push("/sign-in");
+          },
+        }}
+        secondary={{
+          label: tr("common.cancel"),
+          onPress: () => setShowSignInPrompt(false),
+        }}
       />
     </>
   );

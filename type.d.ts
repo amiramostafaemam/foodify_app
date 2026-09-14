@@ -203,5 +203,15 @@ export interface OrderData {
 
 export interface Order extends Models.Document, OrderData {}
 
+export interface ReviewData {
+  menuItemId: string;
+  userId: string;
+  userName: string;
+  rating: number; // 1-5
+  comment?: string;
+}
+
+export interface Review extends Models.Document, ReviewData {}
+
 // Offer / OfferItem types live in constants/offers.constants.ts (co-located
 // with the demo data).
