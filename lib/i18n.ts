@@ -124,6 +124,13 @@ const en = {
   "cart.orderSummary": "Order Summary",
   "cart.subtotalN": "Subtotal ({n} items)",
   "cart.discount": "Discount",
+  "cart.promoCode": "Promo code",
+  "cart.promoPlaceholder": "Enter code",
+  "cart.apply": "Apply",
+  "cart.remove": "Remove",
+  "cart.promoApplied": "\"{code}\" applied",
+  "cart.promoInvalid": "This code isn't valid.",
+  "cart.promoMinOrder": "This code needs a minimum order of ${amount}.",
   "cart.total": "Total",
   "cart.checkout": "Checkout",
   "cart.proceedTo": "Proceed to Checkout · ${amount}",
@@ -245,6 +252,8 @@ const en = {
 
   // edit profile
   "edit.title": "Edit Profile",
+  "edit.noUserFound": "No user found",
+  "edit.goToSignIn": "Go to Sign In",
   "edit.changePhotoHint": "Change your photo from the Profile screen",
   "edit.enterName": "Enter your full name",
   "edit.enterPhone": "Enter your phone number",
@@ -449,6 +458,13 @@ const ar: Record<Key, string> = {
   "cart.orderSummary": "ملخص الطلب",
   "cart.subtotalN": "المجموع ({n} عناصر)",
   "cart.discount": "الخصم",
+  "cart.promoCode": "كود الخصم",
+  "cart.promoPlaceholder": "أدخل الكود",
+  "cart.apply": "تطبيق",
+  "cart.remove": "إزالة",
+  "cart.promoApplied": "تم تطبيق الكود \"{code}\"",
+  "cart.promoInvalid": "هذا الكود غير صالح.",
+  "cart.promoMinOrder": "هذا الكود يتطلب حداً أدنى للطلب قدره {amount}$.",
   "cart.total": "الإجمالي",
   "cart.checkout": "الدفع",
   "cart.proceedTo": "المتابعة للدفع · ${amount}",
@@ -561,6 +577,8 @@ const ar: Record<Key, string> = {
     "تمت إعادة صورة حسابك إلى الحرف الأول من اسمك.",
 
   "edit.title": "تعديل الحساب",
+  "edit.noUserFound": "لم يتم العثور على المستخدم",
+  "edit.goToSignIn": "الذهاب لتسجيل الدخول",
   "edit.changePhotoHint": "غيّر صورتك من صفحة الحساب",
   "edit.enterName": "أدخل اسمك الكامل",
   "edit.enterPhone": "أدخل رقم هاتفك",
@@ -689,7 +707,11 @@ export const useLocalize = () => {
  * because that join collection only stores a denormalized English copy.
  */
 const CUSTOMIZATION_NAME_AR: Record<string, string> = {
-  Cheese: "جبنة",
+  // The seeded topping is actually named "Extra Cheese" (lib/data.ts), not
+  // "Cheese" — this lookup is an exact match, so a key that doesn't match
+  // the real stored name silently falls through untranslated. This was
+  // the one topping doing that; every other name here already matches.
+  "Extra Cheese": "جبنة إضافية",
   "Jalapeños": "هالبينو",
   Onions: "بصل",
   Olives: "زيتون",

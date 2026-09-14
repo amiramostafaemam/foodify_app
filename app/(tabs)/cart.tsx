@@ -7,6 +7,7 @@ import CustomHeader from "@/components/CustomHeader";
 import { TAB_BAR_SPACE } from "@/components/navigation/FloatingTabBar";
 import SummaryRow from "@/components/SummaryRow";
 import { images } from "@/constants";
+import { computePromoDiscount, findPromoCode, PromoCode } from "@/constants/promoCodes";
 import { useColors } from "@/hooks/useColors";
 import { createOrder } from "@/lib/appwrite";
 import { useT } from "@/lib/i18n";
@@ -24,7 +25,9 @@ import {
   CircleAlert,
   CircleCheck,
   MapPin,
+  Tag,
   Wallet,
+  X,
 } from "lucide-react-native";
 import { useState } from "react";
 import {
@@ -34,6 +37,7 @@ import {
   Image,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -41,7 +45,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const DELIVERY_FEE = 2.99;
 const FREE_DELIVERY_OVER = 30;
-const APP_DISCOUNT = 1.0;
 
 const FOOTER_SHADOW = {
   shadowColor: "#000",
@@ -107,11 +110,36 @@ const Cart = () => {
   const [showAddressPicker, setShowAddressPicker] = useState(false);
   const [showMockCard, setShowMockCard] = useState(false);
   const [address, setAddress] = useState(user?.address_home || "");
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
+  const [promoError, setPromoError] = useState("");
 
   const totalItems = getTotalItems();
   const subtotal = getTotalPrice();
   const deliveryFee = subtotal >= FREE_DELIVERY_OVER ? 0 : DELIVERY_FEE;
-  const discount = subtotal > 0 ? APP_DISCOUNT : 0;
+  const discount = appliedPromo ? computePromoDiscount(appliedPromo, subtotal) : 0;
+
+  const applyPromo = () => {
+    const found = findPromoCode(promoInput);
+    if (!found) {
+      setAppliedPromo(null);
+      setPromoError(tr("cart.promoInvalid"));
+      return;
+    }
+    if (found.minOrder && subtotal < found.minOrder) {
+      setAppliedPromo(null);
+      setPromoError(tr("cart.promoMinOrder", { amount: found.minOrder }));
+      return;
+    }
+    setAppliedPromo(found);
+    setPromoError("");
+  };
+
+  const removePromo = () => {
+    setAppliedPromo(null);
+    setPromoInput("");
+    setPromoError("");
+  };
   const finalAmount = Math.max(0, subtotal + deliveryFee - discount);
 
   const saveOrder = async (
@@ -135,6 +163,7 @@ const Cart = () => {
       customerPhone: user.phone || "",
     });
     clearCart();
+    removePromo();
 
     useNotificationsStore.getState().add({
       type: "order",
@@ -335,35 +364,93 @@ const Cart = () => {
             </View>
           }
           ListFooterComponent={
-            <View className="mt-6 rounded-2xl bg-surface p-5">
-              <Text className="paragraph-bold mb-4 text-content">
-                {tr("cart.orderSummary")}
-              </Text>
-              <SummaryRow
-                label={tr("cart.subtotalN", { n: totalItems })}
-                value={`$${subtotal.toFixed(2)}`}
-              />
-              <SummaryRow
-                label={tr("common.delivery")}
-                value={
-                  deliveryFee === 0
-                    ? tr("common.free")
-                    : `$${deliveryFee.toFixed(2)}`
-                }
-              />
-              <SummaryRow
-                label={tr("cart.discount")}
-                value={`- $${discount.toFixed(2)}`}
-                valueStyle="!text-success"
-              />
-              <View className="my-2 border-t border-line/10" />
-              <SummaryRow
-                label={tr("cart.total")}
-                value={`$${finalAmount.toFixed(2)}`}
-                labelStyle="base-bold !text-content"
-                valueStyle="base-bold !text-content"
-              />
-            </View>
+            <>
+              <View className="mt-6 rounded-2xl bg-surface p-5">
+                <View className="mb-3 flex-row items-center gap-2">
+                  <Tag size={16} color="#FE8C00" />
+                  <Text className="paragraph-semibold text-content">
+                    {tr("cart.promoCode")}
+                  </Text>
+                </View>
+
+                {appliedPromo ? (
+                  <View className="flex-row items-center justify-between rounded-xl bg-success/10 px-3.5 py-3">
+                    <Text className="paragraph-semibold text-success">
+                      {tr("cart.promoApplied", { code: appliedPromo.code })}
+                    </Text>
+                    <TouchableOpacity onPress={removePromo} hitSlop={8}>
+                      <X size={16} color="#2F9B65" />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <>
+                    <View className="flex-row items-center gap-2">
+                      <TextInput
+                        value={promoInput}
+                        onChangeText={(v) => {
+                          setPromoInput(v);
+                          setPromoError("");
+                        }}
+                        placeholder={tr("cart.promoPlaceholder")}
+                        placeholderTextColor={c.muted}
+                        autoCapitalize="characters"
+                        className="flex-1 rounded-xl bg-card px-3.5 py-3 font-quicksand-medium text-base text-content"
+                      />
+                      <TouchableOpacity
+                        onPress={applyPromo}
+                        disabled={!promoInput.trim()}
+                        activeOpacity={0.85}
+                        className={cn(
+                          "rounded-xl px-5 py-3",
+                          promoInput.trim() ? "bg-primary" : "bg-primary/40",
+                        )}
+                      >
+                        <Text className="font-quicksand-bold text-white">
+                          {tr("cart.apply")}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    {promoError ? (
+                      <Text className="mt-2 font-quicksand-medium text-sm text-error">
+                        {promoError}
+                      </Text>
+                    ) : null}
+                  </>
+                )}
+              </View>
+
+              <View className="mt-3 rounded-2xl bg-surface p-5">
+                <Text className="paragraph-bold mb-4 text-content">
+                  {tr("cart.orderSummary")}
+                </Text>
+                <SummaryRow
+                  label={tr("cart.subtotalN", { n: totalItems })}
+                  value={`$${subtotal.toFixed(2)}`}
+                />
+                <SummaryRow
+                  label={tr("common.delivery")}
+                  value={
+                    deliveryFee === 0
+                      ? tr("common.free")
+                      : `$${deliveryFee.toFixed(2)}`
+                  }
+                />
+                {discount > 0 ? (
+                  <SummaryRow
+                    label={tr("cart.discount")}
+                    value={`- $${discount.toFixed(2)}`}
+                    valueStyle="!text-success"
+                  />
+                ) : null}
+                <View className="my-2 border-t border-line/10" />
+                <SummaryRow
+                  label={tr("cart.total")}
+                  value={`$${finalAmount.toFixed(2)}`}
+                  labelStyle="base-bold !text-content"
+                  valueStyle="base-bold !text-content"
+                />
+              </View>
+            </>
           }
         />
 
@@ -461,11 +548,13 @@ const Cart = () => {
               deliveryFee === 0 ? tr("common.free") : `$${deliveryFee.toFixed(2)}`
             }
           />
-          <SummaryRow
-            label={tr("cart.discount")}
-            value={`- $${discount.toFixed(2)}`}
-            valueStyle="!text-success"
-          />
+          {discount > 0 ? (
+            <SummaryRow
+              label={tr("cart.discount")}
+              value={`- $${discount.toFixed(2)}`}
+              valueStyle="!text-success"
+            />
+          ) : null}
           <View className="my-2 border-t border-primary/15" />
           <SummaryRow
             label={tr("cart.total")}

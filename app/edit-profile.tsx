@@ -67,12 +67,16 @@ const EditProfile = () => {
   if (!user) {
     return (
       <SafeAreaView className="flex-center h-full bg-canvas">
-        <Text className="paragraph-regular text-muted">No user found</Text>
+        <Text className="paragraph-regular text-muted">
+          {tr("edit.noUserFound")}
+        </Text>
         <TouchableOpacity
           onPress={() => router.replace("/sign-in")}
           className="mt-4"
         >
-          <Text className="paragraph-semibold text-primary">Go to Sign In</Text>
+          <Text className="paragraph-semibold text-primary">
+            {tr("edit.goToSignIn")}
+          </Text>
         </TouchableOpacity>
       </SafeAreaView>
     );

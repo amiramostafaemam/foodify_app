@@ -21,7 +21,8 @@ import {
   type LucideIcon,
 } from "lucide-react-native";
 import { type ReactNode, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const getPasswordErrorMessage = (error: unknown): string => {
@@ -246,9 +247,11 @@ const Settings = () => {
         <Text className="h3-bold text-content">{tr("settings.title")}</Text>
       </View>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
+        bottomOffset={24}
+        keyboardShouldPersistTaps="handled"
       >
         <Section title={tr("settings.appearance")}>
           {THEMES.map((th, i) => (
@@ -284,7 +287,7 @@ const Settings = () => {
         <Text className="mt-8 text-center font-quicksand-medium text-xs text-muted">
           Foodify · v1.0.0
         </Text>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

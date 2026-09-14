@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Svg, { Path } from "react-native-svg";
 
 const { width } = Dimensions.get("window");
@@ -97,7 +98,14 @@ const AuthScaffold = ({
         </Svg>
       </View>
 
-      <View className="flex-1 bg-card px-6 pt-6">
+      {/* Sign-up in particular has four stacked fields — without this the
+          keyboard covers the lower ones with no way to see what's typed. */}
+      <KeyboardAwareScrollView
+        style={{ flex: 1, backgroundColor: c.card }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24 }}
+        bottomOffset={24}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* A small centered mark instead of overlaying it on the photo —
             keeps it clear of the hero image and gives the card its own
             quiet moment of branding above the tabs. The navy "Food" in the
@@ -112,7 +120,7 @@ const AuthScaffold = ({
           <Tabs active={active} />
         </View>
         <View className="mt-7">{children}</View>
-      </View>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

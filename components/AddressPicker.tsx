@@ -12,6 +12,7 @@ import {
   useAnimatedValue,
   View,
 } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 interface AddressPickerProps {
   visible: boolean;
@@ -127,7 +128,8 @@ const AddressPicker = ({
       statusBarTranslucent
       onRequestClose={onClose}
     >
-      <View className="flex-1 items-center justify-center bg-black/50 px-6">
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+        <View className="flex-1 items-center justify-center bg-black/50 px-6">
         <Animated.View
           style={{ opacity, transform: [{ scale }], width: "100%", maxWidth: 400 }}
         >
@@ -202,7 +204,8 @@ const AddressPicker = ({
             </View>
           </View>
         </Animated.View>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };

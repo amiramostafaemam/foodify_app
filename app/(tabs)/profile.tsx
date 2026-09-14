@@ -130,7 +130,7 @@ const Profile = () => {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-center h-full bg-canvas">
-        <Text className="paragraph-regular text-muted">Loading…</Text>
+        <Text className="paragraph-regular text-muted">{tr("common.loading")}</Text>
       </SafeAreaView>
     );
   }
@@ -139,7 +139,7 @@ const Profile = () => {
     return (
       <SafeAreaView className="flex-center h-full bg-canvas">
         <Text className="paragraph-regular text-muted">
-          No user data found
+          {tr("common.userNotFound")}
         </Text>
       </SafeAreaView>
     );

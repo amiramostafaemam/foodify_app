@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 const getErrorMessage = (error: unknown): string => {
   const message =
@@ -87,6 +88,7 @@ const ForgotPasswordModal = ({
       statusBarTranslucent
       onRequestClose={onClose}
     >
+      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <View className="flex-1 items-center justify-center bg-black/50 px-6">
         <View className="w-full max-w-[360px] items-center rounded-[28px] bg-elevated p-6 shadow-2xl">
           {status === "sent" ? (
@@ -169,6 +171,7 @@ const ForgotPasswordModal = ({
           )}
         </View>
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };

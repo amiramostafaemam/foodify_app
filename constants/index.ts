@@ -79,6 +79,10 @@ const customizationImageMap: Record<string, number> = {
   avocado,
   bacon,
   cheese,
+  // The seeded topping is actually named "Extra Cheese" (lib/data.ts), not
+  // "Cheese" — normalizedName strips spaces but not the word "extra", so
+  // this needs its own alias or it silently falls through to null.
+  extracheese: cheese,
   pickles,
   mushrooms,
   onions,
