@@ -138,20 +138,29 @@ const PASSWORD_RESET_URL =
 const CHECK_EMAIL_FUNCTION_ID =
   process.env.EXPO_PUBLIC_APPWRITE_FUNCTION_CHECK_EMAIL_ID;
 
+// A cold Appwrite Function (nobody's called it in a while, so its
+// container isn't warm) can take several seconds on its first invocation
+// — well worth it for the correctness this check buys, but not worth
+// making someone wait indefinitely for. Past this, just proceed as if the
+// email exists rather than block the actual password reset on a slow
+// cold start; the fast path (a warm function) typically answers in a few
+// hundred ms and this timeout never engages.
+const CHECK_EMAIL_TIMEOUT_MS = 2500;
+
 /**
  * Whether an account with this email exists — answered by a small Appwrite
  * Function (appwrite/functions/check-email) rather than the client SDK,
  * since listing/searching users needs a privileged key that can never live
- * in the app bundle. If the function isn't deployed yet (no ID configured)
- * or the call itself fails, this fails *open* (returns true) so a real
- * password reset is never blocked by an unrelated outage — it only ever
- * gets used to short-circuit the case where the email is definitely not
- * registered.
+ * in the app bundle. If the function isn't deployed yet (no ID configured),
+ * takes too long, or the call itself fails, this fails *open* (returns
+ * true) so a real password reset is never blocked by an unrelated outage —
+ * it only ever gets used to short-circuit the case where the email is
+ * definitely not registered.
  */
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   if (!CHECK_EMAIL_FUNCTION_ID) return true;
 
-  try {
+  const check = async () => {
     const execution = await functions.createExecution(
       CHECK_EMAIL_FUNCTION_ID,
       JSON.stringify({ email }),
@@ -162,6 +171,14 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
     }
     const result = JSON.parse(execution.responseBody);
     return result.exists !== false;
+  };
+
+  const timeout = new Promise<boolean>((resolve) =>
+    setTimeout(() => resolve(true), CHECK_EMAIL_TIMEOUT_MS),
+  );
+
+  try {
+    return await Promise.race([check(), timeout]);
   } catch {
     return true;
   }
