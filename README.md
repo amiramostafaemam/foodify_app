@@ -8,6 +8,38 @@ Browse a menu, customise items with toppings and sides, manage a cart, check out
 
 ---
 
+## 📱 Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/onboarding.jpeg" width="200" alt="Onboarding"><br><sub>Onboarding</sub></td>
+    <td align="center"><img src="docs/screenshots/sign-in.jpeg" width="200" alt="Sign in"><br><sub>Sign in</sub></td>
+    <td align="center"><img src="docs/screenshots/home-light.jpeg" width="200" alt="Home"><br><sub>Home</sub></td>
+    <td align="center"><img src="docs/screenshots/home-dark.jpeg" width="200" alt="Home, dark mode"><br><sub>Home — dark mode</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/search.jpeg" width="200" alt="Search"><br><sub>Search</sub></td>
+    <td align="center"><img src="docs/screenshots/item-details.jpeg" width="200" alt="Item details"><br><sub>Item details</sub></td>
+    <td align="center"><img src="docs/screenshots/reviews.jpeg" width="200" alt="Toppings and reviews"><br><sub>Toppings & reviews</sub></td>
+    <td align="center"><img src="docs/screenshots/favorites.jpeg" width="200" alt="Favorites"><br><sub>Favorites</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/checkout.jpeg" width="200" alt="Checkout"><br><sub>Checkout</sub></td>
+    <td align="center"><img src="docs/screenshots/card-payment.jpeg" width="200" alt="Card payment"><br><sub>Card payment (demo)</sub></td>
+    <td align="center"><img src="docs/screenshots/orders.jpeg" width="200" alt="Order history"><br><sub>Order history</sub></td>
+    <td align="center"><img src="docs/screenshots/order-tracking.jpeg" width="200" alt="Order tracking"><br><sub>Order tracking</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/notifications.jpeg" width="200" alt="Notifications"><br><sub>Notifications</sub></td>
+    <td align="center"><img src="docs/screenshots/profile.jpeg" width="200" alt="Profile"><br><sub>Profile</sub></td>
+    <td align="center" colspan="2"><img src="docs/screenshots/settings-arabic.jpeg" width="200" alt="Settings in Arabic, RTL"><br><sub>Settings — Arabic (RTL)</sub></td>
+  </tr>
+</table>
+
+More screenshots (light/dark variants, English settings, cart empty state) are in [`docs/screenshots/extra`](docs/screenshots/extra).
+
+---
+
 ## ✨ Features
 
 | Area                  | What it does                                                                                          |
