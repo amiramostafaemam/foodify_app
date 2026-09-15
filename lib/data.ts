@@ -1,12 +1,42 @@
 // lib/data.ts
 const dummyData = {
   categories: [
-    { name: "Burgers", description: "Juicy grilled burgers" },
-    { name: "Pizzas", description: "Oven-baked cheesy pizzas" },
-    { name: "Burritos", description: "Rolled Mexican delights" },
-    { name: "Sandwiches", description: "Stacked and stuffed sandwiches" },
-    { name: "Wraps", description: "Rolled up wraps packed with flavor" },
-    { name: "Bowls", description: "Balanced rice and protein bowls" },
+    {
+      name: "Burgers",
+      name_ar: "برجر",
+      description: "Juicy grilled burgers",
+      description_ar: "برجر مشوي طازج وشهي",
+    },
+    {
+      name: "Pizzas",
+      name_ar: "بيتزا",
+      description: "Oven-baked cheesy pizzas",
+      description_ar: "بيتزا بالجبنة مخبوزة على الفرن",
+    },
+    {
+      name: "Burritos",
+      name_ar: "بوريتو",
+      description: "Rolled Mexican delights",
+      description_ar: "لفائف مكسيكية شهية",
+    },
+    {
+      name: "Sandwiches",
+      name_ar: "ساندويتشات",
+      description: "Stacked and stuffed sandwiches",
+      description_ar: "ساندويتشات محشوة بطبقات لذيذة",
+    },
+    {
+      name: "Wraps",
+      name_ar: "راب",
+      description: "Rolled up wraps packed with flavor",
+      description_ar: "لفائف راب مليئة بالنكهة",
+    },
+    {
+      name: "Bowls",
+      name_ar: "أطباق",
+      description: "Balanced rice and protein bowls",
+      description_ar: "أطباق أرز وبروتين متوازنة",
+    },
   ],
 
   customizations: [
@@ -36,7 +66,9 @@ const dummyData = {
   menu: [
     {
       name: "Classic Cheeseburger",
+      name_ar: "تشيز برجر كلاسيك",
       description: "Beef patty, cheese, lettuce, tomato",
+      description_ar: "قطعة لحم بقري، جبنة، خس، طماطم",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/044/844/600/small/homemade-fresh-tasty-burger-with-meat-and-cheese-classic-cheese-burger-and-vegetable-ai-generated-free-png.png",
       price: 25.99,
@@ -48,7 +80,9 @@ const dummyData = {
     },
     {
       name: "Pepperoni Pizza",
+      name_ar: "بيتزا ببروني",
       description: "Loaded with cheese and pepperoni slices",
+      description_ar: "محملة بالجبنة وشرائح الببروني",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/023/742/417/small/pepperoni-pizza-isolated-illustration-ai-generative-free-png.png",
       price: 30.99,
@@ -66,7 +100,9 @@ const dummyData = {
     },
     {
       name: "Bean Burrito",
+      name_ar: "بوريتو الفاصوليا",
       description: "Stuffed with beans, rice, salsa",
+      description_ar: "محشو بالفاصوليا والأرز والصلصة",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/055/133/581/small/deliciously-grilled-burritos-filled-with-beans-corn-and-fresh-vegetables-served-with-lime-wedge-and-cilantro-isolated-on-transparent-background-free-png.png",
       price: 20.99,
@@ -78,7 +114,9 @@ const dummyData = {
     },
     {
       name: "BBQ Bacon Burger",
+      name_ar: "برجر البيكون بالباربكيو",
       description: "Smoky BBQ sauce, crispy bacon, cheddar",
+      description_ar: "صلصة باربكيو مدخنة، بيكون مقرمش، جبنة تشيدر",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/060/236/245/small/a-large-hamburger-with-cheese-onions-and-lettuce-free-png.png",
       price: 27.5,
@@ -90,7 +128,9 @@ const dummyData = {
     },
     {
       name: "Chicken Caesar Wrap",
+      name_ar: "راب سيزر بالدجاج",
       description: "Grilled chicken, lettuce, Caesar dressing",
+      description_ar: "دجاج مشوي، خس، صوص سيزر",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/048/930/603/small/caesar-wrap-grilled-chicken-isolated-on-transparent-background-free-png.png",
       price: 21.5,
@@ -102,7 +142,9 @@ const dummyData = {
     },
     {
       name: "Grilled Veggie Sandwich",
+      name_ar: "ساندويتش الخضار المشوي",
       description: "Roasted veggies, pesto, cheese",
+      description_ar: "خضار محمصة، صوص بيستو، جبنة",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/047/832/012/small/grilled-sesame-seed-bread-veggie-sandwich-with-tomato-and-onion-free-png.png",
       price: 19.99,
@@ -114,7 +156,9 @@ const dummyData = {
     },
     {
       name: "Double Patty Burger",
+      name_ar: "دبل تشيز برجر",
       description: "Two juicy beef patties and cheese",
+      description_ar: "قطعتان من اللحم البقري الطازج مع الجبنة",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/060/359/627/small/double-cheeseburger-with-lettuce-tomatoes-cheese-and-sesame-bun-free-png.png",
       price: 32.99,
@@ -132,7 +176,9 @@ const dummyData = {
     },
     {
       name: "Paneer Tikka Wrap",
+      name_ar: "راب بانير تكة",
       description: "Spicy paneer, mint chutney, veggies",
+      description_ar: "بانير حار، صوص النعناع، خضار",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/057/913/530/small/delicious-wraps-a-tantalizing-array-of-wraps-filled-with-vibrant-vegetables-succulent-fillings-and-fresh-ingredients-artfully-arranged-for-a-mouthwatering-culinary-experience-free-png.png",
       price: 23.99,
@@ -144,7 +190,9 @@ const dummyData = {
     },
     {
       name: "Mexican Burrito Bowl",
+      name_ar: "طبق بوريتو مكسيكي",
       description: "Rice, beans, corn, guac, salsa",
+      description_ar: "أرز، فاصوليا، ذرة، جواكامولي، صلصة",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/057/466/374/small/healthy-quinoa-bowl-with-avocado-tomato-and-black-beans-ingredients-free-png.png",
       price: 26.49,
@@ -156,7 +204,9 @@ const dummyData = {
     },
     {
       name: "Spicy Chicken Sandwich",
+      name_ar: "ساندويتش الدجاج الحار",
       description: "Crispy chicken, spicy sauce, pickles",
+      description_ar: "دجاج مقرمش، صوص حار، مخلل",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/051/814/008/small/a-grilled-chicken-sandwich-with-lettuce-and-tomatoes-free-png.png",
       price: 24.99,
@@ -174,7 +224,9 @@ const dummyData = {
     },
     {
       name: "Classic Margherita Pizza",
+      name_ar: "بيتزا مارجريتا كلاسيك",
       description: "Tomato, mozzarella, fresh basil",
+      description_ar: "طماطم، موزاريلا، ريحان طازج",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/058/700/845/small/free-isolated-on-transparent-background-delicious-pizza-topped-with-fresh-tomatoes-basil-and-melted-cheese-perfect-for-food-free-png.png",
       price: 26.99,
@@ -186,7 +238,9 @@ const dummyData = {
     },
     {
       name: "Protein Power Bowl",
+      name_ar: "طبق البروتين",
       description: "Grilled chicken, quinoa, veggies",
+      description_ar: "دجاج مشوي، كينوا، خضار",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/056/106/379/small/top-view-salad-with-chicken-avocado-tomatoes-and-lettuce-free-png.png",
       price: 29.99,
@@ -198,7 +252,9 @@ const dummyData = {
     },
     {
       name: "Paneer Burrito",
+      name_ar: "بوريتو البانير",
       description: "Paneer cubes, spicy masala, rice, beans",
+      description_ar: "مكعبات بانير، ماسالا حارة، أرز، فاصوليا",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/056/565/254/small/burrito-with-cauliflower-and-vegetables-free-png.png",
       price: 24.99,
@@ -210,7 +266,9 @@ const dummyData = {
     },
     {
       name: "Chicken Club Sandwich",
+      name_ar: "ساندويتش كلوب بالدجاج",
       description: "Grilled chicken, lettuce, cheese, tomato",
+      description_ar: "دجاج مشوي، خس، جبنة، طماطم",
       image_url:
         "https://static.vecteezy.com/system/resources/thumbnails/060/364/135/small/a-flavorful-club-sandwich-with-turkey-bacon-and-fresh-vegetables-sliced-and-isolated-on-a-transparent-background-free-png.png",
       price: 27.49,

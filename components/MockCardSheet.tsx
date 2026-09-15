@@ -42,6 +42,21 @@ const formatExp = (v: string) => {
   return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
 };
 
+/** MM/YY, month 01-12, and not already expired — same checks a real card
+ * form runs, so this demo can't be "paid" with an obviously fake date. */
+const isValidExpiry = (v: string) => {
+  const m = /^(\d{2})\/(\d{2})$/.exec(v);
+  if (!m) return false;
+  const month = parseInt(m[1], 10);
+  const year = 2000 + parseInt(m[2], 10);
+  if (month < 1 || month > 12) return false;
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  return year > currentYear || (year === currentYear && month >= currentMonth);
+};
+
 /** Fills the unfilled digits with bullets, grouped like a real card face. */
 const maskedCardDisplay = (digits: string) => {
   const clean = digits.replace(/\D/g, "").padEnd(16, "•");
@@ -95,7 +110,7 @@ const MockCardSheet = ({
 
   const valid =
     card.replace(/\s/g, "").length === 16 &&
-    /^\d{2}\/\d{2}$/.test(exp) &&
+    isValidExpiry(exp) &&
     cvc.length >= 3;
 
   const pay = () => {

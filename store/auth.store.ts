@@ -12,10 +12,14 @@ import { create } from "zustand";
 
 // A cart/favorites list cached on this device belongs to whoever was last
 // signed in on it — tag it to the newly authenticated user so a different
-// account never inherits it. See each store's `setOwner`.
-const claimLocalDataFor = (userId: string) => {
-  useCartStore.getState().setOwner(userId);
-  useFavoritesStore.getState().setOwner(userId);
+// account never inherits it. See each store's `setOwner`. Keyed by the
+// Appwrite Auth account ID (`accountId`), not the profile document's own
+// `$id` — the account ID is the one identity that's guaranteed stable for
+// this account across every login, since the profile document is looked up
+// fresh each time.
+const claimLocalDataFor = (accountId: string) => {
+  useCartStore.getState().setOwner(accountId);
+  useFavoritesStore.getState().setOwner(accountId);
 };
 
 type UpdateProfileData = {
@@ -51,7 +55,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
     const user = await getCurrentUser();
     if (!user) throw new Error("Failed to load your profile");
 
-    claimLocalDataFor(user.$id);
+    claimLocalDataFor(user.accountId);
     set({ isAuthenticated: true, user, isLoading: false });
   },
 
@@ -67,7 +71,7 @@ const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true });
     try {
       const user = await getCurrentUser();
-      if (user) claimLocalDataFor(user.$id);
+      if (user) claimLocalDataFor(user.accountId);
       set(
         user
           ? { isAuthenticated: true, user }

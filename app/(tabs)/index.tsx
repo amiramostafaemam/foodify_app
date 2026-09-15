@@ -1,3 +1,4 @@
+import { Image } from "@/components/CachedImage";
 import CategoryStrip from "@/components/home/CategoryStrip";
 import ExclusiveOfferBanner from "@/components/home/ExclusiveOfferBanner";
 import HomeHeader from "@/components/home/HomeHeader";
@@ -9,7 +10,8 @@ import { getCategories, getMenu } from "@/lib/appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import useAuthStore from "@/store/auth.store";
 import { Category, GetMenuParams, MenuItem } from "@/type";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -40,17 +42,46 @@ export default function Home() {
   const user = useAuthStore((s) => s.user);
   const tr = useT();
 
-  const { data: categories } = useAppwrite<Category[], Record<string, never>>({
+  const { data: categories, refetch: refetchCategories } = useAppwrite<
+    Category[],
+    Record<string, never>
+  >({
     fn: getCategories,
     params: {} as Record<string, never>,
   });
 
-  const { data: menu, loading } = useAppwrite<MenuItem[], GetMenuParams>({
+  const {
+    data: menu,
+    loading,
+    refetch: refetchMenu,
+  } = useAppwrite<MenuItem[], GetMenuParams>({
     fn: getMenu,
     params: {},
   });
 
+  // Ratings (and anything else) can change elsewhere in the app — re-pull
+  // menu/categories each time this tab regains focus rather than only once
+  // on first mount, so the numbers shown here don't go stale for the rest
+  // of the session.
+  useFocusEffect(
+    useCallback(() => {
+      refetchMenu();
+      refetchCategories();
+    }, [refetchMenu, refetchCategories]),
+  );
+
   const popular = (menu ?? []).slice(0, 6);
+
+  // Warm the image cache for the whole menu as soon as it's fetched, not
+  // just the 6 cards actually rendered here — Search reuses the same
+  // items/URLs right after, so by the time someone taps into it the
+  // pictures are typically already on disk instead of loading cold.
+  useEffect(() => {
+    const urls = (menu ?? [])
+      .map((item) => item.image_url)
+      .filter((url): url is string => !!url);
+    if (urls.length) Image.prefetch(urls, "memory-disk");
+  }, [menu]);
 
   return (
     <SafeAreaView className="flex-1 bg-canvas" edges={["top"]}>

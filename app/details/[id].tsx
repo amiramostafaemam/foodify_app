@@ -1,4 +1,5 @@
 import AppModal from "@/components/AppModal";
+import Avatar from "@/components/Avatar";
 import { Image as CachedImage } from "@/components/CachedImage";
 import DetailHero from "@/components/DetailHero";
 import FloatingDish, {
@@ -187,15 +188,18 @@ const ReviewRow = ({
   return (
     <View className="rounded-2xl bg-surface p-4">
       <View className="flex-row items-start justify-between">
-        <View className="flex-1 pr-3">
-          <Text className="paragraph-semibold text-content">
-            {review.userName}
-          </Text>
-          <View className="mt-1 flex-row items-center gap-2">
-            <StarRating rating={review.rating} size={13} />
-            <Text className="body-regular text-muted">
-              {new Date(review.$createdAt).toLocaleDateString()}
+        <View className="flex-1 flex-row items-start gap-3 pr-3">
+          <Avatar name={review.userName} uri={review.userAvatar} size={36} />
+          <View className="flex-1">
+            <Text className="paragraph-semibold text-content">
+              {review.userName}
             </Text>
+            <View className="mt-1 flex-row items-center gap-2">
+              <StarRating rating={review.rating} size={13} />
+              <Text className="body-regular text-muted">
+                {new Date(review.$createdAt).toLocaleDateString()}
+              </Text>
+            </View>
           </View>
         </View>
         {isMine ? (
@@ -291,6 +295,7 @@ const Details = () => {
           menuItemId: item.$id,
           userId: user.$id,
           userName: user.name,
+          userAvatar: user.avatar,
           rating,
           comment,
         },
@@ -306,7 +311,7 @@ const Details = () => {
   const handleDeleteReview = async () => {
     if (!myReview) return;
     setShowDeleteConfirm(false);
-    await deleteReview(myReview.$id);
+    await deleteReview(myReview.$id, myReview.menuItemId);
     await Promise.all([refetchReviews(), refetchMyReview()]);
   };
 

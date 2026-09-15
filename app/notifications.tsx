@@ -13,6 +13,7 @@ import {
   Bell,
   Bike,
   ChevronLeft,
+  ChevronRight,
   type LucideIcon,
   Percent,
   ShoppingBag,
@@ -93,9 +94,10 @@ const NotificationRow = ({
         </Text>
       </View>
 
-      {!item.read && (
-        <View className="mt-1.5 h-2 w-2 rounded-full bg-primary" />
-      )}
+      <View className="items-end gap-2">
+        {!item.read && <View className="h-2 w-2 rounded-full bg-primary" />}
+        {item.link && <ChevronRight size={16} color="#9AA0A6" />}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -108,6 +110,22 @@ const Notifications = () => {
   const clearAll = useNotificationsStore((s) => s.clearAll);
   const c = useColors();
   const tr = useT();
+
+  const openNotification = (item: AppNotification) => {
+    markRead(item.id);
+    if (!item.link) return;
+    if (item.link.kind === "order") {
+      router.push({
+        pathname: "/order-details/[id]",
+        params: { id: item.link.orderId },
+      });
+    } else {
+      router.push({
+        pathname: "/offer-details/[id]",
+        params: { id: item.link.offerId },
+      });
+    }
+  };
 
   // Opening the screen counts as seeing everything — clear the badge.
   useEffect(() => {
@@ -151,7 +169,7 @@ const Notifications = () => {
         ItemSeparatorComponent={() => <View className="h-1.5" />}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <NotificationRow item={item} onPress={() => markRead(item.id)} />
+          <NotificationRow item={item} onPress={() => openNotification(item)} />
         )}
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center px-8">

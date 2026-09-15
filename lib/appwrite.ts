@@ -95,6 +95,13 @@ export const createUser = async ({
       avatar = avatars.getInitialsURL(name).toString();
     } catch {}
 
+    // Scope this profile document (email, phone, home/work address) to its
+    // own account — without this, whatever the `user` collection grants at
+    // the collection level (needed for a signed-in user to read/update
+    // their own profile at all) would let any authenticated user read or
+    // overwrite everyone else's profile by calling the API directly, not
+    // just their own. Requires Document Security ON for this collection in
+    // the Appwrite console.
     return await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
@@ -105,6 +112,10 @@ export const createUser = async ({
         accountId: newAccount.$id,
         avatar,
       },
+      [
+        Permission.read(Role.user(newAccount.$id)),
+        Permission.update(Role.user(newAccount.$id)),
+      ],
     );
   } catch (e: any) {
     throw new Error(e.message || "Failed to create user");
@@ -129,14 +140,6 @@ export const signIn = async ({ email, password }: SignInParams) => {
 export const signOut = async () => {
   await account.deleteSession("current");
 };
-
-// Hosted confirmation page the recovery email links to; it posts the new
-// password straight to Appwrite's public /account/recovery endpoint using
-// the emailed userId + secret (no session or API key required). Its
-// hostname must be added under Appwrite Console → your project →
-// Overview → Platforms as a Web platform, or createRecovery rejects it.
-const PASSWORD_RESET_URL =
-  "https://claude.ai/code/artifact/f5c31e99-245e-4d90-aec3-fb81f49a366d";
 
 const CHECK_EMAIL_FUNCTION_ID =
   process.env.EXPO_PUBLIC_APPWRITE_FUNCTION_CHECK_EMAIL_ID;
@@ -187,11 +190,57 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
   }
 };
 
-export const requestPasswordRecovery = async (email: string) => {
+/**
+ * Emails a 6-digit one-time code and returns the userId it was sent for —
+ * needed by verifyPasswordResetCode. If `email` already has an account,
+ * Appwrite ignores the placeholder ID and sends the code to that account;
+ * otherwise it silently creates a brand-new (passwordless) one, which is
+ * why callers must gate this behind checkEmailExists.
+ */
+export const requestPasswordResetCode = async (
+  email: string,
+): Promise<string> => {
   try {
-    await account.createRecovery({ email, url: PASSWORD_RESET_URL });
+    const token = await account.createEmailToken(ID.unique(), email);
+    return token.userId;
   } catch (e: any) {
-    throw new Error(e.message || "Failed to send the reset email");
+    throw new Error(e.message || "Failed to send the reset code");
+  }
+};
+
+// Redeems the emailed code as a real session, so completePasswordReset can
+// change the password without needing the (forgotten) old one.
+export const verifyPasswordResetCode = async (
+  userId: string,
+  code: string,
+) => {
+  try {
+    try {
+      await account.deleteSessions();
+    } catch {}
+    await account.createSession({ userId, secret: code });
+  } catch (e: any) {
+    throw new Error(e.message || "That code is invalid or has expired");
+  }
+};
+
+// Must run right after verifyPasswordResetCode, while its session is still
+// active — there's no old password to re-verify with here.
+export const completePasswordReset = async (newPassword: string) => {
+  try {
+    await account.updatePassword({ password: newPassword });
+  } catch (e: any) {
+    throw new Error(e.message || "Failed to update password");
+  }
+};
+
+// Drops the session verifyPasswordResetCode created, for when the user
+// abandons the flow before actually setting a new password.
+export const abandonPasswordReset = async () => {
+  try {
+    await account.deleteSession("current");
+  } catch {
+    // no active session to clean up
   }
 };
 
@@ -483,11 +532,22 @@ export const createOrder = async (orderData: {
   customerPhone?: string;
 }) => {
   try {
+    // Scope read access to the buyer alone — without this, whatever the
+    // `orders` collection grants at the collection level (needed for list/
+    // read to work at all for signed-in users) would let any authenticated
+    // user read every order's name/email/phone/address by calling the API
+    // directly, not just their own. No update/delete permission is granted
+    // here on purpose: nothing in the app lets a buyer edit an order after
+    // placing it, and granting it would let a client tamper with its own
+    // paymentStatus/finalAmount. Requires Document Security ON for this
+    // collection in the Appwrite console.
+    const acc = await account.get();
     const order = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.ordersCollectionId,
       ID.unique(),
       orderData,
+      [Permission.read(Role.user(acc.$id))],
     );
     return order;
   } catch (error: any) {
@@ -544,6 +604,39 @@ export const getMenuItemReviews = async (
   }
 };
 
+/** Recomputes a menu item's average rating from its live reviews and writes
+ * it back to the item, so cards elsewhere (home, search, bestsellers) that
+ * read `item.rating` directly — rather than averaging reviews themselves —
+ * stay in sync with what the details page shows. Best-effort: a menu item a
+ * regular user can't update, or a transient failure, shouldn't block the
+ * review action itself, so failures here are swallowed. If every review has
+ * just been deleted, the item's rating is left as-is rather than reset. */
+const syncMenuItemRating = async (menuItemId: string) => {
+  try {
+    const reviews = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.reviewsCollectionId,
+      [Query.equal("menuItemId", menuItemId), Query.limit(100)],
+    );
+    if (reviews.documents.length === 0) return;
+
+    const average =
+      reviews.documents.reduce(
+        (sum, r: any) => sum + (r.rating as number),
+        0,
+      ) / reviews.documents.length;
+
+    await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.menuCollectionId,
+      menuItemId,
+      { rating: average },
+    );
+  } catch {
+    // Best-effort sync — the review itself already succeeded.
+  }
+};
+
 /** Whether the signed-in user already reviewed this item — lets the UI
  * offer "edit your review" instead of a second, duplicate one. */
 export const getMyReviewForItem = async (
@@ -577,14 +670,29 @@ export const submitReview = async (
 ): Promise<Review> => {
   try {
     if (existingReviewId) {
+      // Refresh the userName/userAvatar snapshot too, not just rating/comment
+      // — otherwise a review edited after a profile-picture change (or one
+      // written before userAvatar existed as a column) keeps showing stale
+      // or missing reviewer info forever.
       const updated = await databases.updateDocument(
         appwriteConfig.databaseId,
         appwriteConfig.reviewsCollectionId,
         existingReviewId,
-        { rating: data.rating, comment: data.comment },
+        {
+          rating: data.rating,
+          comment: data.comment,
+          userName: data.userName,
+          userAvatar: data.userAvatar,
+        },
       );
+      await syncMenuItemRating(data.menuItemId);
       return updated as unknown as Review;
     }
+
+    // `data.userId` is the profile document ID (used for querying reviews),
+    // not the Appwrite Auth account ID — Role.user() needs the latter, or
+    // Appwrite rejects the permission ("Permissions must be one of...").
+    const acc = await account.get();
 
     const created = await databases.createDocument(
       appwriteConfig.databaseId,
@@ -592,23 +700,25 @@ export const submitReview = async (
       ID.unique(),
       data,
       [
-        Permission.update(Role.user(data.userId)),
-        Permission.delete(Role.user(data.userId)),
+        Permission.update(Role.user(acc.$id)),
+        Permission.delete(Role.user(acc.$id)),
       ],
     );
+    await syncMenuItemRating(data.menuItemId);
     return created as unknown as Review;
   } catch (error: any) {
     throw new Error(error.message || "Failed to submit review");
   }
 };
 
-export const deleteReview = async (reviewId: string) => {
+export const deleteReview = async (reviewId: string, menuItemId: string) => {
   try {
     await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.reviewsCollectionId,
       reviewId,
     );
+    await syncMenuItemRating(menuItemId);
   } catch (error: any) {
     throw new Error(error.message || "Failed to delete review");
   }

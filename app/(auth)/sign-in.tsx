@@ -40,6 +40,7 @@ const getErrorMessage = (error: unknown): string => {
 
 const SignIn = () => {
   const login = useAuthStore((s) => s.login);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const tr = useT();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -73,7 +74,7 @@ const SignIn = () => {
     }
   };
 
-  if (done) {
+  if (done || isAuthenticated) {
     return <Redirect href="/(tabs)" />;
   }
 

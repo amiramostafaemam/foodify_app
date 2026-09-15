@@ -1,8 +1,16 @@
+import { OFFERS_DATA } from "@/constants/offers.constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 export type NotificationType = "order" | "offer" | "delivery" | "system";
+
+// Where tapping a notification should take you — kept as a small closed set
+// (rather than a raw router pathname) so the notifications screen can build
+// a type-safe expo-router target without stringly-typed routes.
+export type NotificationLink =
+  | { kind: "order"; orderId: string }
+  | { kind: "offer"; offerId: string };
 
 /**
  * title/body are lib/i18n.ts translation keys (+ optional interpolation
@@ -19,6 +27,7 @@ export interface AppNotification {
   bodyVars?: Record<string, string | number>;
   createdAt: number; // epoch ms
   read: boolean;
+  link?: NotificationLink;
 }
 
 const HOUR = 3_600_000;
@@ -47,6 +56,9 @@ const seed = (): AppNotification[] => {
       bodyKey: "notif.seedOfferBody",
       createdAt: now - 8 * HOUR,
       read: false,
+      link: OFFERS_DATA[0]
+        ? { kind: "offer", offerId: OFFERS_DATA[0].id }
+        : undefined,
     },
     {
       id: "seed-delivery",
@@ -63,7 +75,7 @@ const genId = () => `n-${Date.now()}-${Math.round(Math.random() * 1e9)}`;
 
 type NewNotification = Pick<
   AppNotification,
-  "type" | "titleKey" | "bodyKey" | "titleVars" | "bodyVars"
+  "type" | "titleKey" | "bodyKey" | "titleVars" | "bodyVars" | "link"
 >;
 
 type NotificationsState = {

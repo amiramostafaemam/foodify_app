@@ -107,6 +107,7 @@ const Cart = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [showSelectPayment, setShowSelectPayment] = useState(false);
+  const [showAddressRequired, setShowAddressRequired] = useState(false);
   const [showAddressPicker, setShowAddressPicker] = useState(false);
   const [showMockCard, setShowMockCard] = useState(false);
   const [address, setAddress] = useState(user?.address_home || "");
@@ -147,7 +148,9 @@ const Cart = () => {
     paymentStatus: "succeeded" | "cash_on_delivery",
   ) => {
     if (!user) throw new Error("Please sign in to continue");
-    await createOrder({
+    const deliveryAddress = address.trim() || user.address_home || "";
+    if (!deliveryAddress) throw new Error(tr("cart.addressRequiredMsg"));
+    const order = await createOrder({
       userId: user.$id,
       items: JSON.stringify(items),
       totalAmount: subtotal,
@@ -157,7 +160,7 @@ const Cart = () => {
       paymentIntentId,
       paymentStatus,
       orderStatus: "pending",
-      deliveryAddress: address || user.address_home || "",
+      deliveryAddress,
       customerName: user.name,
       customerEmail: user.email,
       customerPhone: user.phone || "",
@@ -169,6 +172,7 @@ const Cart = () => {
       type: "order",
       titleKey: "cart.orderConfirmed",
       bodyKey: "cart.orderConfirmedMsg",
+      link: { kind: "order", orderId: order.$id },
     });
 
     setStep("review");
@@ -220,6 +224,10 @@ const Cart = () => {
   const placeOrder = async () => {
     if (!user) {
       Alert.alert(tr("cart.signInRequiredTitle"), tr("cart.signInRequiredMsg"));
+      return;
+    }
+    if (!address.trim()) {
+      setShowAddressRequired(true);
       return;
     }
     if (!method) {
@@ -310,6 +318,21 @@ const Cart = () => {
         primary={{
           label: tr("auth.resetDone"),
           onPress: () => setShowSelectPayment(false),
+        }}
+      />
+      <AppModal
+        visible={showAddressRequired}
+        onClose={() => setShowAddressRequired(false)}
+        tone="primary"
+        icon={MapPin}
+        title={tr("cart.addressRequiredTitle")}
+        message={tr("cart.addressRequiredMsg")}
+        primary={{
+          label: tr("cart.chooseAddress"),
+          onPress: () => {
+            setShowAddressRequired(false);
+            setShowAddressPicker(true);
+          },
         }}
       />
     </>
