@@ -1,6 +1,5 @@
 import { Image } from "@/components/CachedImage";
 import { images } from "@/constants";
-import cn from "clsx";
 import type { ImageContentFit } from "expo-image";
 import { useState } from "react";
 
@@ -15,10 +14,11 @@ interface FoodImageProps {
  * Food image with memory + disk caching, a soft fade-in, and a graceful
  * fallback. Accepts a remote URL or a bundled image.
  *
- * Always carries a faint tinted background (not just the callers that
- * happened to add one) so a remote image that hasn't loaded yet — the
- * first time it's ever seen, before it's disk-cached — reads as "loading"
- * rather than a blank/empty gap while its request is in flight.
+ * No default background here — many callers (MenuCard's floating cutout,
+ * for one) show a transparent-PNG food photo with nothing behind it, and a
+ * tinted box would show through as a visible edge around it. Callers that
+ * fill a solid rectangular area (PopularMealCard, order rows) add their
+ * own `bg-*` in their className for a loading placeholder instead.
  */
 const FoodImage = ({
   uri,
@@ -31,7 +31,7 @@ const FoodImage = ({
     return (
       <Image
         source={images.emptyState}
-        className={cn("bg-primary/5", className)}
+        className={className}
         contentFit={contentFit}
       />
     );
@@ -40,7 +40,7 @@ const FoodImage = ({
   return (
     <Image
       source={typeof uri === "number" ? uri : { uri }}
-      className={cn("bg-primary/5", className)}
+      className={className}
       contentFit={contentFit}
       transition={200}
       cachePolicy="memory-disk"
